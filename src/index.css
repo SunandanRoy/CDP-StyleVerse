@@ -1,0 +1,132 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* SpeedStyle-flavored default — always overridden by [data-brand] below once BrandProvider mounts */
+  --brand-accent: #e0401b;
+  --brand-accent-soft: #fdebe5;
+  --brand-accent-text: #ffffff;
+  --surface: #ffffff;
+  --surface-alt: #f7f7f8;
+  --ink: #0b0b0c;
+  --ink-mute: #55565c;
+  --edge: #e2e2e6;
+  --font-heading: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --tracking-heading: -0.01em;
+  --radius: 10px;
+  --card-padding: 1.1rem;
+  --section-gap: 1.5rem;
+}
+
+[data-brand='speedstyle'] {
+  --brand-accent: #e0401b;
+  --brand-accent-soft: #fdebe5;
+  --brand-accent-text: #ffffff;
+  --surface: #ffffff;
+  --surface-alt: #f5f5f6;
+  --ink: #0a0a0b;
+  --ink-mute: #4b4b50;
+  --edge: #1c1c1e;
+  --font-heading: 'Oswald', 'Arial Narrow', sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --tracking-heading: 0.01em;
+  --radius: 6px;
+  --card-padding: 0.9rem;
+  --section-gap: 1.1rem;
+}
+
+[data-brand='urbanedge'] {
+  --brand-accent: #2563eb;
+  --brand-accent-soft: #e8effd;
+  --brand-accent-text: #ffffff;
+  --surface: #ffffff;
+  --surface-alt: #f6f8fc;
+  --ink: #14181f;
+  --ink-mute: #5b6472;
+  --edge: #dde3ee;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --tracking-heading: 0em;
+  --radius: 10px;
+  --card-padding: 1.1rem;
+  --section-gap: 1.4rem;
+}
+
+[data-brand='maisonluxe'] {
+  --brand-accent: #a6802f;
+  --brand-accent-soft: #f4efe4;
+  --brand-accent-text: #2b2620;
+  --surface: #fbf9f4;
+  --surface-alt: #f4efe4;
+  --ink: #3a342b;
+  --ink-mute: #857d6d;
+  --edge: #e4dac4;
+  --font-heading: 'Playfair Display', 'Cormorant Garamond', serif;
+  --font-body: 'Cormorant Garamond', Georgia, serif;
+  --tracking-heading: 0.02em;
+  --radius: 2px;
+  --card-padding: 2rem;
+  --section-gap: 2.75rem;
+}
+
+[data-brand='ecoweave'] {
+  --brand-accent: #5c8a5c;
+  --brand-accent-soft: #eaf3ea;
+  --brand-accent-text: #ffffff;
+  --surface: #fbfcf9;
+  --surface-alt: #f1f5ee;
+  --ink: #232b23;
+  --ink-mute: #62705f;
+  --edge: #dbe6d7;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --tracking-heading: -0.005em;
+  --radius: 14px;
+  --card-padding: 1.2rem;
+  --section-gap: 1.5rem;
+}
+
+[data-brand='threadbasics'] {
+  --brand-accent: #334155;
+  --brand-accent-soft: #edf0f4;
+  --brand-accent-text: #ffffff;
+  --surface: #ffffff;
+  --surface-alt: #f1f3f6;
+  --ink: #1a2130;
+  --ink-mute: #5b6577;
+  --edge: #d7dce3;
+  --font-heading: 'Space Grotesk', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --tracking-heading: 0em;
+  --radius: 4px;
+  --card-padding: 0.85rem;
+  --section-gap: 1rem;
+}
+
+html, body, #root {
+  height: 100%;
+}
+
+body {
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+h1, h2, h3, h4, .font-heading {
+  font-family: var(--font-heading);
+  letter-spacing: var(--tracking-heading);
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--edge);
+  border-radius: var(--radius);
+  padding: var(--card-padding);
+}
+
+.scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
+.scrollbar-thin::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 6px; }

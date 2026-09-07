@@ -8,12 +8,13 @@ import { CATEGORIES } from '../../shared/confidence.js'
 export default function FitPassportAdmin() {
   const { archetypeId: routeArchetypeId } = useParams()
   const navigate = useNavigate()
-  const { brandId } = useBrand()
+  const { brandId, dial } = useBrand()
   const { data: archetypes } = useFetch('/archetypes')
   const [category, setCategory] = useState(CATEGORIES[0])
 
   const selected = routeArchetypeId || archetypes?.[0]?.id
   const archetype = archetypes?.find((a) => a.id === selected)
+  const isAdvisorMediated = dial?.disclosure_mode === 'Advisor-Mediated'
 
   const { data: members } = useFetch(selected && brandId ? `/customers?brand_id=${brandId}&archetype_id=${selected}` : null)
   const { data: adjustmentLog } = useFetch(selected ? `/confidence-adjustment-log?archetype_id=${selected}` : null)
@@ -54,8 +55,12 @@ export default function FitPassportAdmin() {
                 <h2 className="font-heading text-lg font-bold">{archetype.label}</h2>
                 <p className="text-xs" style={{ color: 'var(--ink-mute)' }}>{archetype.measurement_range}</p>
               </div>
-              <span className="rounded-full border px-2.5 py-1 text-[11px] font-semibold" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }} title="This preview simulates what the shopper sees, including AI-disclosure watermarking.">
-                Customer View Preview · 🛈 AI-disclosed
+              <span
+                className="rounded-full border px-2.5 py-1 text-[11px] font-semibold"
+                style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}
+                title={isAdvisorMediated ? 'This preview simulates the human-advisor-framed experience — no AI badge shown, per this brand\'s hard limit.' : 'This preview simulates what the shopper sees, including AI-disclosure watermarking.'}
+              >
+                Customer View Preview · {isAdvisorMediated ? '🧑 Advisor-Mediated' : '🛈 AI-disclosed'}
               </span>
             </div>
 
@@ -76,7 +81,7 @@ export default function FitPassportAdmin() {
               ))}
             </div>
 
-            <FitModel archetypeId={selected} productCategory={category} confidenceScore={78} heightPx={380} />
+            <FitModel archetypeId={selected} productCategory={category} confidenceScore={78} heightPx={380} suppressAiBadge={isAdvisorMediated} />
           </div>
 
           <div className="space-y-4">

@@ -1,0 +1,2258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleVerse — D2C Fashion Storefront Prototype</title>
+<style>
+  :root{
+    --accent:#2563eb;
+    --accent-dark:#1d4ed8;
+    --heading-font: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --body-font: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --bg:#f7f7f8;
+    --surface:#ffffff;
+    --text:#1a1a1a;
+    --muted:#6b7280;
+    --border:#e5e7eb;
+    --radius:10px;
+    --green:#16a34a;
+    --amber:#d97706;
+    --red:#dc2626;
+    --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
+    --shadow-lg: 0 10px 30px rgba(0,0,0,.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:var(--body-font);
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:var(--heading-font); margin:0 0 .4em 0; letter-spacing:0.01em;}
+  a{color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+  img{display:block; max-width:100%;}
+  .container{max-width:1180px; margin:0 auto; padding:0 20px;}
+  .hidden{display:none !important;}
+
+  /* ---------- Top Nav ---------- */
+  #topnav{
+    position:sticky; top:0; z-index:50;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  #topnav .bar{
+    display:flex; align-items:center; justify-content:space-between;
+    max-width:1180px; margin:0 auto; padding:12px 20px; gap:16px;
+  }
+  #topnav .brand-mark{display:flex; align-items:center; gap:10px; font-family:var(--heading-font); font-weight:700; font-size:20px; cursor:pointer;}
+  #topnav .brand-dot{width:12px; height:12px; border-radius:50%; background:var(--accent);}
+  #topnav nav{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  #topnav nav button.navlink{
+    background:none; border:none; color:var(--text); font-size:14px; padding:6px 4px;
+    border-bottom:2px solid transparent;
+  }
+  #topnav nav button.navlink:hover{border-bottom-color:var(--accent);}
+  #topnav .cart-count{
+    display:inline-flex; align-items:center; justify-content:center;
+    background:var(--accent); color:#fff; border-radius:50%; min-width:18px; height:18px;
+    font-size:11px; padding:0 4px; margin-left:4px;
+  }
+  #topnav .switch-persona{font-size:13px; color:var(--muted); background:none; border:1px solid var(--border); border-radius:6px; padding:6px 10px;}
+  .escalation-pill{
+    background:#fff; border:1px solid var(--accent); color:var(--accent); border-radius:20px;
+    padding:5px 12px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;
+  }
+
+  /* ---------- Generic layout ---------- */
+  .page{padding:28px 0 60px 0;}
+  .section-title{font-size:22px; margin-bottom:14px;}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);}
+  .btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px;
+    background:var(--accent); color:#fff; border:none; border-radius:8px;
+    padding:11px 18px; font-size:14px; font-weight:600; transition:transform .1s ease, opacity .15s ease;
+  }
+  .btn:hover{opacity:.9;}
+  .btn:active{transform:scale(.98);}
+  .btn.secondary{background:transparent; color:var(--accent); border:1.5px solid var(--accent);}
+  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--border);}
+  .btn:disabled{opacity:.45; cursor:not-allowed;}
+  .btn.small{padding:7px 12px; font-size:12.5px;}
+  .badge{display:inline-block; padding:3px 9px; border-radius:20px; font-size:11.5px; font-weight:700;}
+  .badge.high{background:#dcfce7; color:#166534;}
+  .badge.medium{background:#fef3c7; color:#92400e;}
+  .badge.low{background:#fee2e2; color:#991b1b;}
+  .badge.ai{background:#ede9fe; color:#5b21b6;}
+  .pill{background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 10px; font-size:12px;}
+
+  /* ---------- Persona Selector ---------- */
+  #persona-screen{min-height:100vh; background:linear-gradient(160deg,#111827,#1f2937); padding:50px 20px;}
+  .ps-header{text-align:center; color:#fff; margin-bottom:36px;}
+  .ps-header h1{font-size:38px; color:#fff;}
+  .ps-header p{color:#cbd5e1; font-size:15px;}
+  .persona-grid{
+    max-width:1180px; margin:0 auto; display:grid; gap:18px;
+    grid-template-columns:repeat(auto-fill, minmax(270px,1fr));
+  }
+  .persona-card{
+    background:#fff; border-radius:14px; padding:20px; cursor:pointer;
+    border:1px solid rgba(255,255,255,.1); transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .persona-card:hover{transform:translateY(-4px); box-shadow:0 16px 32px rgba(0,0,0,.35);}
+  .persona-card .brand-badge{
+    display:inline-block; color:#fff; font-size:11px; font-weight:700; padding:4px 10px;
+    border-radius:20px; margin-bottom:10px; letter-spacing:.03em;
+  }
+  .persona-card h3{font-size:17px; margin-bottom:6px;}
+  .persona-card p{font-size:13px; color:var(--muted); line-height:1.4; margin:0;}
+  .persona-card .scenario-tag{font-size:10.5px; color:#9ca3af; margin-top:10px; text-transform:uppercase; letter-spacing:.04em;}
+
+  /* ---------- Banners ---------- */
+  .banner{
+    display:flex; align-items:center; justify-content:space-between; gap:14px;
+    background:#eef2ff; border:1px solid #c7d2fe; border-radius:10px; padding:14px 18px; margin-bottom:20px; flex-wrap:wrap;
+  }
+  .banner.outreach{background:#fff7ed; border-color:#fed7aa;}
+  .banner p{margin:0; font-size:13.5px;}
+  .banner .close-x{background:none; border:none; color:var(--muted); font-size:16px; padding:0 4px;}
+
+  /* ---------- Modal ---------- */
+  .modal-overlay{
+    position:fixed; inset:0; background:rgba(15,23,42,.55); display:flex; align-items:center; justify-content:center;
+    z-index:200; padding:20px;
+  }
+  .modal{background:#fff; border-radius:14px; padding:28px; max-width:440px; width:100%; box-shadow:var(--shadow-lg);}
+  .modal h3{margin-bottom:6px;}
+  .modal .step-dots{display:flex; gap:6px; margin-bottom:18px;}
+  .modal .step-dots span{width:26px; height:4px; border-radius:2px; background:var(--border);}
+  .modal .step-dots span.active{background:var(--accent);}
+  .field{margin-bottom:14px;}
+  .field label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:5px;}
+  .field input{width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px;}
+  .spinner{
+    width:34px; height:34px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%;
+    animation:spin .8s linear infinite; margin:18px auto;
+  }
+  @keyframes spin{to{transform:rotate(360deg);}}
+  .checkmark-anim{
+    width:60px; height:60px; border-radius:50%; background:var(--green); color:#fff; display:flex; align-items:center;
+    justify-content:center; font-size:30px; margin:6px auto 14px auto; animation:pop .35s ease;
+  }
+  @keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+
+  /* ---------- Onboarding ---------- */
+  .progress-steps{display:flex; gap:6px; margin-bottom:22px;}
+  .progress-steps div{flex:1; height:5px; border-radius:3px; background:var(--border);}
+  .progress-steps div.done{background:var(--accent);}
+  .choice-row{display:flex; gap:12px; flex-wrap:wrap; margin:16px 0;}
+  .choice-card{
+    border:1.5px solid var(--border); border-radius:10px; padding:16px 20px; cursor:pointer; min-width:120px;
+    text-align:center; background:#fff; transition:border-color .12s ease, background .12s ease;
+  }
+  .choice-card:hover{border-color:var(--accent);}
+  .choice-card.selected{border-color:var(--accent); background:#eff6ff;}
+
+  /* ---------- Catalog ---------- */
+  .filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; align-items:center;}
+  .filter-bar select{padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:#fff;}
+  .product-grid{display:grid; gap:20px; grid-template-columns:repeat(auto-fill, minmax(220px,1fr));}
+  .product-card{overflow:hidden; cursor:pointer; transition:box-shadow .15s ease;}
+  .product-card:hover{box-shadow:var(--shadow-lg);}
+  .product-card .thumb{width:100%; aspect-ratio:3/4; object-fit:cover; background:#f1f1f1;}
+  .product-card .pc-body{padding:12px 14px;}
+  .product-card h4{font-size:14px; margin-bottom:4px;}
+  .product-card .price{font-size:14px; font-weight:700; margin-bottom:8px;}
+
+  /* ---------- Product Detail ---------- */
+  .pd-grid{display:grid; grid-template-columns:1fr 1fr; gap:36px;}
+  @media (max-width:840px){.pd-grid{grid-template-columns:1fr;}}
+  .pd-images{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
+  .pd-images img{width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:10px; background:#f1f1f1;}
+  .size-row{display:flex; gap:8px; margin:10px 0 18px 0; flex-wrap:wrap;}
+  .size-btn{border:1.5px solid var(--border); background:#fff; border-radius:8px; padding:8px 14px; font-size:13px;}
+  .size-btn.active{border-color:var(--accent); background:var(--accent); color:#fff;}
+  .size-btn.recommended::after{content:"★ suggested"; display:block; font-size:9px; margin-top:2px; font-weight:600;}
+  .qty-row{display:flex; align-items:center; gap:10px; margin-bottom:18px;}
+  .qty-row button{width:30px; height:30px; border-radius:6px; border:1px solid var(--border); background:#fff;}
+
+  .advisor-widget{border:1px solid var(--border); border-radius:10px; padding:16px; margin-top:22px;}
+  .advisor-widget input[type=text]{width:100%; padding:10px; border:1px solid var(--border); border-radius:8px; font-size:13.5px; margin-top:8px;}
+  .ai-badge{display:inline-flex; align-items:center; gap:4px; font-size:10.5px; font-weight:700; color:#5b21b6; background:#ede9fe; padding:2px 8px; border-radius:12px;}
+  .typing-dots span{display:inline-block; width:5px; height:5px; border-radius:50%; background:var(--muted); margin-right:3px; animation:blink 1.2s infinite;}
+  .typing-dots span:nth-child(2){animation-delay:.2s;} .typing-dots span:nth-child(3){animation-delay:.4s;}
+  @keyframes blink{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+
+  /* ---------- Fit Model ---------- */
+  .fit-model-wrap{border:1px solid var(--border); border-radius:12px; padding:16px; background:#fafafa; position:relative;}
+  .fit-model-wrap.compact{padding:10px;}
+  .ai-watermark{position:absolute; top:10px; left:10px; font-size:9.5px; background:rgba(255,255,255,.9); border:1px solid var(--border); padding:2px 8px; border-radius:10px; color:var(--muted); z-index:5;}
+  .fm-stage{width:100%; max-width:260px; margin:0 auto; touch-action:pan-y; user-select:none; -webkit-user-select:none; overflow:visible; cursor:grab;}
+  .fm-stage:active{cursor:grabbing;}
+  .fm-zoomwrap{transition:transform .15s ease; transform-origin:center top;}
+  .fm-svg-holder{transition:transform .28s cubic-bezier(.4,0,.2,1);}
+  .fm-svg-holder.flip{transform:scaleX(0.02);}
+  .fm-marker{cursor:pointer;}
+  .fm-marker circle{stroke:#fff; stroke-width:2;}
+  .fm-controls{display:flex; align-items:center; justify-content:center; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .fm-controls button{width:32px; height:32px; border-radius:50%; border:1px solid var(--border); background:#fff; font-size:14px;}
+  .fm-controls button.wide{width:auto; border-radius:16px; padding:0 12px; font-size:12px;}
+  .fm-controls button.active-toggle{background:var(--accent); color:#fff; border-color:var(--accent);}
+  .fm-tooltip{
+    position:absolute; background:#111827; color:#fff; font-size:11.5px; padding:8px 11px; border-radius:8px;
+    max-width:190px; z-index:20; box-shadow:var(--shadow-lg); pointer-events:none;
+  }
+  .fm-hint{text-align:center; font-size:11px; color:var(--muted); margin-top:6px;}
+  .fm-empty{padding:20px; text-align:center; color:var(--muted); font-size:13px; border:1px dashed var(--border); border-radius:10px;}
+
+  /* ---------- Cart ---------- */
+  .cart-line{display:flex; gap:14px; align-items:center; padding:14px 0; border-bottom:1px solid var(--border);}
+  .cart-line img{width:64px; height:80px; object-fit:cover; border-radius:8px; background:#f1f1f1;}
+  .cart-line .cl-info{flex:1;}
+  .cart-line .cl-actions{display:flex; gap:8px; align-items:center;}
+  .cart-summary{display:flex; justify-content:space-between; padding:14px 0; font-weight:700;}
+
+  .interstitial{position:fixed; inset:0; background:#fff; z-index:300; overflow-y:auto;}
+  .interstitial-inner{max-width:480px; margin:0 auto; padding:60px 20px; text-align:center;}
+  .interstitial-inner img{width:140px; height:170px; object-fit:cover; border-radius:10px; margin:0 auto 18px auto;}
+
+  /* ---------- Track Everywhere ---------- */
+  .order-row{padding:16px; margin-bottom:12px; cursor:pointer;}
+  .order-row .or-top{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap;}
+  .channel-tag{font-size:10.5px; padding:2px 9px; border-radius:10px; font-weight:700;}
+  .channel-tag.d2c{background:#dbeafe; color:#1e40af;}
+  .channel-tag.marketplace{background:#fce7f3; color:#9d174d;}
+  .status-badge{font-size:11px; font-weight:700; padding:3px 10px; border-radius:12px; background:#f1f5f9; color:#334155;}
+  .step-progress{display:flex; gap:4px; margin-top:12px;}
+  .step-progress div{flex:1; height:4px; background:var(--border); border-radius:2px;}
+  .step-progress div.done{background:var(--accent);}
+  .linked-badge{background:#dcfce7; color:#166534; font-size:11px; font-weight:700; padding:4px 10px; border-radius:20px; display:inline-block;}
+
+  /* ---------- Returns ---------- */
+  .reason-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:12px; margin:18px 0;}
+  .reason-card{border:1.5px solid var(--border); border-radius:10px; padding:20px 14px; text-align:center; cursor:pointer;}
+  .reason-card:hover{border-color:var(--accent);}
+  .reason-card .ic{font-size:26px; margin-bottom:8px;}
+  .fitq-row{display:flex; gap:14px; margin-top:16px;}
+  .fitq-opt{flex:1; border:1.5px solid var(--border); border-radius:10px; padding:22px; text-align:center; cursor:pointer; font-weight:600;}
+  .fitq-opt:hover{border-color:var(--accent);}
+
+  /* ---------- Support ---------- */
+  .chat-thread{display:flex; flex-direction:column; gap:12px; padding:16px 0; max-height:60vh; overflow-y:auto;}
+  .msg{max-width:75%; padding:10px 14px; border-radius:12px; font-size:13.5px; line-height:1.4;}
+  .msg.customer{align-self:flex-end; background:var(--accent); color:#fff; border-bottom-right-radius:2px;}
+  .msg.system{align-self:flex-start; background:#f1f5f9; color:var(--text); border-bottom-left-radius:2px;}
+  .msg .msg-meta{font-size:10px; opacity:.75; margin-top:5px;}
+  .msg .who{font-size:11px; font-weight:700; margin-bottom:3px; display:flex; align-items:center; gap:5px;}
+  .avatar-circle{width:22px; height:22px; border-radius:50%; background:var(--accent); color:#fff; display:inline-flex; align-items:center; justify-content:center; font-size:10px; font-weight:700;}
+  .chat-input-row{display:flex; gap:8px; padding-top:12px; border-top:1px solid var(--border);}
+  .chat-input-row input{flex:1; padding:11px 14px; border:1px solid var(--border); border-radius:20px; font-size:13.5px;}
+
+  /* ---------- Account ---------- */
+  .acct-grid{display:grid; gap:20px; grid-template-columns:1fr 1fr;}
+  @media (max-width:840px){.acct-grid{grid-template-columns:1fr;}}
+  .acct-section{padding:18px;}
+  .toggle-row{display:flex; gap:8px; margin-top:8px;}
+  .toggle-btn{border:1.5px solid var(--border); border-radius:20px; padding:7px 14px; font-size:12.5px; background:#fff;}
+  .toggle-btn.active{background:var(--accent); color:#fff; border-color:var(--accent);}
+  details.log-panel summary{cursor:pointer; font-weight:600; font-size:13.5px; padding:6px 0;}
+  .log-entry{font-size:12.5px; padding:9px 0; border-bottom:1px solid var(--border); color:var(--muted);}
+  .log-entry b{color:var(--text);}
+
+  footer.app-footer{text-align:center; padding:30px 20px; font-size:11.5px; color:var(--muted);}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* =========================================================================
+   STYLEVERSE — SINGLE-FILE PROTOTYPE
+   ========================================================================= */
+
+/* ---------------------------- CORE CONSTANTS ---------------------------- */
+const CATEGORIES = ["Tops","Bottoms","Outerwear","Footwear","Dresses","Accessories"];
+
+const BRANDS = [
+  { id:"speedstyle", name:"SpeedStyle", posture:"Automate-heavy, Self-Directed",
+    hardLimit:"Synthetic imagery labelled; no implied fit accuracy beyond product capability",
+    accent:"#e8491d", accentDark:"#b3350f", headingFont:'"Arial Narrow", "Oswald", sans-serif', bodyFont:'system-ui, sans-serif',
+    bg:"#141414", surface:"#1f1f1f", text:"#f5f5f5", muted:"#a3a3a3", border:"#3a3a3a", contrast:"high",
+    clientFacingAI:true, escalationVisible:false },
+  { id:"urbanedge", name:"UrbanEdge", posture:"Balanced, Self-Directed",
+    hardLimit:"Disclosure at every AI touchpoint, one-tap human escalation always visible",
+    accent:"#2563eb", accentDark:"#1d4ed8", headingFont:'system-ui, sans-serif', bodyFont:'system-ui, sans-serif',
+    bg:"#f3f6fb", surface:"#ffffff", text:"#0f172a", muted:"#64748b", border:"#dbeafe", contrast:"mid",
+    clientFacingAI:true, escalationVisible:true },
+  { id:"maisonluxe", name:"Maison Luxe", posture:"Amplify-dominant, Advisor-Mediated",
+    hardLimit:"Generative content PROHIBITED client-facing — a client never meets a bot first",
+    accent:"#8a7250", accentDark:"#6b5738", headingFont:'Georgia, "Times New Roman", serif', bodyFont:'Georgia, serif',
+    bg:"#faf8f5", surface:"#ffffff", text:"#2b2620", muted:"#8a7f70", border:"#e8e0d3", contrast:"low",
+    clientFacingAI:false, escalationVisible:false },
+  { id:"ecoweave", name:"EcoWeave", posture:"Augment-led",
+    hardLimit:"Zero generative fallback on claims; every claim must trace to verified data",
+    accent:"#4f7942", accentDark:"#3d5e33", headingFont:'system-ui, sans-serif', bodyFont:'system-ui, sans-serif',
+    bg:"#f6f8f2", surface:"#ffffff", text:"#1f2a17", muted:"#6b7a5e", border:"#dbe6cf", contrast:"natural",
+    clientFacingAI:false, escalationVisible:false },
+  { id:"threadbasics", name:"ThreadBasics", posture:"Rules-engine automate",
+    hardLimit:"Cheapest viable AI, no bespoke models; still full model-card obligation",
+    accent:"#334155", accentDark:"#1e293b", headingFont:'system-ui, sans-serif', bodyFont:'system-ui, sans-serif',
+    bg:"#f4f5f7", surface:"#ffffff", text:"#111827", muted:"#6b7280", border:"#e2e8f0", contrast:"none",
+    clientFacingAI:false, escalationVisible:false }
+];
+function getBrand(id){ return BRANDS.find(b=>b.id===id); }
+
+const ARCHETYPES = [
+  { id:"petite-slim", label:"Petite/Slim", measurementRange:"4'10\"–5'2\", slim frame, narrow shoulders",
+    shoulderHW:30, waistHW:22, hipHW:26, legLen:128, armLen:96 },
+  { id:"regular-athletic", label:"Regular/Athletic", measurementRange:"5'3\"–5'7\", athletic build, defined waist",
+    shoulderHW:36, waistHW:26, hipHW:30, legLen:150, armLen:108 },
+  { id:"tall-broad", label:"Tall/Broad-shoulder", measurementRange:"5'8\"–6'0\", broad shoulders, long torso",
+    shoulderHW:44, waistHW:28, hipHW:32, legLen:172, armLen:118 },
+  { id:"curvy-regular", label:"Curvy/Regular", measurementRange:"5'3\"–5'7\", fuller bust/hip, defined waist",
+    shoulderHW:33, waistHW:27, hipHW:40, legLen:148, armLen:106 },
+  { id:"plus-relaxed", label:"Plus/Relaxed-fit", measurementRange:"5'4\"–5'9\", fuller figure, prefers relaxed fit",
+    shoulderHW:42, waistHW:42, hipHW:46, legLen:144, armLen:110 },
+  { id:"petite-curvy", label:"Petite/Curvy", measurementRange:"4'10\"–5'3\", curvy frame on a petite build",
+    shoulderHW:29, waistHW:25, hipHW:36, legLen:122, armLen:94 },
+  { id:"tall-slim", label:"Tall/Slim", measurementRange:"5'8\"–6'2\", slim build, long limbs",
+    shoulderHW:32, waistHW:22, hipHW:26, legLen:178, armLen:120 },
+  { id:"regular-broad", label:"Regular/Broad", measurementRange:"5'4\"–5'8\", broad shoulders, straight build",
+    shoulderHW:41, waistHW:31, hipHW:33, legLen:146, armLen:108 }
+];
+function getArchetype(id){ return ARCHETYPES.find(a=>a.id===id); }
+
+/* ---------------------------- FIT MATRIX ---------------------------- */
+const DIRECTIONS = ["true_to_size","runs_tight","runs_loose"];
+function buildFitMatrix(){
+  const m = {};
+  CATEGORIES.forEach((cat,ci)=>{
+    m[cat] = {};
+    ARCHETYPES.forEach((arch,ai)=>{
+      const shoulderSeed = (ci*3 + ai*5 + 1) % 3;
+      const waistSeed = (ci*7 + ai*3 + 2) % 3;
+      const lengthSeed = (ci*5 + ai*7 + 4) % 3;
+      m[cat][arch.id] = {
+        shoulders: DIRECTIONS[shoulderSeed],
+        waist: DIRECTIONS[waistSeed],
+        length: DIRECTIONS[lengthSeed]
+      };
+    });
+  });
+  return m;
+}
+const fitMatrix = buildFitMatrix();
+/* hand-tuned realism overrides — also anchors confidenceAdjustmentLog entries below */
+fitMatrix.Outerwear["tall-broad"].shoulders = "runs_tight";
+fitMatrix.Tops["regular-athletic"].waist = "true_to_size";
+fitMatrix.Dresses["curvy-regular"].waist = "runs_tight";
+fitMatrix.Bottoms["petite-curvy"].length = "runs_loose";
+fitMatrix.Footwear["regular-broad"].waist = "runs_tight";
+
+const confidenceAdjustmentLog = [
+  { category:"Outerwear", archetypeId:"tall-broad", zone:"shoulders", oldValue:"true_to_size", newValue:"runs_tight",
+    reason:"Shoulder fit downgraded after 12 fit-driven returns citing tightness for Tall/Broad-shoulder customers.", date:"2026-07-14" },
+  { category:"Tops", archetypeId:"regular-athletic", zone:"waist", oldValue:"runs_loose", newValue:"true_to_size",
+    reason:"Recalibrated after kept-it rate improved among Regular/Athletic shoppers over Q2.", date:"2026-06-02" },
+  { category:"Dresses", archetypeId:"curvy-regular", zone:"waist", oldValue:"true_to_size", newValue:"runs_tight",
+    reason:"Adjusted after a return spike citing waist tightness for Curvy/Regular shoppers.", date:"2026-08-01" },
+  { category:"Bottoms", archetypeId:"petite-curvy", zone:"length", oldValue:"runs_tight", newValue:"runs_loose",
+    reason:"Updated after repeated hemming/length complaints from Petite/Curvy shoppers.", date:"2026-05-20" },
+  { category:"Footwear", archetypeId:"regular-broad", zone:"waist", oldValue:"true_to_size", newValue:"runs_tight",
+    reason:"Width sizing guidance adjusted after fit-driven returns for Regular/Broad shoppers.", date:"2026-07-29" }
+];
+
+/* ---------------------------- IMAGE LIBRARY ---------------------------- */
+const IMAGE_LIBRARY = {
+  Tops: [
+    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80",
+    "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80",
+    "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&q=80",
+    "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80",
+    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80",
+    "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80"
+  ],
+  Bottoms: [
+    "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80",
+    "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&q=80",
+    "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&q=80",
+    "https://images.unsplash.com/photo-1602293589930-45821b8b8f92?w=600&q=80",
+    "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&q=80",
+    "https://images.unsplash.com/photo-1517438476312-10d79c077509?w=600&q=80"
+  ],
+  Outerwear: [
+    "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80",
+    "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80",
+    "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80",
+    "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600&q=80",
+    "https://images.unsplash.com/photo-1520367445093-50dc08a59d9d?w=600&q=80",
+    "https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80"
+  ],
+  Footwear: [
+    "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80",
+    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&q=80",
+    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80",
+    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
+    "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600&q=80",
+    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=600&q=80"
+  ],
+  Dresses: [
+    "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80",
+    "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&q=80",
+    "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80",
+    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80",
+    "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=600&q=80",
+    "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&q=80"
+  ],
+  Accessories: [
+    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600&q=80",
+    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80",
+    "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80",
+    "https://images.unsplash.com/photo-1519638399535-1b036603ac77?w=600&q=80",
+    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80",
+    "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=600&q=80"
+  ]
+};
+const imageCursor = {};
+function nextImage(category, detail){
+  const list = IMAGE_LIBRARY[category];
+  imageCursor[category] = imageCursor[category] || 0;
+  const idx = imageCursor[category] % list.length;
+  if(!detail) imageCursor[category]++;
+  const detailIdx = (idx+1) % list.length;
+  return detail ? list[detailIdx] : list[idx];
+}
+function placeholderDataUri(category, accentHex){
+  const label = category;
+  const bgHex = accentHex || "#64748b";
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="640">'
+    + '<rect width="500" height="640" fill="' + bgHex + '"/>'
+    + '<rect x="0" y="0" width="500" height="640" fill="black" opacity="0.12"/>'
+    + '<circle cx="250" cy="270" r="70" fill="white" opacity="0.18"/>'
+    + '<text x="250" y="285" font-family="sans-serif" font-size="26" fill="white" text-anchor="middle" opacity="0.9">StyleVerse</text>'
+    + '<text x="250" y="330" font-family="sans-serif" font-size="16" fill="white" text-anchor="middle" opacity="0.75">' + label + '</text>'
+    + '</svg>';
+  return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
+}
+function handleImgError(imgEl, category, accentHex){
+  imgEl.onerror = null;
+  imgEl.src = placeholderDataUri(category, accentHex || "#64748b");
+}
+function preflightImageCheck(){
+  Object.keys(IMAGE_LIBRARY).forEach(cat=>{
+    IMAGE_LIBRARY[cat].forEach(url=>{
+      const img = new Image();
+      img.onerror = function(){ console.warn("[StyleVerse] image failed to load:", url); };
+      img.src = url;
+    });
+  });
+}
+
+/* ---------------------------- HASH / DETERMINISTIC HELPERS ---------------------------- */
+function hashStr(str){
+  let h = 0;
+  for(let i=0;i<str.length;i++){ h = (h*31 + str.charCodeAt(i)) >>> 0; }
+  return h;
+}
+function mulberry32(seed){
+  return function(){
+    seed |= 0; seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function hesitationPenalty(productId){
+  return hashStr(productId + "::hesitation") % 101;
+}
+
+/* ---------------------------- PRODUCTS ---------------------------- */
+const RAW_PRODUCTS = [
+  { id:"ss-top", name:"Neon Rush Graphic Tee", brandId:"speedstyle", category:"Tops", priceInr:799, baseFitMatchPct:74 },
+  { id:"ss-bottom", name:"Turbo-Fit Track Pants", brandId:"speedstyle", category:"Bottoms", priceInr:1299, baseFitMatchPct:81 },
+  { id:"ss-outer", name:"Blitz Windbreaker Jacket", brandId:"speedstyle", category:"Outerwear", priceInr:2299, baseFitMatchPct:68 },
+  { id:"ss-foot", name:"Velocity Sneaker Low", brandId:"speedstyle", category:"Footwear", priceInr:1999, baseFitMatchPct:85 },
+  { id:"ss-dress", name:"Flash Bodycon Dress", brandId:"speedstyle", category:"Dresses", priceInr:1599, baseFitMatchPct:66 },
+  { id:"ss-acc", name:"Pulse Cap Snapback", brandId:"speedstyle", category:"Accessories", priceInr:599, baseFitMatchPct:90 },
+
+  { id:"ue-top", name:"Everyday Oxford Shirt", brandId:"urbanedge", category:"Tops", priceInr:1499, baseFitMatchPct:83 },
+  { id:"ue-bottom", name:"Straight-Fit Chinos", brandId:"urbanedge", category:"Bottoms", priceInr:1899, baseFitMatchPct:78 },
+  { id:"ue-outer", name:"Commuter Bomber Jacket", brandId:"urbanedge", category:"Outerwear", priceInr:3499, baseFitMatchPct:71 },
+  { id:"ue-foot", name:"City Trekker Boots", brandId:"urbanedge", category:"Footwear", priceInr:3999, baseFitMatchPct:88 },
+  { id:"ue-dress", name:"Weekend Wrap Dress", brandId:"urbanedge", category:"Dresses", priceInr:2499, baseFitMatchPct:69 },
+  { id:"ue-acc", name:"Canvas Crossbody Bag", brandId:"urbanedge", category:"Accessories", priceInr:1799, baseFitMatchPct:92 },
+
+  { id:"ml-top", name:"Silk Charmeuse Blouse", brandId:"maisonluxe", category:"Tops", priceInr:6999, baseFitMatchPct:80 },
+  { id:"ml-bottom", name:"Tailored Wool Trousers", brandId:"maisonluxe", category:"Bottoms", priceInr:7499, baseFitMatchPct:76 },
+  { id:"ml-outer", name:"Cashmere Wrap Coat", brandId:"maisonluxe", category:"Outerwear", priceInr:8999, baseFitMatchPct:72 },
+  { id:"ml-foot", name:"Handcrafted Leather Loafers", brandId:"maisonluxe", category:"Footwear", priceInr:8499, baseFitMatchPct:87 },
+  { id:"ml-dress", name:"Draped Satin Evening Gown", brandId:"maisonluxe", category:"Dresses", priceInr:8999, baseFitMatchPct:65 },
+  { id:"ml-acc", name:"Gold-Plated Statement Necklace", brandId:"maisonluxe", category:"Accessories", priceInr:4999, baseFitMatchPct:95 },
+
+  { id:"ew-top", name:"Organic Cotton Henley", brandId:"ecoweave", category:"Tops", priceInr:2199, baseFitMatchPct:79 },
+  { id:"ew-bottom", name:"Hemp-Blend Wide Trousers", brandId:"ecoweave", category:"Bottoms", priceInr:2799, baseFitMatchPct:82 },
+  { id:"ew-outer", name:"Recycled Wool Overcoat", brandId:"ecoweave", category:"Outerwear", priceInr:4999, baseFitMatchPct:70 },
+  { id:"ew-foot", name:"Cork-Sole Slip-On Sneakers", brandId:"ecoweave", category:"Footwear", priceInr:3499, baseFitMatchPct:84 },
+  { id:"ew-dress", name:"Linen Midi Wrap Dress", brandId:"ecoweave", category:"Dresses", priceInr:3299, baseFitMatchPct:67 },
+  { id:"ew-acc", name:"Jute-Weave Tote Bag", brandId:"ecoweave", category:"Accessories", priceInr:1999, baseFitMatchPct:93 },
+
+  { id:"tb-top", name:"Essential Crew Tee", brandId:"threadbasics", category:"Tops", priceInr:399, baseFitMatchPct:77 },
+  { id:"tb-bottom", name:"Basic Denim Jeans", brandId:"threadbasics", category:"Bottoms", priceInr:1199, baseFitMatchPct:73 },
+  { id:"tb-outer", name:"Everyday Zip Hoodie", brandId:"threadbasics", category:"Outerwear", priceInr:1499, baseFitMatchPct:75 },
+  { id:"tb-foot", name:"Classic Canvas Shoes", brandId:"threadbasics", category:"Footwear", priceInr:999, baseFitMatchPct:86 },
+  { id:"tb-dress", name:"Simple A-Line Dress", brandId:"threadbasics", category:"Dresses", priceInr:899, baseFitMatchPct:68 },
+  { id:"tb-acc", name:"Cotton Beanie", brandId:"threadbasics", category:"Accessories", priceInr:349, baseFitMatchPct:91 }
+];
+
+function buildFitFeedback(productId){
+  const rnd = mulberry32(hashStr(productId + "::feedback"));
+  const entries = [];
+  const count = 14 + Math.floor(rnd()*8); // 14-21 feedback entries
+  for(let i=0;i<count;i++){
+    const arch = ARCHETYPES[Math.floor(rnd()*ARCHETYPES.length)];
+    const kept = rnd() < (0.55 + rnd()*0.35); // mostly kept, some returned
+    entries.push({ archetypeId: arch.id, kept });
+  }
+  return entries;
+}
+
+const products = RAW_PRODUCTS.map(p=>{
+  const imageUrl = nextImage(p.category, false);
+  const imageUrlDetail = nextImage(p.category, true);
+  return Object.assign({}, p, {
+    sizes: ["S","M","L","XL"],
+    imageUrl, imageUrlDetail,
+    fitFeedback: buildFitFeedback(p.id)
+  });
+});
+function getProduct(id){ return products.find(p=>p.id===id); }
+
+function socialProofKeptItRate(product, archetypeId){
+  const all = product.fitFeedback;
+  const forArch = all.filter(f=>f.archetypeId===archetypeId);
+  const pool = forArch.length ? forArch : all;
+  const kept = pool.filter(f=>f.kept).length;
+  return Math.round((kept / pool.length) * 100);
+}
+function confidenceScore(product, archetypeId){
+  if(!archetypeId){
+    // no fit passport: fall back to base fit-match & overall kept-rate only
+    const social = socialProofKeptItRate(product, null);
+    const hp = hesitationPenalty(product.id);
+    return clamp(Math.round(0.5*product.baseFitMatchPct + 0.3*social + 0.2*(100-hp)), 0, 100);
+  }
+  const social = socialProofKeptItRate(product, archetypeId);
+  const hp = hesitationPenalty(product.id);
+  const score = 0.5*product.baseFitMatchPct + 0.3*social + 0.2*(100-hp);
+  return clamp(Math.round(score), 0, 100);
+}
+function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
+function confidenceTier(score){ return score>=80 ? "high" : score>=60 ? "medium" : "low"; }
+function recommendedSize(product, archetypeId){
+  // deterministic mock: derive from archetype + product id
+  const sizes = product.sizes;
+  const h = hashStr(product.id + "::" + (archetypeId||"none"));
+  return sizes[h % sizes.length];
+}
+
+/* ---------------------------- PERSONAS + SEED ORDERS/RETURNS/CASES ---------------------------- */
+function d(dateStr){ return dateStr; }
+
+const personas = [
+  { id:"p1", name:"Rohan Verma", brandId:"speedstyle", scenario:1,
+    scenarioLabel:"D2C-native shopper with a complete Fit Passport and order history",
+    loyaltyId:"SV-10021", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"regular-athletic", completedAt:"2026-04-02" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9001", channel:"d2c", date:"2026-08-28", status:"Delivered", items:[{productId:"ss-top", size:"M", qty:1}] },
+      { id:"SV-ORD-9002", channel:"d2c", date:"2026-08-10", status:"Delivered", items:[{productId:"ss-foot", size:"M", qty:1}] },
+      { id:"SV-ORD-9003", channel:"d2c", date:"2026-07-19", status:"Delivered", items:[{productId:"ss-acc", size:"M", qty:2}] },
+      { id:"SV-ORD-9004", channel:"d2c", date:"2026-09-02", status:"Shipped", items:[{productId:"ss-bottom", size:"M", qty:1}] },
+      { id:"SV-ORD-9005", channel:"d2c", date:"2026-09-06", status:"Processing", items:[{productId:"ss-outer", size:"L", qty:1}] }
+    ], marketplaceOrders:[], returns:[], cases:[] },
+
+  { id:"p2", name:"Ananya Iyer", brandId:"speedstyle", scenario:6,
+    scenarioLabel:"Has a fit-driven return mid-flow — resumable right where they left off",
+    loyaltyId:"SV-10098", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"tall-broad", completedAt:"2026-05-11" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9101", channel:"d2c", date:"2026-08-20", status:"Return in Progress", items:[{productId:"ss-outer", size:"M", qty:1}] },
+      { id:"SV-ORD-9102", channel:"d2c", date:"2026-07-15", status:"Delivered", items:[{productId:"ss-top", size:"L", qty:1}] },
+      { id:"SV-ORD-9103", channel:"d2c", date:"2026-06-30", status:"Delivered", items:[{productId:"ss-foot", size:"L", qty:1}] }
+    ], marketplaceOrders:[],
+    returns:[
+      { id:"SV-RET-501", orderId:"SV-ORD-9101", productId:"ss-outer", size:"M", status:"in_progress",
+        reason:"doesnt_fit", fitIssue:"running_small", step:"exchange-offer", _suggestedSize:"L",
+        resolvedType:null, exchangeSize:null, trackingRef:null, date:"2026-08-22" }
+    ], cases:[] },
+
+  { id:"p3", name:"Karan Mehta", brandId:"urbanedge", scenario:2,
+    scenarioLabel:"Marketplace-only shopper — hasn't linked their StyleVerse account yet",
+    loyaltyId:null, bridgingStatus:"none", fitPassport:null,
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[], marketplaceOrders:[
+      { id:"MKT-7701", channel:"marketplace", date:"2026-07-02", status:"Delivered", items:[{productId:"ue-top", size:"L", qty:1}] },
+      { id:"MKT-7702", channel:"marketplace", date:"2026-07-22", status:"Delivered", items:[{productId:"ue-acc", size:"M", qty:1}] },
+      { id:"MKT-7703", channel:"marketplace", date:"2026-08-14", status:"Delivered", items:[{productId:"ue-foot", size:"L", qty:1}] }
+    ], returns:[], cases:[] },
+
+  { id:"p4", name:"Priya Nair", brandId:"urbanedge", scenario:7,
+    scenarioLabel:"Predicted delay on a recent order — proactive outreach waiting for them",
+    loyaltyId:"SV-10233", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"curvy-regular", completedAt:"2026-03-18" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:true, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9201", channel:"d2c", date:"2026-09-04", status:"Processing", items:[{productId:"ue-outer", size:"M", qty:1}] },
+      { id:"SV-ORD-9202", channel:"d2c", date:"2026-08-02", status:"Delivered", items:[{productId:"ue-dress", size:"M", qty:1}] }
+    ], marketplaceOrders:[], returns:[],
+    cases:[
+      { id:"CASE-301", subject:"Order SV-ORD-9201 — possible delivery delay", predictedGrievance:true,
+        channelLog:[
+          { from:"system", channel:"chat", text:"We noticed a possible delay with your recent order (SV-ORD-9201) — here's what we're doing about it: your courier partner is running behind in your area, and we've already flagged this order for priority dispatch. We expect it to move within 24 hours.", ts:"2026-09-06T10:15:00" }
+        ] }
+    ] },
+
+  { id:"p5", name:"Vikram Chatterjee", brandId:"maisonluxe", scenario:3,
+    scenarioLabel:"Marketplace shopper — mid-way through linking their StyleVerse account",
+    loyaltyId:"SV-10344", bridgingStatus:"started", fitPassport:{ archetypeId:"tall-slim", completedAt:"2026-02-25" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[], marketplaceOrders:[
+      { id:"MKT-7801", channel:"marketplace", date:"2026-06-19", status:"Delivered", items:[{productId:"ml-acc", size:"M", qty:1}] },
+      { id:"MKT-7802", channel:"marketplace", date:"2026-07-30", status:"Delivered", items:[{productId:"ml-foot", size:"M", qty:1}] },
+      { id:"MKT-7803", channel:"marketplace", date:"2026-08-11", status:"Delivered", items:[{productId:"ml-top", size:"M", qty:1}] }
+    ], returns:[], cases:[] },
+
+  { id:"p6", name:"Ishaan Kapoor", brandId:"maisonluxe", scenario:9,
+    scenarioLabel:"Bridged account with order history across both channels",
+    loyaltyId:"SV-10455", bridgingStatus:"linked", fitPassport:{ archetypeId:"tall-broad", completedAt:"2026-01-30" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9401", channel:"d2c", date:"2026-08-25", status:"Delivered", items:[{productId:"ml-outer", size:"L", qty:1}] },
+      { id:"SV-ORD-9402", channel:"d2c", date:"2026-07-05", status:"Delivered", items:[{productId:"ml-dress", size:"L", qty:1}] }
+    ], marketplaceOrders:[
+      { id:"MKT-7901", channel:"marketplace", date:"2026-06-12", status:"Delivered", items:[{productId:"ml-bottom", size:"L", qty:1}] },
+      { id:"MKT-7902", channel:"marketplace", date:"2026-08-01", status:"Delivered", items:[{productId:"ml-acc", size:"M", qty:1}] }
+    ], returns:[], cases:[] },
+
+  { id:"p7", name:"Meera Pillai", brandId:"ecoweave", scenario:4,
+    scenarioLabel:"Bridged account — marketplace and D2C history merged under one loyalty ID",
+    loyaltyId:"SV-10566", bridgingStatus:"linked", fitPassport:{ archetypeId:"petite-slim", completedAt:"2026-03-09" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9501", channel:"d2c", date:"2026-08-30", status:"Out for Delivery", items:[{productId:"ew-top", size:"S", qty:1}] },
+      { id:"SV-ORD-9502", channel:"d2c", date:"2026-07-11", status:"Delivered", items:[{productId:"ew-dress", size:"S", qty:1}] }
+    ], marketplaceOrders:[
+      { id:"MKT-8001", channel:"marketplace", date:"2026-06-05", status:"Delivered", items:[{productId:"ew-acc", size:"S", qty:1}] },
+      { id:"MKT-8002", channel:"marketplace", date:"2026-08-15", status:"Delivered", items:[{productId:"ew-foot", size:"S", qty:1}] }
+    ], returns:[], cases:[] },
+
+  { id:"p8", name:"Aditi Rao", brandId:"ecoweave", scenario:8,
+    scenarioLabel:"Shopping for someone else, with a saved secondary fit profile",
+    loyaltyId:"SV-10677", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"petite-curvy", completedAt:"2026-04-22" },
+    shoppingFor:"myself",
+    secondaryProfile:{ name:"Rahul (gift recipient)", archetypeId:"tall-slim" },
+    predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9601", channel:"d2c", date:"2026-08-17", status:"Delivered", items:[{productId:"ew-bottom", size:"S", qty:1}] },
+      { id:"SV-ORD-9602", channel:"d2c", date:"2026-07-28", status:"Delivered", items:[{productId:"ew-outer", size:"S", qty:1}] },
+      { id:"SV-ORD-9603", channel:"d2c", date:"2026-06-14", status:"Delivered", items:[{productId:"ew-top", size:"S", qty:1}] }
+    ], marketplaceOrders:[], returns:[], cases:[] },
+
+  { id:"p9", name:"Sanjay Gupta", brandId:"threadbasics", scenario:5,
+    scenarioLabel:"Brand new shopper — no orders, no Fit Passport yet",
+    loyaltyId:null, bridgingStatus:"none", fitPassport:null,
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[], marketplaceOrders:[], returns:[], cases:[] },
+
+  { id:"p10", name:"Neha Joshi", brandId:"threadbasics", scenario:10,
+    scenarioLabel:"D2C-native shopper with a complete Fit Passport and a long order history",
+    loyaltyId:"SV-10788", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"regular-broad", completedAt:"2026-01-15" },
+    shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
+    orders:[
+      { id:"SV-ORD-9701", channel:"d2c", date:"2026-09-01", status:"Processing", items:[{productId:"tb-top", size:"M", qty:2}] },
+      { id:"SV-ORD-9702", channel:"d2c", date:"2026-08-19", status:"Shipped", items:[{productId:"tb-bottom", size:"M", qty:1}] },
+      { id:"SV-ORD-9703", channel:"d2c", date:"2026-08-03", status:"Delivered", items:[{productId:"tb-outer", size:"L", qty:1}] },
+      { id:"SV-ORD-9704", channel:"d2c", date:"2026-07-12", status:"Delivered", items:[{productId:"tb-foot", size:"M", qty:1}] },
+      { id:"SV-ORD-9705", channel:"d2c", date:"2026-06-21", status:"Delivered", items:[{productId:"tb-dress", size:"M", qty:1}] },
+      { id:"SV-ORD-9706", channel:"d2c", date:"2026-06-01", status:"Delivered", items:[{productId:"tb-acc", size:"M", qty:3}] }
+    ], marketplaceOrders:[], returns:[], cases:[] }
+];
+function getPersonaTemplate(id){ return personas.find(p=>p.id===id); }
+
+/* ---------------------------- GLOBAL STATE ---------------------------- */
+const state = {
+  screen: "persona-select",
+  screenParams: {},
+  currentPersona: null,     // deep-cloned mutable persona in play
+  browsingBrandId: null,    // brand currently being viewed in catalog (may differ from persona's home brand)
+  cart: [],
+  geminiKey: "",
+  apiCallLog: [],           // rolling 60s call timestamps
+  bridgeBannerDismissed: false,
+  bridgeModal: null,        // {step, prefilled}
+  proactiveShown: false,
+  supportDraft: "",
+  catalogFilters: { category:"all", confidence:"all" },
+  returnFlowByProductOrder: {}, // in-progress return flow UI state, keyed by orderId
+  fitModelRegistry: {}      // instanceId -> controller
+};
+
+function cloneJSON(o){ return JSON.parse(JSON.stringify(o)); }
+
+function money(n){
+  return "₹" + n.toLocaleString("en-IN");
+}
+function escapeHtml(s){
+  return String(s==null?"":s).replace(/[&<>"']/g, function(c){
+    return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
+  });
+}
+function fmtDate(iso){
+  const dt = new Date(iso);
+  if(isNaN(dt)) return iso;
+  return dt.toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" });
+}
+function activeBrand(){ return getBrand(state.browsingBrandId || state.currentPersona.brandId); }
+function personaHomeBrand(){ return getBrand(state.currentPersona.brandId); }
+function activeArchetypeId(){
+  const p = state.currentPersona;
+  if(!p || !p.fitPassport) return null;
+  if(p.shoppingFor === "other" && p.secondaryProfile) return p.secondaryProfile.archetypeId;
+  return p.fitPassport.archetypeId;
+}
+
+/* apply brand theme vars to :root */
+function applyTheme(brand){
+  const r = document.documentElement.style;
+  r.setProperty("--accent", brand.accent);
+  r.setProperty("--accent-dark", brand.accentDark);
+  r.setProperty("--heading-font", brand.headingFont);
+  r.setProperty("--body-font", brand.bodyFont);
+  r.setProperty("--bg", brand.bg);
+  r.setProperty("--surface", brand.surface);
+  r.setProperty("--text", brand.text);
+  r.setProperty("--muted", brand.muted);
+  r.setProperty("--border", brand.border);
+  document.body.style.background = brand.bg;
+  document.body.style.color = brand.text;
+}
+
+function navigate(screen, params){
+  state.screenParams = params || {};
+  state.screen = screen;
+  window.scrollTo(0,0);
+  render();
+}
+
+/* ---------------------------- FIT MODEL — GEOMETRY ENGINE ---------------------------- */
+/* 5-position carousel: 0=side,1=threeQuarter,2=front,3=threeQuarter,4=side */
+const FM_VIEW_SEQUENCE = ["side","threeQuarter","front","threeQuarter","side"];
+
+function fmGeom(view, arch){
+  const s = arch.shoulderHW, w = arch.waistHW, h = arch.hipHW, legLen = arch.legLen;
+  if(view === "front"){
+    return {
+      cx:100, headCx:100, headCy:52, headR:21,
+      shY:88, waY:158, hiY:202,
+      shL:100-s, shR:100+s, waL:100-w, waR:100+w, hiL:100-h, hiR:100+h,
+      legTopY:202, legBotY:202+legLen, legGap:9,
+      armTopY:88, armBotY:200, armW:15, armGapL:100-s-16, armGapR:100+s+16,
+      markShoulder:[100-s*0.62, 96], markWaist:[100, 160], markHem:[100, 200],
+      markLength:[100, 202+legLen*0.92]
+    };
+  }
+  if(view === "threeQuarter"){
+    const cx = 108;
+    return {
+      cx, headCx:cx+4, headCy:52, headR:20,
+      shY:90, waY:158, hiY:204,
+      shNearX:cx+s*0.95, shFarX:cx-s*0.55,
+      waNearX:cx+w*0.9, waFarX:cx-w*0.5,
+      hiNearX:cx+h*0.9, hiFarX:cx-h*0.5,
+      legTopY:204, legBotY:204+legLen*0.97,
+      nearLegX:cx+h*0.4, farLegX:cx-h*0.55, legW: s*0.34,
+      farArmTopY:92, farArmBotY:150, farArmW:11,
+      nearArmTopY:90, nearArmBotY:200, nearArmW:16,
+      markShoulder:[cx+s*0.5, 98], markWaist:[cx, 160], markHem:[cx, 202],
+      markLength:[cx, 204+legLen*0.85]
+    };
+  }
+  // side
+  const cx = 100;
+  const chest = s*0.42 + w*0.22;
+  const seat = h*0.5;
+  return {
+    cx, headCx:cx+16, headCy:52, headR:19,
+    shY:90, waY:158, hiY:204,
+    frontX: cx+8, chestHW:chest, seatHW:seat,
+    torsoTop:86, torsoBot:204,
+    legTopY:204, legBotY:204+legLen*0.98,
+    legFrontX: cx+10, legBackX: cx-2, legW: seat*0.62,
+    footX: cx+8,
+    markShoulder:[cx+12, 98], markWaist:[cx+chest*0.5+2, 160], markHem:[cx+2, 200],
+    markLength:[cx+6, 204+legLen*0.85]
+  };
+}
+
+function fmHeadSvg(g){
+  return '<circle cx="'+g.headCx+'" cy="'+g.headCy+'" r="'+g.headR+'" fill="none" stroke="currentColor" stroke-width="3"/>';
+}
+
+function fmBodySvg(view, arch){
+  const g = fmGeom(view, arch);
+  let body = fmHeadSvg(g);
+  if(view === "front"){
+    body += '<line x1="'+g.cx+'" y1="'+(g.headCy+g.headR)+'" x2="'+g.cx+'" y2="'+g.shY+'" stroke="currentColor" stroke-width="3"/>';
+    body += '<polygon points="'+g.shL+','+g.shY+' '+g.shR+','+g.shY+' '+g.waR+','+g.waY+' '+g.hiR+','+g.hiY+' '+g.hiL+','+g.hiY+' '+g.waL+','+g.waY+'" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>';
+    body += '<line x1="'+g.armGapL+'" y1="'+g.armTopY+'" x2="'+(g.armGapL-6)+'" y2="'+g.armBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<line x1="'+g.armGapR+'" y1="'+g.armTopY+'" x2="'+(g.armGapR+6)+'" y2="'+g.armBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<line x1="'+(g.hiL+4)+'" y1="'+g.legTopY+'" x2="'+(g.hiL+8)+'" y2="'+g.legBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<line x1="'+(g.hiR-4)+'" y1="'+g.legTopY+'" x2="'+(g.hiR-8)+'" y2="'+g.legBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<ellipse cx="'+(g.hiL+8)+'" cy="'+(g.legBotY+6)+'" rx="9" ry="4" fill="none" stroke="currentColor" stroke-width="2.5"/>';
+    body += '<ellipse cx="'+(g.hiR-8)+'" cy="'+(g.legBotY+6)+'" rx="9" ry="4" fill="none" stroke="currentColor" stroke-width="2.5"/>';
+  } else if(view === "threeQuarter"){
+    body += '<line x1="'+g.headCx+'" y1="'+(g.headCy+g.headR)+'" x2="'+g.cx+'" y2="'+g.shY+'" stroke="currentColor" stroke-width="3"/>';
+    body += '<polygon points="'+g.shFarX+','+g.shY+' '+g.shNearX+','+g.shY+' '+g.waNearX+','+g.waY+' '+g.hiNearX+','+g.hiY+' '+g.hiFarX+','+g.hiY+' '+g.waFarX+','+g.waY+'" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>';
+    body += '<line x1="'+g.shFarX+'" y1="'+g.farArmTopY+'" x2="'+(g.shFarX-4)+'" y2="'+g.farArmBotY+'" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.55"/>';
+    body += '<line x1="'+g.shNearX+'" y1="'+g.nearArmTopY+'" x2="'+(g.shNearX+10)+'" y2="'+g.nearArmBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<line x1="'+g.farLegX+'" y1="'+(g.legTopY+6)+'" x2="'+(g.farLegX-2)+'" y2="'+(g.legBotY-8)+'" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>';
+    body += '<line x1="'+g.nearLegX+'" y1="'+g.legTopY+'" x2="'+(g.nearLegX+6)+'" y2="'+g.legBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<ellipse cx="'+(g.nearLegX+6)+'" cy="'+(g.legBotY+6)+'" rx="9" ry="4" fill="none" stroke="currentColor" stroke-width="2.5"/>';
+  } else { // side
+    body += '<line x1="'+g.headCx+'" y1="'+(g.headCy+g.headR)+'" x2="'+g.frontX+'" y2="'+g.torsoTop+'" stroke="currentColor" stroke-width="3"/>';
+    body += '<path d="M '+(g.frontX-6)+' '+g.torsoTop+' Q '+(g.frontX+g.chestHW)+' '+(g.torsoTop+30)+' '+(g.frontX+g.chestHW*0.6)+' '+g.waY+' Q '+(g.frontX+g.seatHW+4)+' '+(g.torsoTop+90)+' '+(g.frontX-2)+' '+g.torsoBot+' L '+(g.frontX-16)+' '+g.torsoBot+' L '+(g.frontX-14)+' '+g.torsoTop+' Z" fill="none" stroke="currentColor" stroke-width="3" stroke-linejoin="round"/>';
+    body += '<line x1="'+(g.frontX-4)+'" y1="96" x2="'+(g.frontX-6)+'" y2="188" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.6"/>';
+    body += '<line x1="'+g.legBackX+'" y1="'+(g.legTopY+4)+'" x2="'+(g.legBackX-2)+'" y2="'+(g.legBotY-6)+'" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" opacity="0.65"/>';
+    body += '<line x1="'+g.legFrontX+'" y1="'+g.legTopY+'" x2="'+(g.legFrontX+2)+'" y2="'+g.legBotY+'" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+    body += '<ellipse cx="'+(g.footX+10)+'" cy="'+(g.legBotY+5)+'" rx="13" ry="4" fill="none" stroke="currentColor" stroke-width="2.5"/>';
+  }
+  return body;
+}
+
+function fmGarmentSvg(view, category, arch){
+  const g = fmGeom(view, arch);
+  const accentFill = "currentColor";
+  if(view === "front"){
+    if(category==="Tops" || category==="Outerwear" || category==="Dresses"){
+      const pad = category==="Outerwear" ? 9 : 4;
+      const hemY = category==="Dresses" ? g.hiY + 60 : g.waY + (category==="Outerwear"?18:6);
+      const hemHW = category==="Dresses" ? (g.hiR-g.cx)+10 : (g.waR-g.cx)+pad*0.6;
+      return '<polygon points="'+(g.shL-pad)+','+(g.shY-4)+' '+(g.shR+pad)+','+(g.shY-4)+' '+(g.cx+hemHW)+','+hemY+' '+(g.cx-hemHW)+','+hemY+'" fill="'+accentFill+'" opacity="0.35"/>';
+    }
+    if(category==="Bottoms"){
+      return '<polygon points="'+(g.hiL-3)+','+(g.legTopY-2)+' '+(g.hiR+3)+','+(g.legTopY-2)+' '+(g.hiR-6)+','+(g.legBotY-14)+' '+(g.hiL+6)+','+(g.legBotY-14)+'" fill="'+accentFill+'" opacity="0.35"/>';
+    }
+    if(category==="Footwear"){
+      return '<ellipse cx="'+(g.hiL+8)+'" cy="'+(g.legBotY+6)+'" rx="12" ry="6" fill="'+accentFill+'" opacity="0.45"/><ellipse cx="'+(g.hiR-8)+'" cy="'+(g.legBotY+6)+'" rx="12" ry="6" fill="'+accentFill+'" opacity="0.45"/>';
+    }
+    return '<rect x="'+(g.cx-14)+'" y="'+(g.shY-14)+'" width="28" height="8" rx="4" fill="'+accentFill+'" opacity="0.5"/>';
+  }
+  if(view === "threeQuarter"){
+    if(category==="Tops" || category==="Outerwear" || category==="Dresses"){
+      const pad = category==="Outerwear" ? 9 : 4;
+      const hemY = category==="Dresses" ? g.hiY + 56 : g.waY + (category==="Outerwear"?16:6);
+      return '<polygon points="'+(g.shFarX-pad*0.6)+','+(g.shY-4)+' '+(g.shNearX+pad)+','+(g.shY-4)+' '+(g.waNearX+6)+','+hemY+' '+(g.waFarX-6)+','+hemY+'" fill="'+accentFill+'" opacity="0.35"/>';
+    }
+    if(category==="Bottoms"){
+      return '<polygon points="'+(g.hiFarX-3)+','+(g.legTopY)+' '+(g.hiNearX+4)+','+(g.legTopY)+' '+(g.nearLegX+8)+','+(g.legBotY-12)+' '+(g.farLegX-2)+','+(g.legBotY-14)+'" fill="'+accentFill+'" opacity="0.35"/>';
+    }
+    if(category==="Footwear"){
+      return '<ellipse cx="'+(g.nearLegX+6)+'" cy="'+(g.legBotY+6)+'" rx="12" ry="6" fill="'+accentFill+'" opacity="0.45"/>';
+    }
+    return '<rect x="'+(g.cx-10)+'" y="'+(g.shY-14)+'" width="24" height="8" rx="4" fill="'+accentFill+'" opacity="0.5"/>';
+  }
+  // side
+  if(category==="Tops" || category==="Outerwear" || category==="Dresses"){
+    const pad = category==="Outerwear" ? 8 : 3;
+    const hemY = category==="Dresses" ? g.torsoBot + 56 : g.waY + (category==="Outerwear"?14:4);
+    return '<polygon points="'+(g.frontX-16-pad)+','+(g.torsoTop-2)+' '+(g.frontX+g.chestHW+pad)+','+(g.torsoTop+26)+' '+(g.frontX+2)+','+hemY+' '+(g.frontX-18)+','+hemY+'" fill="'+accentFill+'" opacity="0.35"/>';
+  }
+  if(category==="Bottoms"){
+    return '<polygon points="'+(g.legBackX-4)+','+(g.legTopY+2)+' '+(g.legFrontX+6)+','+g.legTopY+' '+(g.legFrontX+6)+','+(g.legBotY-10)+' '+(g.legBackX-4)+','+(g.legBotY-12)+'" fill="'+accentFill+'" opacity="0.35"/>';
+  }
+  if(category==="Footwear"){
+    return '<ellipse cx="'+(g.footX+10)+'" cy="'+(g.legBotY+5)+'" rx="14" ry="6" fill="'+accentFill+'" opacity="0.45"/>';
+  }
+  return '<rect x="'+(g.frontX-2)+'" y="94" width="18" height="7" rx="3.5" fill="'+accentFill+'" opacity="0.5"/>';
+}
+
+const ZONE_COLOR = { true_to_size:"#16a34a", runs_tight:"#d97706", runs_loose:"#dc2626" };
+const ZONE_LABEL = {
+  shoulders:{ true_to_size:"Fits true to size through the shoulders for this build.",
+    runs_tight:"Runs tight through the shoulders for this build.", runs_loose:"Runs loose through the shoulders for this build." },
+  waist:{ true_to_size:"Fits true to size at the waist for this build.",
+    runs_tight:"Runs tight at the waist for this build.", runs_loose:"Runs loose at the waist for this build." },
+  length:{ true_to_size:"Length runs true to size for this build.",
+    runs_tight:"Length runs shorter than expected for this build.", runs_loose:"Length runs longer than expected for this build." }
+};
+
+function fmMarkersSvg(view, category, archetypeId){
+  const arch = getArchetype(archetypeId);
+  const g = fmGeom(view, arch);
+  const zones = (fitMatrix[category] && fitMatrix[category][archetypeId]) || { shoulders:"true_to_size", waist:"true_to_size", length:"true_to_size" };
+  const pts = [
+    { zone:"shoulders", xy:g.markShoulder },
+    { zone:"waist", xy:g.markWaist },
+    { zone:"length", xy:g.markLength }
+  ];
+  return pts.map(function(pt){
+    const dir = zones[pt.zone];
+    const color = ZONE_COLOR[dir];
+    const note = ZONE_LABEL[pt.zone][dir];
+    return '<g class="fm-marker" data-zone="'+pt.zone+'" data-note="'+escapeHtml(note)+'" transform="translate('+pt.xy[0]+','+pt.xy[1]+')">'
+      + '<circle r="7" fill="'+color+'"/>'
+      + '</g>';
+  }).join("");
+}
+
+function fmFullSvg(view, category, archetypeId){
+  const arch = getArchetype(archetypeId);
+  const body = fmBodySvg(view, arch);
+  const garment = category ? fmGarmentSvg(view, category, arch) : "";
+  const markers = category ? fmMarkersSvg(view, category, archetypeId) : "";
+  return '<svg viewBox="0 0 220 420" width="100%" style="color:var(--accent); overflow:visible;">'
+    + '<g>' + body + garment + '</g>'
+    + '<g>' + markers + '</g>'
+    + '</svg>';
+}
+
+/* ---------------------------- FIT MODEL — HTML + CONTROLLER ---------------------------- */
+let fmInstanceCounter = 0;
+function renderFitModel(opts){
+  // opts: { archetypeId, category, suppressAiBadge, compact }
+  const id = "fm" + (++fmInstanceCounter);
+  if(!opts.archetypeId){
+    return '<div class="fm-empty">No Fit Passport on file yet — complete one to unlock a personalized fit preview.</div>';
+  }
+  const compactClass = opts.compact ? " compact" : "";
+  const badge = opts.suppressAiBadge ? "" : '<div class="ai-watermark">AI-generated visualization based on your profile</div>';
+  return ''
+    + '<div class="fit-model-wrap'+compactClass+'" id="'+id+'" data-archetype="'+opts.archetypeId+'" data-category="'+(opts.category||"")+'">'
+    +   badge
+    +   '<div class="fm-zoomwrap" data-role="zoomwrap">'
+    +     '<div class="fm-stage" data-role="stage">'
+    +       '<div class="fm-svg-holder" data-role="svgholder">' + fmFullSvg("front", opts.category, opts.archetypeId) + '</div>'
+    +     '</div>'
+    +   '</div>'
+    +   '<div class="fm-controls">'
+    +     '<button type="button" data-role="rotleft" title="Rotate left">&#8592;</button>'
+    +     '<button type="button" data-role="autorotate" class="wide" title="Auto-rotate">Auto-rotate</button>'
+    +     '<button type="button" data-role="rotright" title="Rotate right">&#8594;</button>'
+    +     '<button type="button" data-role="zoomout" title="Zoom out">&#8722;</button>'
+    +     '<button type="button" data-role="zoomin" title="Zoom in">&#43;</button>'
+    +   '</div>'
+    +   '<div class="fm-hint">Drag left/right to rotate • tap a dot for fit notes</div>'
+    + '</div>';
+}
+
+function initFitModel(containerId, archetypeId, category){
+  const root = document.getElementById(containerId);
+  if(!root) return null;
+  const stage = root.querySelector('[data-role="stage"]');
+  const holder = root.querySelector('[data-role="svgholder"]');
+  const zoomwrap = root.querySelector('[data-role="zoomwrap"]');
+
+  const ctrl = {
+    viewIndex: 2, // start on "front"
+    zoom: 1,
+    archetypeId: archetypeId,
+    category: category,
+    autoRotateTimer: null,
+    dragStartX: null,
+    dragging: false
+  };
+
+  function currentView(){ return FM_VIEW_SEQUENCE[ctrl.viewIndex]; }
+
+  function renderView(){
+    holder.innerHTML = fmFullSvg(currentView(), ctrl.category, ctrl.archetypeId);
+    bindMarkerTaps();
+  }
+  function animatedStep(delta){
+    ctrl.viewIndex = (ctrl.viewIndex + delta + FM_VIEW_SEQUENCE.length) % FM_VIEW_SEQUENCE.length;
+    holder.classList.add("flip");
+    setTimeout(function(){
+      renderView();
+      holder.classList.remove("flip");
+    }, 150);
+  }
+  function bindMarkerTaps(){
+    const markers = holder.querySelectorAll(".fm-marker");
+    markers.forEach(function(m){
+      m.addEventListener("click", function(e){
+        e.stopPropagation();
+        showTooltip(m, m.getAttribute("data-note"));
+      });
+    });
+  }
+  function showTooltip(markerEl, note){
+    const old = root.querySelector(".fm-tooltip");
+    if(old) old.remove();
+    const tip = document.createElement("div");
+    tip.className = "fm-tooltip";
+    tip.textContent = note;
+    root.appendChild(tip);
+    const rootRect = root.getBoundingClientRect();
+    const markRect = markerEl.getBoundingClientRect();
+    tip.style.left = Math.max(6, markRect.left - rootRect.left - 60) + "px";
+    tip.style.top = Math.max(6, markRect.top - rootRect.top - 46) + "px";
+    setTimeout(function(){ if(tip.parentNode) tip.remove(); }, 3200);
+  }
+
+  // pointer / touch drag rotation
+  function onDown(clientX){
+    ctrl.dragging = true;
+    ctrl.dragStartX = clientX;
+    stage.style.cursor = "grabbing";
+  }
+  function onMove(clientX){
+    if(!ctrl.dragging || ctrl.dragStartX===null) return;
+    const dx = clientX - ctrl.dragStartX;
+    if(Math.abs(dx) > 60){
+      animatedStep(dx > 0 ? -1 : 1);
+      ctrl.dragStartX = clientX;
+    }
+  }
+  function onUp(){
+    ctrl.dragging = false;
+    ctrl.dragStartX = null;
+    stage.style.cursor = "grab";
+  }
+  stage.addEventListener("pointerdown", function(e){ onDown(e.clientX); });
+  window.addEventListener("pointermove", function(e){ onMove(e.clientX); });
+  window.addEventListener("pointerup", onUp);
+  stage.addEventListener("touchstart", function(e){ onDown(e.touches[0].clientX); }, { passive:true });
+  stage.addEventListener("touchmove", function(e){ onMove(e.touches[0].clientX); }, { passive:true });
+  stage.addEventListener("touchend", onUp);
+
+  root.querySelector('[data-role="rotleft"]').addEventListener("click", function(){ animatedStep(-1); });
+  root.querySelector('[data-role="rotright"]').addEventListener("click", function(){ animatedStep(1); });
+  const autoBtn = root.querySelector('[data-role="autorotate"]');
+  autoBtn.addEventListener("click", function(){
+    if(ctrl.autoRotateTimer){
+      clearInterval(ctrl.autoRotateTimer);
+      ctrl.autoRotateTimer = null;
+      autoBtn.classList.remove("active-toggle");
+    } else {
+      autoBtn.classList.add("active-toggle");
+      ctrl.autoRotateTimer = setInterval(function(){ animatedStep(1); }, 2500);
+    }
+  });
+  root.querySelector('[data-role="zoomin"]').addEventListener("click", function(){
+    ctrl.zoom = Math.min(2, ctrl.zoom + 0.15);
+    zoomwrap.style.transform = "scale(" + ctrl.zoom + ")";
+  });
+  root.querySelector('[data-role="zoomout"]').addEventListener("click", function(){
+    ctrl.zoom = Math.max(0.6, ctrl.zoom - 0.15);
+    zoomwrap.style.transform = "scale(" + ctrl.zoom + ")";
+  });
+
+  ctrl.updateProduct = function(newCategory, newArchetypeId){
+    holder.style.transition = "opacity .25s ease";
+    holder.style.opacity = "0";
+    setTimeout(function(){
+      ctrl.category = newCategory;
+      if(newArchetypeId) ctrl.archetypeId = newArchetypeId;
+      root.setAttribute("data-category", newCategory || "");
+      root.setAttribute("data-archetype", ctrl.archetypeId);
+      renderView();
+      holder.style.opacity = "1";
+    }, 180);
+  };
+  ctrl.destroy = function(){
+    if(ctrl.autoRotateTimer) clearInterval(ctrl.autoRotateTimer);
+  };
+
+  bindMarkerTaps();
+  state.fitModelRegistry[containerId] = ctrl;
+  return ctrl;
+}
+function destroyAllFitModels(){
+  Object.keys(state.fitModelRegistry).forEach(function(id){
+    state.fitModelRegistry[id].destroy();
+  });
+  state.fitModelRegistry = {};
+}
+
+/* ---------------------------- AI INTEGRATION (Gemini) ---------------------------- */
+const GEMINI_ENDPOINT_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+const FALLBACKS = {
+  explainFit: "This is a strong fit match based on your profile and what similar shoppers with your build kept rather than returned.",
+  askStyleAdvisor: "Based on fit data from shoppers with a similar profile, this tends to run true to size — we'd recommend your usual size here."
+};
+
+function withinRateLimit(){
+  const now = Date.now();
+  state.apiCallLog = state.apiCallLog.filter(function(ts){ return now - ts < 60000; });
+  return state.apiCallLog.length < 8;
+}
+function recordApiCall(){ state.apiCallLog.push(Date.now()); }
+
+async function callGemini(prompt){
+  if(!state.geminiKey){ return { ok:false, reason:"no-key" }; }
+  if(!withinRateLimit()){ return { ok:false, reason:"rate-limit" }; }
+  recordApiCall();
+  const controller = new AbortController();
+  const timer = setTimeout(function(){ controller.abort(); }, 8000);
+  try{
+    const res = await fetch(GEMINI_ENDPOINT_BASE + "?key=" + encodeURIComponent(state.geminiKey), {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ contents:[{ parts:[{ text: prompt }] }] }),
+      signal: controller.signal
+    });
+    clearTimeout(timer);
+    if(res.status === 429){ return { ok:false, reason:"rate-limit" }; }
+    if(!res.ok){
+      const errText = await res.text().catch(function(){ return ""; });
+      console.error("[StyleVerse] Gemini error", res.status, errText);
+      return { ok:false, reason:"http-error" };
+    }
+    const data = await res.json();
+    const text = data && data.candidates && data.candidates[0] && data.candidates[0].content
+      && data.candidates[0].content.parts && data.candidates[0].content.parts[0] && data.candidates[0].content.parts[0].text;
+    if(!text){ return { ok:false, reason:"empty" }; }
+    return { ok:true, text: text.trim() };
+  } catch(err){
+    clearTimeout(timer);
+    console.error("[StyleVerse] Gemini call failed", err);
+    return { ok:false, reason: err.name === "AbortError" ? "timeout" : "network" };
+  }
+}
+
+async function explainFit(product, archetypeId){
+  const social = socialProofKeptItRate(product, archetypeId);
+  const conf = confidenceScore(product, archetypeId);
+  const prompt = "Given fit-match: " + product.baseFitMatchPct + "%, social-proof kept-it rate: " + social
+    + "%, in the voice of a friendly shopping assistant, write ONE short sentence (under 20 words) telling a shopper why this item is a "
+    + conf + "% fit confidence match for them. No technical terms.";
+  const result = await callGemini(prompt);
+  if(result.ok) return { text: result.text, isFallback:false };
+  return { text: FALLBACKS.explainFit, isFallback:true };
+}
+
+async function askStyleAdvisor(question, product, archetypeId){
+  const social = socialProofKeptItRate(product, archetypeId);
+  const prompt = "A shopper asks: '" + question + "' about a product with these fit signals: fit-match "
+    + product.baseFitMatchPct + "%, kept-it rate " + social
+    + "%. Answer in ONE short, helpful, conversational sentence (under 30 words), as a friendly style advisor would, using the fit data to inform the answer.";
+  const result = await callGemini(prompt);
+  if(result.ok) return { text: result.text, isFallback:false };
+  return { text: FALLBACKS.askStyleAdvisor, isFallback:true };
+}
+
+/* ---------------------------- NAV ---------------------------- */
+function renderNav(){
+  if(!state.currentPersona) return "";
+  const brand = activeBrand();
+  const cartCount = state.cart.reduce(function(sum,l){ return sum+l.qty; }, 0);
+  return ''
+    + '<div id="topnav">'
+    +   '<div class="bar">'
+    +     '<div class="brand-mark" data-action="go-home"><span class="brand-dot"></span>' + escapeHtml(brand.name) + '</div>'
+    +     '<nav>'
+    +       '<button class="navlink" data-action="go-home">Home</button>'
+    +       '<button class="navlink" data-action="go-catalog">Catalog</button>'
+    +       '<button class="navlink" data-action="go-track">Track Everywhere</button>'
+    +       '<button class="navlink" data-action="go-returns">My Returns</button>'
+    +       '<button class="navlink" data-action="go-account">Account</button>'
+    +       '<button class="navlink" data-action="go-support">Support</button>'
+    +       '<button class="navlink" data-action="go-cart">Cart<span class="cart-count">'+cartCount+'</span></button>'
+    +       (brand.escalationVisible ? '<span class="escalation-pill" data-action="go-support">Talk to a human</span>' : '')
+    +       '<button class="switch-persona" data-action="switch-persona">&#8635; Switch Persona</button>'
+    +     '</nav>'
+    +   '</div>'
+    + '</div>';
+}
+
+/* ---------------------------- MASTER RENDER ---------------------------- */
+function render(){
+  const app = document.getElementById("app");
+  destroyAllFitModels();
+  let html = "";
+  if(state.screen === "persona-select"){
+    html = renderPersonaSelectScreen();
+  } else {
+    const brand = activeBrand();
+    applyTheme(brand);
+    html = '<div id="page-shell">' + renderNav() + renderScreenBody() + renderFooter() + '<div id="modal-host"></div></div>';
+  }
+  app.innerHTML = html;
+  afterRender();
+  const modalHost = document.getElementById("modal-host");
+  if(state.bridgeModal && modalHost){
+    modalHost.innerHTML = renderBridgeModal();
+  }
+}
+function renderFooter(){
+  return '<footer class="app-footer">StyleVerse prototype — demo data only. Brand posture: '
+    + escapeHtml(activeBrand().posture) + '</footer>';
+}
+function renderScreenBody(){
+  switch(state.screen){
+    case "home": return renderHomeScreen();
+    case "fit-onboarding": return renderFitOnboardingScreen();
+    case "account": return renderAccountScreen();
+    case "catalog": return renderCatalogScreen();
+    case "product": return renderProductDetailScreen(state.screenParams.productId);
+    case "cart": return renderCartScreen();
+    case "checkout-interstitial": return renderCheckoutInterstitialScreen();
+    case "order-confirm": return renderOrderConfirmScreen();
+    case "track": return renderTrackScreen();
+    case "returns": return renderReturnsListScreen();
+    case "return-flow": return renderReturnFlowScreen(state.screenParams.returnKey);
+    case "support": return renderSupportScreen();
+    default: return renderHomeScreen();
+  }
+}
+function afterRender(){
+  if(state.screen === "fit-onboarding" && state.screenParams.step === 4){
+    initFitModel("onboard-fm", state.screenParams.previewArchetypeId, "Tops");
+  }
+  if(state.screen === "account"){
+    const arch = activeArchetypeId();
+    if(arch) initFitModel("acct-fm", arch, "Tops");
+  }
+  if(state.screen === "product"){
+    const p = getProduct(state.screenParams.productId);
+    const arch = activeArchetypeId();
+    if(arch && p) initFitModel("pd-fm", arch, p.category);
+  }
+}
+
+/* ---------------------------- PRODUCT CARD (shared) ---------------------------- */
+function renderProductCard(p){
+  const brand = getBrand(p.brandId);
+  const archId = activeArchetypeId();
+  const score = confidenceScore(p, archId);
+  const tier = confidenceTier(score);
+  return ''
+    + '<div class="card product-card" data-action="open-product" data-id="'+p.id+'">'
+    +   '<img class="thumb" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+    +   '<div class="pc-body">'
+    +     '<h4>'+escapeHtml(p.name)+'</h4>'
+    +     '<div class="price">'+money(p.priceInr)+'</div>'
+    +     '<span class="badge '+tier+'">'+score+'% fit confidence</span>'
+    +   '</div>'
+    + '</div>';
+}
+
+/* ---------------------------- SCREEN 6 — CATALOG ---------------------------- */
+function browseBrand(brandId){
+  state.browsingBrandId = brandId;
+  applyTheme(getBrand(brandId));
+  render();
+}
+function setFilter(kind, val){
+  state.catalogFilters[kind] = val;
+  render();
+}
+function renderCatalogScreen(){
+  const brand = activeBrand();
+  const f = state.catalogFilters;
+  let list = products.filter(function(p){ return p.brandId === brand.id; });
+  if(f.category !== "all") list = list.filter(function(p){ return p.category === f.category; });
+  if(f.confidence !== "all"){
+    list = list.filter(function(p){ return confidenceTier(confidenceScore(p, activeArchetypeId())) === f.confidence; });
+  }
+  const cards = list.map(renderProductCard).join("") || '<p style="color:var(--muted);">No products match these filters.</p>';
+  const brandOptions = BRANDS.map(function(b){ return '<option value="'+b.id+'" '+(b.id===brand.id?"selected":"")+'>'+escapeHtml(b.name)+'</option>'; }).join("");
+  const catOptions = CATEGORIES.map(function(c){ return '<option value="'+c+'" '+(f.category===c?"selected":"")+'>'+c+'</option>'; }).join("");
+  return ''
+    + '<div class="page container">'
+    +   '<h1>Catalog</h1>'
+    +   '<div class="filter-bar">'
+    +     '<select data-action="browse-brand-select">'+brandOptions+'</select>'
+    +     '<select data-action="filter-category"><option value="all">All categories</option>'+catOptions+'</select>'
+    +     '<select data-action="filter-confidence">'
+    +       '<option value="all">All fit confidence</option>'
+    +       '<option value="high" '+(f.confidence==="high"?"selected":"")+'>High (&ge;80%)</option>'
+    +       '<option value="medium" '+(f.confidence==="medium"?"selected":"")+'>Medium (60–79%)</option>'
+    +       '<option value="low" '+(f.confidence==="low"?"selected":"")+'>Low (&lt;60%)</option>'
+    +     '</select>'
+    +   '</div>'
+    +   '<div class="product-grid">'+cards+'</div>'
+    + '</div>';
+}
+
+/* ---------------------------- STATIC EXPLANATION TEMPLATES (non-AI brands) ---------------------------- */
+const STATIC_EXPLAIN_TEMPLATES = {
+  high: [
+    "Shoppers with a similar profile overwhelmingly kept this item rather than returning it.",
+    "This item's measurements align closely with your Fit Passport, and return rates for your build are low.",
+    "Verified fit data for your archetype shows this style consistently performs true to size."
+  ],
+  medium: [
+    "Most shoppers with your build kept this item, though a size adjustment is worth double-checking.",
+    "Fit data for your archetype is mixed — consider the size guidance below before ordering.",
+    "This style fits reasonably well for your build, with some shoppers sizing up or down."
+  ],
+  low: [
+    "Shoppers with your build have returned this item more often than average — check the size guidance closely.",
+    "Verified fit data suggests this style may not match your usual size; review the fit notes below.",
+    "This item runs differently than expected for your archetype based on recorded fit outcomes."
+  ]
+};
+function staticExplainText(product, archetypeId){
+  const score = confidenceScore(product, archetypeId);
+  const tier = confidenceTier(score);
+  const options = STATIC_EXPLAIN_TEMPLATES[tier];
+  return options[hashStr(product.id) % options.length];
+}
+
+/* ---------------------------- SCREEN 7 — PRODUCT DETAIL ---------------------------- */
+function openProduct(productId){
+  const p = getProduct(productId);
+  const archId = activeArchetypeId();
+  navigate("product", {
+    productId: productId,
+    selectedSize: archId ? recommendedSize(p, archId) : p.sizes[0],
+    qty: 1,
+    explain: { loading:false, text:null, isFallback:false, shown:false },
+    advisor: { loading:false, question:"", answer:null, isFallback:false },
+    advisorCallRequested: false
+  });
+}
+function selectSize(sz){ state.screenParams.selectedSize = sz; render(); }
+function changeQty(delta){
+  state.screenParams.qty = Math.max(1, (state.screenParams.qty||1) + delta);
+  render();
+}
+function addToCart(){
+  const sp = state.screenParams;
+  const p = getProduct(sp.productId);
+  const archId = activeArchetypeId();
+  const existing = state.cart.find(function(l){ return l.productId===p.id && l.size===sp.selectedSize; });
+  if(existing){ existing.qty += sp.qty; }
+  else {
+    state.cart.push({ productId:p.id, size:sp.selectedSize, qty:sp.qty, confidenceScore: confidenceScore(p, archId) });
+  }
+  navigate("cart", {});
+}
+async function triggerExplainFit(){
+  const sp = state.screenParams;
+  sp.explain.shown = true;
+  sp.explain.loading = true;
+  render();
+  const p = getProduct(sp.productId);
+  const result = await explainFit(p, activeArchetypeId());
+  sp.explain.loading = false;
+  sp.explain.text = result.text;
+  sp.explain.isFallback = result.isFallback;
+  render();
+}
+async function submitAdvisorQuestion(){
+  const input = document.getElementById("advisor-input");
+  const question = input ? input.value.trim() : "";
+  if(!question) return;
+  const sp = state.screenParams;
+  sp.advisor.question = question;
+  sp.advisor.loading = true;
+  sp.advisor.answer = null;
+  render();
+  const p = getProduct(sp.productId);
+  const result = await askStyleAdvisor(question, p, activeArchetypeId());
+  sp.advisor.loading = false;
+  sp.advisor.answer = result.text;
+  sp.advisor.isFallback = result.isFallback;
+  render();
+}
+function requestAdvisorCall(){
+  state.screenParams.advisorCallRequested = true;
+  render();
+}
+function renderProductDetailScreen(productId){
+  const p = getProduct(productId);
+  const brand = getBrand(p.brandId);
+  const sp = state.screenParams;
+  const archId = activeArchetypeId();
+  const score = confidenceScore(p, archId);
+  const tier = confidenceTier(score);
+
+  const sizeButtons = p.sizes.map(function(sz){
+    const isRec = archId && sz === recommendedSize(p, archId);
+    return '<button class="size-btn '+(sp.selectedSize===sz?"active":"")+' '+(isRec?"recommended":"")+'" data-action="select-size" data-val="'+sz+'">'+sz+'</button>';
+  }).join("");
+
+  let fitSection = "";
+  if(p.category && archId){
+    fitSection = '<h3 style="margin-top:24px;">Your Fit Preview</h3><div id="pd-fm">' + renderFitModel({ archetypeId: archId, category: p.category }) + '</div>';
+  } else {
+    fitSection = ''
+      + '<div class="card" style="padding:16px; margin-top:22px;">'
+      +   '<p style="font-size:13.5px; margin-bottom:10px;">Complete your Fit Passport to see your personalized fit preview.</p>'
+      +   '<button class="btn small" data-action="start-onboarding">Complete Fit Passport</button>'
+      + '</div>';
+  }
+
+  let whySection = "";
+  if(brand.clientFacingAI){
+    if(!sp.explain.shown){
+      whySection = '<button class="btn ghost small" data-action="explain-fit">Why this confidence score?</button>';
+    } else if(sp.explain.loading){
+      whySection = '<div class="card" style="padding:12px; font-size:13px;">Generating explanation<span class="typing-dots"><span></span><span></span><span></span></span></div>';
+    } else {
+      whySection = ''
+        + '<div class="card" style="padding:12px; font-size:13px;">'
+        +   '<span class="ai-badge">AI</span> ' + escapeHtml(sp.explain.text)
+        +   (sp.explain.isFallback ? ' <span style="color:var(--muted); font-size:11px;">(example response)</span>' : '')
+        + '</div>';
+    }
+  } else {
+    whySection = '<div class="card" style="padding:12px; font-size:13px;">' + escapeHtml(staticExplainText(p, archId)) + '</div>';
+  }
+
+  let advisorWidget = "";
+  if(brand.clientFacingAI){
+    const adv = sp.advisor;
+    advisorWidget = ''
+      + '<div class="advisor-widget">'
+      +   '<strong style="font-size:13.5px;">Ask your Style Advisor <span class="ai-badge">AI</span></strong>'
+      +   '<input type="text" id="advisor-input" placeholder="Ask about fit or styling..." value="'+escapeHtml(adv.question||"")+'">'
+      +   '<button class="btn small" style="margin-top:8px;" data-action="advisor-submit">Ask</button>'
+      +   (adv.loading ? '<div style="margin-top:10px; font-size:13px;">Thinking<span class="typing-dots"><span></span><span></span><span></span></span></div>' : "")
+      +   (adv.answer && !adv.loading ? '<div class="card" style="padding:10px; margin-top:10px; font-size:13px;"><span class="ai-badge">AI</span> '+escapeHtml(adv.answer)+(adv.isFallback?' <span style="color:var(--muted); font-size:11px;">(example response)</span>':'')+'</div>' : "")
+      +   (brand.escalationVisible ? '<div style="margin-top:10px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
+      + '</div>';
+  } else {
+    advisorWidget = ''
+      + '<div class="advisor-widget">'
+      +   '<strong style="font-size:13.5px;">Style guidance, from a person</strong>'
+      +   '<p style="font-size:12.5px; color:var(--muted); margin:6px 0 10px 0;">'+escapeHtml(brand.name)+' pairs every shopper with a Style Advisor — no bots involved.</p>'
+      +   (state.screenParams.advisorCallRequested
+            ? '<div class="card" style="padding:10px; font-size:13px;">A Style Advisor will reach out within 24 hours.</div>'
+            : '<button class="btn small" data-action="request-advisor-call">Request a call with your Style Advisor</button>')
+      + '</div>';
+  }
+
+  return ''
+    + '<div class="page container">'
+    +   '<div class="pd-grid">'
+    +     '<div class="pd-images">'
+    +       '<img src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+    +       '<img src="'+p.imageUrlDetail+'" alt="'+escapeHtml(p.name)+' detail" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+    +     '</div>'
+    +     '<div>'
+    +       '<h1>'+escapeHtml(p.name)+'</h1>'
+    +       '<p style="color:var(--muted); font-size:13px;">'+escapeHtml(brand.name)+' &middot; '+escapeHtml(p.category)+'</p>'
+    +       '<h2 style="margin-top:10px;">'+money(p.priceInr)+'</h2>'
+    +       '<span class="badge '+tier+'">'+score+'% fit confidence</span>'
+    +       '<p style="font-size:13.5px; margin-top:14px; line-height:1.5;">'+escapeHtml(brand.name)+' presents the '+escapeHtml(p.name)+' — a '+p.category.toLowerCase()+' piece built around '+escapeHtml(brand.posture.toLowerCase())+' craft and fit intelligence.</p>'
+    +       whySection
+    +       '<h4 style="margin-top:18px;">Size</h4>'
+    +       '<div class="size-row">'+sizeButtons+'</div>'
+    +       '<div class="qty-row"><button data-action="qty-minus">&minus;</button><span>'+sp.qty+'</span><button data-action="qty-plus">&#43;</button></div>'
+    +       '<button class="btn" data-action="add-to-cart">Add to Cart</button>'
+    +       advisorWidget
+    +     '</div>'
+    +   '</div>'
+    +   fitSection
+    + '</div>';
+}
+
+/* ---------------------------- SCREEN 8 — CART / CHECKOUT ---------------------------- */
+function removeCartLine(idx){ state.cart.splice(idx,1); render(); }
+function cartLineChangeSize(idx, sz){ state.cart[idx].size = sz; render(); }
+function renderCartScreen(){
+  const brand = activeBrand();
+  if(!state.cart.length){
+    return '<div class="page container"><h1>Cart</h1><p style="color:var(--muted);">Your cart is empty.</p><button class="btn" data-action="go-catalog">Browse Catalog</button></div>';
+  }
+  let total = 0;
+  const lines = state.cart.map(function(line, idx){
+    const p = getProduct(line.productId);
+    const brandOf = getBrand(p.brandId);
+    const score = confidenceScore(p, activeArchetypeId());
+    const tier = confidenceTier(score);
+    total += p.priceInr * line.qty;
+    const sizeOpts = p.sizes.map(function(sz){ return '<option value="'+sz+'" '+(sz===line.size?"selected":"")+'>'+sz+'</option>'; }).join("");
+    return ''
+      + '<div class="cart-line">'
+      +   '<img src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onerror="handleImgError(this,\''+p.category+'\',\''+brandOf.accent+'\')">'
+      +   '<div class="cl-info">'
+      +     '<div style="font-weight:600; font-size:14px;">'+escapeHtml(p.name)+'</div>'
+      +     '<div style="font-size:12px; color:var(--muted);">'+money(p.priceInr)+' &middot; Qty '+line.qty+'</div>'
+      +     '<span class="badge '+tier+'">'+score+'% fit confidence</span>'
+      +   '</div>'
+      +   '<div class="cl-actions">'
+      +     '<select data-action="cart-size" data-idx="'+idx+'">'+sizeOpts+'</select>'
+      +     '<button class="btn ghost small" data-action="cart-remove" data-idx="'+idx+'">Remove</button>'
+      +   '</div>'
+      + '</div>';
+  }).join("");
+  return ''
+    + '<div class="page container">'
+    +   '<h1>Cart</h1>'
+    +   '<div class="card" style="padding:6px 18px;">'+lines+'</div>'
+    +   '<div class="cart-summary"><span>Total</span><span>'+money(total)+'</span></div>'
+    +   '<button class="btn" data-action="go-checkout">Proceed to Checkout</button>'
+    + '</div>';
+}
+
+function goCheckout(){
+  const flagged = [];
+  state.cart.forEach(function(line, idx){
+    const p = getProduct(line.productId);
+    const score = confidenceScore(p, activeArchetypeId());
+    if(score < 60) flagged.push(idx);
+  });
+  navigate("checkout-interstitial", { flaggedIdx: flagged, reviewPos: 0, resolved:{} });
+}
+function resolveFlagUpdateSize(){
+  const sp = state.screenParams;
+  const idx = sp.flaggedIdx[sp.reviewPos];
+  const line = state.cart[idx];
+  const p = getProduct(line.productId);
+  const suggested = recommendedSize(p, activeArchetypeId());
+  line.size = suggested;
+  sp.resolved[idx] = true;
+  sp.reviewPos++;
+  render();
+}
+function resolveFlagKeepAnyway(){
+  const sp = state.screenParams;
+  const idx = sp.flaggedIdx[sp.reviewPos];
+  sp.resolved[idx] = true;
+  sp.reviewPos++;
+  render();
+}
+function placeOrder(){
+  const p = state.currentPersona;
+  const orderId = "SV-ORD-" + Math.floor(1000+Math.random()*8999);
+  const deliveryDate = new Date(Date.now() + (3 + Math.floor(Math.random()*4))*86400000).toISOString().slice(0,10);
+  const items = state.cart.map(function(l){ return { productId:l.productId, size:l.size, qty:l.qty }; });
+  const order = { id: orderId, channel:"d2c", date:new Date().toISOString().slice(0,10), status:"Processing", items: items };
+  p.orders.unshift(order);
+  state.cart = [];
+  navigate("order-confirm", { order: order, deliveryDate: deliveryDate });
+}
+function renderCheckoutInterstitialScreen(){
+  const sp = state.screenParams;
+  const brand = activeBrand();
+  const totalFlagged = sp.flaggedIdx.length;
+  if(sp.reviewPos < totalFlagged){
+    const idx = sp.flaggedIdx[sp.reviewPos];
+    const line = state.cart[idx];
+    const p = getProduct(line.productId);
+    const brandOf = getBrand(p.brandId);
+    const suggested = recommendedSize(p, activeArchetypeId());
+    return ''
+      + '<div class="interstitial"><div class="interstitial-inner">'
+      +   '<p style="font-size:12px; color:var(--muted);">'+(sp.reviewPos+1)+' of '+totalFlagged+' items to review</p>'
+      +   '<img src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onerror="handleImgError(this,\''+p.category+'\',\''+brandOf.accent+'\')">'
+      +   '<h2>'+escapeHtml(p.name)+' may not fit as expected in size '+line.size+'</h2>'
+      +   '<p style="color:var(--muted); font-size:13.5px;">Based on fit data for your archetype, we suggest size <strong>'+suggested+'</strong> instead.</p>'
+      +   '<div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">'
+      +     '<button class="btn" data-action="resolve-update-size">Update to size '+suggested+'</button>'
+      +     '<button class="btn ghost" data-action="resolve-keep-anyway">Continue with size '+line.size+' anyway</button>'
+      +   '</div>'
+      + '</div></div>';
+  }
+  let total = 0;
+  const lines = state.cart.map(function(line){
+    const p = getProduct(line.productId);
+    total += p.priceInr * line.qty;
+    return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:14px;">'+escapeHtml(p.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+line.size+' &middot; Qty '+line.qty+'</div></div><div>'+money(p.priceInr*line.qty)+'</div></div>';
+  }).join("");
+  return ''
+    + '<div class="page container" style="max-width:600px;">'
+    +   '<h1>Checkout</h1>'
+    +   (totalFlagged ? '<p style="color:var(--green); font-size:13px;">All fit concerns reviewed.</p>' : '')
+    +   '<div class="card" style="padding:6px 18px;">'+lines+'</div>'
+    +   '<div class="cart-summary"><span>Total</span><span>'+money(total)+'</span></div>'
+    +   '<button class="btn" data-action="place-order">Place Order</button>'
+    + '</div>';
+}
+function renderOrderConfirmScreen(){
+  const sp = state.screenParams;
+  const order = sp.order;
+  const items = order.items.map(function(it){
+    const p = getProduct(it.productId);
+    return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:14px;">'+escapeHtml(p.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+it.size+' &middot; Qty '+it.qty+'</div></div></div>';
+  }).join("");
+  return ''
+    + '<div class="page container" style="max-width:560px; text-align:center;">'
+    +   '<div class="checkmark-anim">&#10003;</div>'
+    +   '<h1>Order Placed</h1>'
+    +   '<p style="color:var(--muted);">Order <strong>'+order.id+'</strong> confirmed.</p>'
+    +   '<div class="card" style="padding:6px 18px; text-align:left; margin-top:18px;">'+items+'</div>'
+    +   '<p style="margin-top:14px; font-size:13.5px;">Estimated delivery: <strong>'+fmtDate(sp.deliveryDate)+'</strong></p>'
+    +   '<button class="btn" style="margin-top:18px;" data-action="go-track">Track Your Order</button>'
+    + '</div>';
+}
+
+/* ---------------------------- SCREEN 9 — TRACK EVERYWHERE ---------------------------- */
+const STATUS_STEPS = ["Processing","Shipped","Out for Delivery","Delivered"];
+function getTimelineOrders(p){
+  const isBridged = p.bridgingStatus === "linked";
+  let list = p.orders.map(function(o){ return Object.assign({}, o, { channel:"d2c" }); });
+  if(isBridged){
+    list = list.concat((p.marketplaceOrders||[]).map(function(o){ return Object.assign({}, o, { channel:"marketplace" }); }));
+  }
+  list.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
+  return list;
+}
+function toggleOrderExpand(orderId){
+  state.screenParams.expandedOrderId = state.screenParams.expandedOrderId === orderId ? null : orderId;
+  render();
+}
+function renderTrackScreen(){
+  const p = state.currentPersona;
+  const isBridged = p.bridgingStatus === "linked";
+  const timeline = getTimelineOrders(p);
+  const expandedId = state.screenParams.expandedOrderId;
+  const rows = timeline.length ? timeline.map(function(o){
+    const stepIdx = STATUS_STEPS.indexOf(o.status);
+    const stepsHtml = STATUS_STEPS.map(function(s,i){ return '<div class="'+(stepIdx>=0 && i<=stepIdx ? "done":"")+'"></div>'; }).join("");
+    const expanded = expandedId === o.id;
+    const itemsHtml = o.items.map(function(it){
+      const pr = getProduct(it.productId);
+      return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:13.5px;">'+escapeHtml(pr.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+it.size+' &middot; Qty '+it.qty+'</div></div></div>';
+    }).join("");
+    const canReturn = o.status === "Delivered";
+    return ''
+      + '<div class="card order-row" data-action="toggle-order" data-id="'+o.id+'">'
+      +   '<div class="or-top">'
+      +     '<div><strong>'+o.id+'</strong> <span class="channel-tag '+o.channel+'">'+(o.channel==="d2c"?"via StyleVerse.com":"via Marketplace")+'</span></div>'
+      +     '<span class="status-badge">'+o.status+'</span>'
+      +   '</div>'
+      +   '<div style="font-size:12px; color:var(--muted); margin-top:4px;">'+fmtDate(o.date)+'</div>'
+      +   (STATUS_STEPS.indexOf(o.status)>=0 ? '<div class="step-progress">'+stepsHtml+'</div>' : '')
+      +   (expanded ? '<div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">'+itemsHtml
+              + (canReturn ? '<button class="btn small" style="margin-top:10px;" data-action="start-return" data-order="'+o.id+'" data-product="'+o.items[0].productId+'">Start a Return</button>' : '')
+              + '</div>' : '')
+      + '</div>';
+  }).join("") : '<p style="color:var(--muted);">No orders yet.</p>';
+  return ''
+    + '<div class="page container">'
+    +   '<h1>Track Everywhere</h1>'
+    +   (isBridged ? '<p class="linked-badge" style="margin-bottom:16px;">Merged view — D2C + Marketplace</p>' : '')
+    +   rows
+    + '</div>';
+}
+
+/* ---------------------------- SCREEN 10 — RETURNS & EXCHANGE ---------------------------- */
+function returnKeyFor(orderId, productId){ return orderId + "::" + productId; }
+function findReturnByKey(key){
+  return state.currentPersona.returns.find(function(r){ return returnKeyFor(r.orderId, r.productId) === key; });
+}
+function startReturnFlow(orderId, productId){
+  const key = returnKeyFor(orderId, productId);
+  let rec = findReturnByKey(key);
+  if(!rec){
+    const order = state.currentPersona.orders.find(function(o){ return o.id===orderId; });
+    const item = order.items.find(function(it){ return it.productId===productId; });
+    rec = { id:"SV-RET-"+Math.floor(100+Math.random()*899), orderId:orderId, productId:productId, size:item.size,
+      status:"in_progress", reason:null, fitIssue:null, step:"reason", resolvedType:null, exchangeSize:null, trackingRef:null, date:new Date().toISOString().slice(0,10) };
+    state.currentPersona.returns.push(rec);
+  }
+  navigate("return-flow", { returnKey: key });
+}
+function resumeReturnFlow(key){ navigate("return-flow", { returnKey: key }); }
+function selectReturnReason(reason){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  rec.reason = reason;
+  rec.step = reason === "doesnt_fit" ? "fitq" : "return-form";
+  render();
+}
+function selectFitIssue(issue){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  rec.fitIssue = issue;
+  rec.step = "checking";
+  render();
+  setTimeout(function(){
+    const p = getProduct(rec.productId);
+    const sizes = p.sizes;
+    const curIdx = sizes.indexOf(rec.size);
+    const dir = issue === "running_small" ? 1 : -1;
+    const targetIdx = clamp(curIdx + dir, 0, sizes.length-1);
+    const available = targetIdx !== curIdx && (hashStr(rec.id+p.id) % 10) < 7;
+    if(available){
+      rec._suggestedSize = sizes[targetIdx];
+      rec.step = "exchange-offer";
+    } else {
+      rec.step = "return-form";
+    }
+    render();
+  }, 800);
+}
+function confirmExchange(){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  rec.status = "exchanged";
+  rec.resolvedType = "exchange";
+  rec.exchangeSize = rec._suggestedSize;
+  rec.step = "exchange-confirm";
+  rec.newDeliveryDate = new Date(Date.now() + 4*86400000).toISOString().slice(0,10);
+  const order = state.currentPersona.orders.find(function(o){ return o.id===rec.orderId; });
+  if(order) order.status = "Exchange in progress";
+  render();
+}
+function declineExchange(){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  rec.step = "return-form";
+  render();
+}
+function setPickupPref(val){ findReturnByKey(state.screenParams.returnKey).pickupPref = val; render(); }
+function setRefundPref(val){ findReturnByKey(state.screenParams.returnKey).refundPref = val; render(); }
+function submitReturnForm(){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  rec.status = "requested";
+  rec.resolvedType = "return";
+  rec.trackingRef = "RET-TRK-" + Math.floor(100000+Math.random()*899999);
+  rec.step = "return-confirm";
+  const order = state.currentPersona.orders.find(function(o){ return o.id===rec.orderId; });
+  if(order) order.status = "Return in Progress";
+  render();
+}
+const RETURN_REASONS = [
+  { id:"doesnt_fit", label:"Doesn't fit", icon:"&#128203;" },
+  { id:"changed_mind", label:"Changed my mind", icon:"&#128260;" },
+  { id:"quality_issue", label:"Quality issue", icon:"&#9888;" },
+  { id:"other", label:"Other", icon:"&#8230;" }
+];
+function renderReturnFlowScreen(key){
+  const rec = findReturnByKey(key);
+  if(!rec) return '<div class="page container"><p>Return not found.</p></div>';
+  const p = getProduct(rec.productId);
+  const brand = getBrand(p.brandId);
+  let body = "";
+  if(rec.step === "reason"){
+    body = ''
+      + '<h2>Why are you returning this?</h2>'
+      + '<div class="reason-grid">' + RETURN_REASONS.map(function(r){
+          return '<div class="reason-card" data-action="return-reason" data-val="'+r.id+'"><div class="ic">'+r.icon+'</div>'+r.label+'</div>';
+        }).join("") + '</div>';
+  } else if(rec.step === "fitq"){
+    body = ''
+      + '<h2>Running small or running large?</h2>'
+      + '<div class="fitq-row">'
+      +   '<div class="fitq-opt" data-action="fit-issue" data-val="running_small">Running Small</div>'
+      +   '<div class="fitq-opt" data-action="fit-issue" data-val="running_large">Running Large</div>'
+      + '</div>';
+  } else if(rec.step === "checking"){
+    body = '<h2 style="text-align:center;">Checking availability...</h2><div class="spinner"></div>';
+  } else if(rec.step === "exchange-offer"){
+    body = ''
+      + '<div class="card" style="padding:20px;">'
+      +   '<img src="'+p.imageUrl+'" style="width:110px; height:135px; object-fit:cover; border-radius:8px; margin-bottom:12px;" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+      +   '<h3>We noticed you might need a different size — want to exchange instead of returning?</h3>'
+      +   '<p style="font-size:13.5px;">'+escapeHtml(p.name)+' in size <strong>'+rec._suggestedSize+'</strong> (currently '+rec.size+')</p>'
+      +   '<div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">'
+      +     '<button class="btn" data-action="confirm-exchange">Exchange for size '+rec._suggestedSize+'</button>'
+      +     '<button class="btn ghost" data-action="decline-exchange">No thanks, return it</button>'
+      +   '</div>'
+      + '</div>';
+  } else if(rec.step === "return-form"){
+    body = ''
+      + '<h2>A few last details</h2>'
+      + '<div class="field"><label>Pickup or drop-off?</label>'
+      +   '<div class="choice-row"><div class="choice-card '+(rec.pickupPref==="pickup"?"selected":"")+'" data-action="pickup-pref" data-val="pickup">Schedule Pickup</div><div class="choice-card '+(rec.pickupPref==="dropoff"?"selected":"")+'" data-action="pickup-pref" data-val="dropoff">Drop-off at Store</div></div></div>'
+      + '<div class="field"><label>Refund method</label>'
+      +   '<div class="choice-row"><div class="choice-card '+(rec.refundPref==="original"?"selected":"")+'" data-action="refund-pref" data-val="original">Original Payment Method</div><div class="choice-card '+(rec.refundPref==="wallet"?"selected":"")+'" data-action="refund-pref" data-val="wallet">StyleVerse Wallet (instant)</div></div></div>'
+      + '<button class="btn" data-action="submit-return-form">Request Return</button>';
+  } else if(rec.step === "exchange-confirm"){
+    body = ''
+      + '<div class="checkmark-anim">&#10003;</div>'
+      + '<h2 style="text-align:center;">Exchange in progress</h2>'
+      + '<p style="text-align:center; color:var(--muted);">Your replacement in size '+rec.exchangeSize+' is on its way.</p>'
+      + '<p style="text-align:center; font-size:13.5px;">Estimated delivery: <strong>'+fmtDate(rec.newDeliveryDate)+'</strong></p>'
+      + '<button class="btn" style="margin-top:16px;" data-action="go-returns">Back to My Returns</button>';
+  } else if(rec.step === "return-confirm"){
+    body = ''
+      + '<div class="checkmark-anim">&#10003;</div>'
+      + '<h2 style="text-align:center;">Return requested</h2>'
+      + '<p style="text-align:center; color:var(--muted);">Tracking reference: <strong>'+rec.trackingRef+'</strong></p>'
+      + '<button class="btn" style="margin-top:16px;" data-action="go-returns">Back to My Returns</button>';
+  }
+  return '<div class="page container" style="max-width:560px;">' + body + '</div>';
+}
+function renderReturnsListScreen(){
+  const p = state.currentPersona;
+  const list = p.returns || [];
+  if(!list.length){
+    return '<div class="page container"><h1>My Returns</h1><p style="color:var(--muted);">No returns in progress.</p></div>';
+  }
+  const rows = list.map(function(r){
+    const pr = getProduct(r.productId);
+    const statusLabel = r.status === "exchanged" ? "Exchanged" : r.status === "requested" ? "Return Requested" : "In Progress";
+    return ''
+      + '<div class="card order-row" data-action="resume-return" data-key="'+returnKeyFor(r.orderId,r.productId)+'">'
+      +   '<div class="or-top"><strong>'+escapeHtml(pr.name)+'</strong><span class="status-badge">'+statusLabel+'</span></div>'
+      +   '<div style="font-size:12px; color:var(--muted); margin-top:4px;">Order '+r.orderId+' &middot; '+fmtDate(r.date)+'</div>'
+      + '</div>';
+  }).join("");
+  return '<div class="page container"><h1>My Returns</h1>' + rows + '</div>';
+}
+
+/* ---------------------------- SCREEN 11 — SUPPORT / CASE THREAD ---------------------------- */
+const ADVISOR_NAMES = { maisonluxe:"Priya", ecoweave:"Aarav", threadbasics:"Neel" };
+const CHANNEL_ICON = { chat:"&#128172;", email:"&#9993;", call:"&#128222;" };
+function getOrCreateThread(p){
+  if(!p.cases.length){
+    p.cases.push({ id:"CASE-"+Math.floor(100+Math.random()*899), subject:"General Support", predictedGrievance:false, channelLog:[] });
+  }
+  return p.cases[0];
+}
+function sendSupportMessage(){
+  const input = document.getElementById("support-input");
+  const text = input ? input.value.trim() : "";
+  if(!text) return;
+  const p = state.currentPersona;
+  const thread = getOrCreateThread(p);
+  thread.channelLog.push({ from:"customer", channel:"chat", text:text, ts:new Date().toISOString() });
+  state.screenParams.typing = true;
+  render();
+  setTimeout(function(){
+    thread.channelLog.push({ from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:new Date().toISOString() });
+    state.screenParams.typing = false;
+    render();
+  }, 1000);
+}
+function renderSupportScreen(){
+  const p = state.currentPersona;
+  const brand = activeBrand();
+  const thread = getOrCreateThread(p);
+  const advisorName = ADVISOR_NAMES[brand.id] || "Advisor";
+  const initials = advisorName.slice(0,1);
+  const msgs = thread.channelLog.map(function(m){
+    const isCustomer = m.from === "customer";
+    const time = new Date(m.ts).toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit" });
+    let whoHtml = "";
+    if(!isCustomer){
+      if(brand.clientFacingAI){
+        whoHtml = '<div class="who"><span class="ai-badge">AI</span> StyleVerse AI Assistant</div>';
+      } else {
+        whoHtml = '<div class="who"><span class="avatar-circle">'+initials+'</span> Your Style Advisor, '+advisorName+'</div>';
+      }
+    }
+    return ''
+      + '<div class="msg '+(isCustomer?"customer":"system")+'">'
+      +   whoHtml
+      +   escapeHtml(m.text)
+      +   '<div class="msg-meta">'+CHANNEL_ICON[m.channel||"chat"]+' '+time+'</div>'
+      +   (!isCustomer && brand.escalationVisible ? '<div style="margin-top:8px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
+      + '</div>';
+  }).join("");
+  const typingHtml = state.screenParams.typing
+    ? '<div class="msg system"><span class="typing-dots"><span></span><span></span><span></span></span></div>' : "";
+  return ''
+    + '<div class="page container" style="max-width:640px;">'
+    +   '<h1>Support</h1>'
+    +   '<p style="color:var(--muted); font-size:12.5px; margin-bottom:6px;">'+(brand.clientFacingAI ? "AI-assisted, human-escalation always available." : "Human advisor-routed — no bots in this thread.")+'</p>'
+    +   '<div class="card" style="padding:14px 18px;">'
+    +     '<div class="chat-thread">' + (msgs || '<p style="color:var(--muted); font-size:13px;">No messages yet — say hello!</p>') + typingHtml + '</div>'
+    +     '<div class="chat-input-row"><input type="text" id="support-input" placeholder="Type a message..."><button class="btn small" data-action="send-support">Send</button></div>'
+    +   '</div>'
+    + '</div>';
+}
+
+/* ---------------------------- EVENT DELEGATION / INIT ---------------------------- */
+function handleAppClick(e){
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const action = el.getAttribute("data-action");
+  const id = el.getAttribute("data-id");
+  const val = el.getAttribute("data-val");
+  switch(action){
+    case "noop": break;
+    case "select-persona": selectPersona(id); break;
+    case "switch-persona": switchPersona(); break;
+    case "go-home": navigate("home", {}); break;
+    case "go-catalog": navigate("catalog", {}); break;
+    case "go-track": navigate("track", {}); break;
+    case "go-returns": navigate("returns", {}); break;
+    case "go-account": navigate("account", {}); break;
+    case "go-support": navigate("support", {}); break;
+    case "go-cart": navigate("cart", {}); break;
+    case "open-bridge-modal": openBridgeModal(); break;
+    case "dismiss-bridge-banner": dismissBridgeBanner(); break;
+    case "view-outreach-details": viewOutreachDetails(); break;
+    case "bridge-verify": bridgeModalVerify(); break;
+    case "bridge-complete": completeBridge(); break;
+    case "start-onboarding": startFitOnboarding(); break;
+    case "onboard-height": onboardingSelectHeight(val); break;
+    case "onboard-fit": onboardingSelectFit(val); break;
+    case "onboard-shopfor": onboardingSelectShoppingFor(val); break;
+    case "onboard-continue": onboardingContinueToFinish(); break;
+    case "open-product": openProduct(id); break;
+    case "select-size": selectSize(val); break;
+    case "qty-minus": changeQty(-1); break;
+    case "qty-plus": changeQty(1); break;
+    case "add-to-cart": addToCart(); break;
+    case "explain-fit": triggerExplainFit(); break;
+    case "advisor-submit": submitAdvisorQuestion(); break;
+    case "request-advisor-call": requestAdvisorCall(); break;
+    case "set-profile": setShoppingProfile(val); break;
+    case "save-gemini-key": saveGeminiKey(); break;
+    case "cart-remove": removeCartLine(parseInt(el.getAttribute("data-idx"),10)); break;
+    case "go-checkout": goCheckout(); break;
+    case "resolve-update-size": resolveFlagUpdateSize(); break;
+    case "resolve-keep-anyway": resolveFlagKeepAnyway(); break;
+    case "place-order": placeOrder(); break;
+    case "toggle-order": toggleOrderExpand(id); break;
+    case "start-return": startReturnFlow(el.getAttribute("data-order"), el.getAttribute("data-product")); break;
+    case "resume-return": resumeReturnFlow(el.getAttribute("data-key")); break;
+    case "return-reason": selectReturnReason(val); break;
+    case "fit-issue": selectFitIssue(val); break;
+    case "confirm-exchange": confirmExchange(); break;
+    case "decline-exchange": declineExchange(); break;
+    case "pickup-pref": setPickupPref(val); break;
+    case "refund-pref": setRefundPref(val); break;
+    case "submit-return-form": submitReturnForm(); break;
+    case "send-support": sendSupportMessage(); break;
+    default: break;
+  }
+}
+function handleAppChange(e){
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const action = el.getAttribute("data-action");
+  switch(action){
+    case "browse-brand-select": browseBrand(el.value); break;
+    case "filter-category": setFilter("category", el.value); break;
+    case "filter-confidence": setFilter("confidence", el.value); break;
+    case "cart-size": cartLineChangeSize(parseInt(el.getAttribute("data-idx"),10), el.value); break;
+    default: break;
+  }
+}
+function handleAppKeypress(e){
+  if(e.key !== "Enter") return;
+  if(e.target.id === "support-input"){ sendSupportMessage(); }
+  if(e.target.id === "advisor-input"){ submitAdvisorQuestion(); }
+  if(e.target.id === "bridge-loyalty-input"){ bridgeModalVerify(); }
+}
+
+function initApp(){
+  const app = document.getElementById("app");
+  app.addEventListener("click", handleAppClick);
+  app.addEventListener("change", handleAppChange);
+  app.addEventListener("keypress", handleAppKeypress);
+  preflightImageCheck();
+  render();
+}
+if(document.readyState === "loading"){
+  document.addEventListener("DOMContentLoaded", initApp);
+} else {
+  initApp();
+}
+
+/* ---------------------------- SCREEN 4 — ACCOUNT ---------------------------- */
+function setShoppingProfile(val){
+  state.currentPersona.shoppingFor = val;
+  render();
+}
+function saveGeminiKey(){
+  const input = document.getElementById("gemini-key-input");
+  if(input){ state.geminiKey = input.value.trim(); }
+  const status = document.getElementById("gemini-key-status");
+  if(status) status.textContent = state.geminiKey ? "Key saved for this session (not stored)." : "No key set — AI features will use fallback responses.";
+}
+function renderAccountScreen(){
+  const p = state.currentPersona;
+  const brand = activeBrand();
+  const arch = p.fitPassport ? getArchetype(p.fitPassport.archetypeId) : null;
+  const activeArch = activeArchetypeId();
+
+  let passportSection = "";
+  if(arch){
+    passportSection = ''
+      + '<h3>Fit Passport</h3>'
+      + '<p style="font-size:13.5px;">Archetype: <strong>'+escapeHtml(arch.label)+'</strong></p>'
+      + '<p style="font-size:12px; color:var(--muted);">'+escapeHtml(arch.measurementRange)+'</p>'
+      + '<div id="acct-fm">' + renderFitModel({ archetypeId: activeArch, category:"Tops", compact:true }) + '</div>';
+  } else {
+    passportSection = ''
+      + '<h3>Fit Passport</h3>'
+      + '<p style="font-size:13.5px; color:var(--muted);">You haven\'t completed your Fit Passport yet.</p>'
+      + '<button class="btn small" data-action="start-onboarding">Complete Fit Passport</button>';
+  }
+
+  let secondaryToggle = "";
+  if(p.secondaryProfile){
+    secondaryToggle = ''
+      + '<div style="margin-top:14px;">'
+      +   '<p style="font-size:12.5px; color:var(--muted); margin-bottom:4px;">Shopping for:</p>'
+      +   '<div class="toggle-row">'
+      +     '<button class="toggle-btn '+(p.shoppingFor==="myself"?"active":"")+'" data-action="set-profile" data-val="myself">Myself</button>'
+      +     '<button class="toggle-btn '+(p.shoppingFor==="other"?"active":"")+'" data-action="set-profile" data-val="other">'+escapeHtml(p.secondaryProfile.name)+'</button>'
+      +   '</div>'
+      +   '<p style="font-size:11.5px; color:var(--muted); margin-top:6px;">Active profile: <strong>'+(p.shoppingFor==="other"?escapeHtml(p.secondaryProfile.name):"Myself")+'</strong></p>'
+      + '</div>';
+  }
+
+  const bridgedBadge = p.bridgingStatus === "linked" ? '<span class="linked-badge">2 accounts linked</span>' : "";
+  let bridgeStatusText = "Not linked to a marketplace account.";
+  if(p.bridgingStatus === "linked") bridgeStatusText = "Marketplace + StyleVerse.com accounts linked.";
+  else if(p.bridgingStatus === "started") bridgeStatusText = "Linking in progress — finish anytime.";
+  else if(p.bridgingStatus === "linked-native") bridgeStatusText = "D2C-native account (StyleVerse.com only).";
+
+  const relevantLog = confidenceAdjustmentLog.filter(function(e){ return arch && e.archetypeId === arch.id; });
+  const logHtml = relevantLog.length ? relevantLog.map(function(e){
+    return '<div class="log-entry"><b>'+escapeHtml(e.category)+' × '+escapeHtml(getArchetype(e.archetypeId).label)+'</b> — '+escapeHtml(e.zone)+' changed from <b>'+escapeHtml(e.oldValue)+'</b> to <b>'+escapeHtml(e.newValue)+'</b>. '+escapeHtml(e.reason)+' <span style="opacity:.7">('+fmtDate(e.date)+')</span></div>';
+  }).join("") : '<div class="log-entry">No fit adjustments logged for your archetype yet.</div>';
+
+  return ''
+    + '<div class="page container">'
+    +   '<h1>Account</h1>'
+    +   '<div class="acct-grid">'
+    +     '<div class="card acct-section">' + passportSection + secondaryToggle + '</div>'
+    +     '<div class="card acct-section">'
+    +       '<h3>Bridging Status</h3>'
+    +       '<p style="font-size:13.5px;">'+bridgeStatusText+'</p>'
+    +       bridgedBadge
+    +       '<p style="margin-top:14px;"><button class="btn ghost small" data-action="go-track">View full order history &rarr;</button></p>'
+    +       '<details class="log-panel" style="margin-top:16px;"><summary>Your Fit Data — refinement log</summary>' + logHtml + '</details>'
+    +     '</div>'
+    +     '<div class="card acct-section">'
+    +       '<h3>Gemini API Key</h3>'
+    +       '<p style="font-size:12px; color:var(--muted);">Stored only in memory for this session — never saved to disk. Only used for '+escapeHtml(brand.name)+'-eligible AI features when this brand allows it.</p>'
+    +       '<div class="field"><input type="text" id="gemini-key-input" placeholder="Paste Gemini API key" value="'+escapeHtml(state.geminiKey)+'"></div>'
+    +       '<button class="btn small" data-action="save-gemini-key">Save</button>'
+    +       '<p id="gemini-key-status" style="font-size:11.5px; color:var(--muted); margin-top:8px;">'+(state.geminiKey ? "Key saved for this session (not stored)." : "No key set — AI features will use fallback responses.")+'</p>'
+    +     '</div>'
+    +     '<div class="card acct-section">'
+    +       '<h3>Brand Posture</h3>'
+    +       '<p style="font-size:13px;">'+escapeHtml(brand.posture)+'</p>'
+    +       '<p style="font-size:12px; color:var(--muted);">'+escapeHtml(brand.hardLimit)+'</p>'
+    +       '<p style="font-size:12px; margin-top:8px;">Client-facing AI: <strong>'+(brand.clientFacingAI ? "Enabled (Gemini, labeled)" : "Disabled — advisor/rules-routed")+'</strong></p>'
+    +     '</div>'
+    +   '</div>'
+    + '</div>';
+}
+
+/* ---------------------------- SCREEN 1 — PERSONA SELECTOR ---------------------------- */
+function renderPersonaSelectScreen(){
+  const cards = personas.map(function(p){
+    const brand = getBrand(p.brandId);
+    return ''
+      + '<div class="persona-card" data-action="select-persona" data-id="'+p.id+'">'
+      +   '<span class="brand-badge" style="background:'+brand.accent+'">'+escapeHtml(brand.name)+'</span>'
+      +   '<h3>'+escapeHtml(p.name)+'</h3>'
+      +   '<p>'+escapeHtml(p.scenarioLabel)+'</p>'
+      +   '<div class="scenario-tag">Scenario '+p.scenario+' of 10</div>'
+      + '</div>';
+  }).join("");
+  return ''
+    + '<div id="persona-screen">'
+    +   '<div class="ps-header"><h1>StyleVerse</h1><p>Pick a shopper persona to enter the demo. Each one shows a different piece of the D2C fit &amp; identity story.</p></div>'
+    +   '<div class="persona-grid">' + cards + '</div>'
+    + '</div>';
+}
+
+function selectPersona(personaId){
+  const tmpl = getPersonaTemplate(personaId);
+  state.currentPersona = cloneJSON(tmpl);
+  state.browsingBrandId = null;
+  state.cart = [];
+  state.bridgeBannerDismissed = false;
+  state.bridgeModal = null;
+  state.proactiveShown = false;
+  applyTheme(getBrand(state.currentPersona.brandId));
+  navigate("home", {});
+}
+function switchPersona(){
+  destroyAllFitModels();
+  state.currentPersona = null;
+  navigate("persona-select", {});
+}
+
+/* ---------------------------- HOME SCREEN ---------------------------- */
+function needsBridgeBanner(){
+  const p = state.currentPersona;
+  return (p.scenario === 2 || p.scenario === 3) && p.bridgingStatus !== "linked" && !state.bridgeBannerDismissed;
+}
+function needsProactiveOutreach(){
+  const p = state.currentPersona;
+  return p.predictedGrievance && !p.proactiveOutreachSent;
+}
+function renderHomeScreen(){
+  const p = state.currentPersona;
+  const brand = activeBrand();
+  let banners = "";
+  if(needsBridgeBanner()){
+    const label = p.bridgingStatus === "started" ? "Finish linking your account" : "Link Account";
+    banners += ''
+      + '<div class="banner">'
+      +   '<p><strong>Shop smarter</strong> — link your marketplace account to unlock Fit Preview and faster checkout.</p>'
+      +   '<div style="display:flex; gap:10px; align-items:center;">'
+      +     '<button class="btn small" data-action="open-bridge-modal">'+label+'</button>'
+      +     '<button class="close-x" data-action="dismiss-bridge-banner">&times;</button>'
+      +   '</div>'
+      + '</div>';
+  }
+  if(needsProactiveOutreach()){
+    banners += ''
+      + '<div class="banner outreach">'
+      +   '<p><strong>We noticed a possible delay</strong> with your recent order — here\'s what we\'re doing about it.</p>'
+      +   '<button class="btn small secondary" data-action="view-outreach-details">View Details</button>'
+      + '</div>';
+    p.proactiveOutreachSent = true; // mark shown so it doesn't repeat within the session
+  }
+  const featured = products.filter(function(pr){ return pr.brandId === brand.id; }).slice(0,4);
+  const featuredHtml = featured.map(renderProductCard).join("");
+  return ''
+    + '<div class="page container">'
+    +   banners
+    +   '<h1>Welcome back, '+escapeHtml(p.name.split(" ")[0])+'</h1>'
+    +   '<p style="color:var(--muted); margin-bottom:24px;">Shopping '+escapeHtml(brand.name)+' &middot; '+escapeHtml(brand.posture)+'</p>'
+    +   '<h2 class="section-title">Picked for you</h2>'
+    +   '<div class="product-grid">'+featuredHtml+'</div>'
+    + '</div>';
+}
+function dismissBridgeBanner(){ state.bridgeBannerDismissed = true; render(); }
+function viewOutreachDetails(){
+  state.currentPersona.proactiveOutreachSent = true;
+  navigate("support", {});
+}
+
+/* ---------------------------- SCREEN 3 — FIT PASSPORT ONBOARDING ---------------------------- */
+const ARCHETYPE_LOOKUP = {
+  petite: { fitted:"petite-slim", regular:"petite-slim", relaxed:"petite-curvy" },
+  regular: { fitted:"regular-athletic", regular:"regular-broad", relaxed:"curvy-regular" },
+  tall: { fitted:"tall-slim", regular:"tall-broad", relaxed:"plus-relaxed" }
+};
+function startFitOnboarding(){
+  navigate("fit-onboarding", { step:1, heightRange:null, fitPref:null, shoppingFor:"myself" });
+}
+function onboardingSelectHeight(range){
+  state.screenParams.heightRange = range;
+  state.screenParams.step = 2;
+  render();
+}
+function onboardingSelectFit(pref){
+  state.screenParams.fitPref = pref;
+  state.screenParams.step = 3;
+  render();
+}
+function onboardingSelectShoppingFor(val){
+  state.screenParams.shoppingFor = val;
+  render();
+}
+function onboardingContinueToFinish(){
+  state.screenParams.step = "loading";
+  render();
+  setTimeout(function(){
+    const sp = state.screenParams;
+    const archId = (ARCHETYPE_LOOKUP[sp.heightRange] && ARCHETYPE_LOOKUP[sp.heightRange][sp.fitPref]) || "regular-athletic";
+    const p = state.currentPersona;
+    if(sp.shoppingFor === "other"){
+      p.secondaryProfile = { name:"New profile", archetypeId: archId };
+      p.shoppingFor = "other";
+      if(!p.fitPassport) p.fitPassport = { archetypeId:"regular-athletic", completedAt:new Date().toISOString().slice(0,10) };
+    } else {
+      p.fitPassport = { archetypeId: archId, completedAt:new Date().toISOString().slice(0,10) };
+      p.shoppingFor = "myself";
+    }
+    sp.step = 4;
+    sp.previewArchetypeId = archId;
+    render();
+  }, 1100);
+}
+function renderFitOnboardingScreen(){
+  const sp = state.screenParams;
+  const stepNum = typeof sp.step === "number" ? sp.step : (sp.step === "loading" ? 3.5 : 4);
+  const doneSteps = Math.min(4, Math.floor(stepNum));
+  const progress = [1,2,3,4].map(function(i){ return '<div class="'+(i<=doneSteps?"done":"")+'"></div>'; }).join("");
+  let body = "";
+  if(sp.step === 1){
+    body = ''
+      + '<h2>Step 1 of 4 — What\'s your height range?</h2>'
+      + '<div class="choice-row">'
+      +   ["petite","regular","tall"].map(function(r){
+            const labels = { petite:"4'10\"–5'2\" (Petite)", regular:"5'3\"–5'7\" (Regular)", tall:"5'8\"+ (Tall)" };
+            return '<div class="choice-card" data-action="onboard-height" data-val="'+r+'">'+labels[r]+'</div>';
+          }).join("")
+      + '</div>';
+  } else if(sp.step === 2){
+    body = ''
+      + '<h2>Step 2 of 4 — How do you like your tops to fit?</h2>'
+      + '<div class="choice-row">'
+      +   ["fitted","regular","relaxed"].map(function(f){
+            return '<div class="choice-card" data-action="onboard-fit" data-val="'+f+'" style="text-transform:capitalize;">'+f+'</div>';
+          }).join("")
+      + '</div>';
+  } else if(sp.step === 3){
+    const sf = sp.shoppingFor;
+    body = ''
+      + '<h2>Step 3 of 4 — Who are you shopping for?</h2>'
+      + '<div class="choice-row">'
+      +   '<div class="choice-card '+(sf==="myself"?"selected":"")+'" data-action="onboard-shopfor" data-val="myself">Myself</div>'
+      +   '<div class="choice-card '+(sf==="other"?"selected":"")+'" data-action="onboard-shopfor" data-val="other">Someone else</div>'
+      + '</div>'
+      + '<p style="color:var(--muted); font-size:12.5px;">Choosing "someone else" creates a separate saved fit profile you can switch to any time.</p>'
+      + '<button class="btn" data-action="onboard-continue">Continue</button>';
+  } else if(sp.step === "loading"){
+    body = '<h2 style="text-align:center;">Finding your fit...</h2><div class="spinner"></div>';
+  } else if(sp.step === 4){
+    const arch = getArchetype(sp.previewArchetypeId);
+    body = ''
+      + '<h2>You\'re all set!</h2>'
+      + '<div class="card" style="padding:16px; margin-bottom:18px;">Based on your answers, your fit archetype is <strong>'+escapeHtml(arch.label)+'</strong> — '+escapeHtml(arch.measurementRange)+'.</div>'
+      + '<h3>Your Fit Model</h3>'
+      + '<div id="onboard-fm">' + renderFitModel({ archetypeId: sp.previewArchetypeId, category:"Tops" }) + '</div>'
+      + '<button class="btn" style="margin-top:18px;" data-action="go-home">Continue Shopping</button>';
+  }
+  return ''
+    + '<div class="page container" style="max-width:640px;">'
+    +   (sp.step!==4 ? '<div class="progress-steps">'+progress+'</div>' : '')
+    +   body
+    + '</div>';
+}
+
+/* ---------------------------- SCREEN 2 — IDENTITY BRIDGE MODAL ---------------------------- */
+function openBridgeModal(){
+  const p = state.currentPersona;
+  state.bridgeModal = { step: p.bridgingStatus === "started" ? 1 : 1, loyaltyInput: p.bridgingStatus === "started" ? (p.loyaltyId || "") : "" };
+  render();
+}
+function closeBridgeModal(){ state.bridgeModal = null; render(); }
+function bridgeModalVerify(){
+  const input = document.getElementById("bridge-loyalty-input");
+  if(input) state.bridgeModal.loyaltyInput = input.value;
+  state.bridgeModal.step = 2;
+  render();
+  setTimeout(function(){
+    if(!state.bridgeModal) return;
+    state.bridgeModal.step = 3;
+    render();
+  }, 1200);
+}
+function completeBridge(){
+  const p = state.currentPersona;
+  p.bridgingStatus = "linked";
+  if(!p.loyaltyId) p.loyaltyId = state.bridgeModal.loyaltyInput || ("SV-" + Math.floor(10000+Math.random()*89999));
+  state.bridgeModal = null;
+  render();
+}
+function renderBridgeModal(){
+  const bm = state.bridgeModal;
+  const p = state.currentPersona;
+  const finishing = p.bridgingStatus === "started" || p.bridgingStatus === "linked";
+  let inner = "";
+  if(bm.step === 1){
+    inner = ''
+      + '<h3>'+(finishing ? "Finish linking your account" : "Link your marketplace account")+'</h3>'
+      + '<p style="color:var(--muted); font-size:13px;">Enter your StyleVerse loyalty number to connect your marketplace history.</p>'
+      + '<div class="field"><label>Loyalty number</label><input type="text" id="bridge-loyalty-input" placeholder="e.g. SV-10344" value="'+escapeHtml(bm.loyaltyInput||"")+'"></div>'
+      + '<button class="btn" style="width:100%" data-action="bridge-verify">Verify</button>';
+  } else if(bm.step === 2){
+    inner = '<h3>Verifying...</h3><div class="spinner"></div><p style="text-align:center; color:var(--muted); font-size:13px;">Connecting your marketplace history</p>';
+  } else if(bm.step === 3){
+    const mktCount = (p.marketplaceOrders||[]).length;
+    inner = ''
+      + '<div class="checkmark-anim">&#10003;</div>'
+      + '<h3 style="text-align:center;">You\'re linked!</h3>'
+      + '<div class="card" style="padding:14px; margin-top:12px; font-size:13px;">Your marketplace history and this account are now connected — '+mktCount+' marketplace order'+(mktCount===1?"":"s")+' now visible here.</div>'
+      + '<button class="btn" style="width:100%; margin-top:16px;" data-action="bridge-complete">Done</button>';
+  }
+  return ''
+    + '<div class="modal-overlay" data-action="noop">'
+    +   '<div class="modal">'
+    +     '<div class="step-dots"><span class="'+(bm.step>=1?"active":"")+'"></span><span class="'+(bm.step>=2?"active":"")+'"></span><span class="'+(bm.step>=3?"active":"")+'"></span></div>'
+    +     inner
+    +   '</div>'
+    + '</div>';
+}
+</script>
+</body>
+</html>

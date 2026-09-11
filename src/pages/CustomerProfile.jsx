@@ -114,12 +114,25 @@ export default function CustomerProfile() {
         <div className="space-y-4">
           <div className="card">
             <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+              Fit Passport
+            </h2>
+            <div className="space-y-1.5 text-sm">
+              <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Archetype</span><span className="font-medium">{customer.fit_passport.archetype}</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Height</span><span className="font-medium">{customer.fit_passport.height_cm} cm</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Measurements</span><span className="font-medium text-right">{customer.fit_passport.measurements}</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Passport confidence</span><span className="font-medium">{customer.fit_passport.confidence}%</span></div>
+              <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Shopping for</span><span className="font-medium capitalize">{customer.fit_passport.shopping_for}</span></div>
+            </div>
+          </div>
+
+          <div className="card">
+            <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
               Live Confidence Score
             </h2>
             {confidence ? (
               <>
                 <div className="font-heading text-3xl font-bold" style={{ color: 'var(--brand-accent)' }}>{confidence.confidence_score}%</div>
-                <p className="mt-1 text-xs" style={{ color: 'var(--ink-mute)' }}>Based on most recent order + archetype: {customer.archetype_id.replace('arch_', '').replaceAll('_', ' ')}</p>
+                <p className="mt-1 text-xs" style={{ color: 'var(--ink-mute)' }}>Based on most recent order + archetype: {customer.fit_passport.archetype}</p>
                 <div className="mt-2">
                   <ScoreFormulaNote signals={confidence} />
                 </div>
@@ -130,9 +143,10 @@ export default function CustomerProfile() {
           </div>
 
           <div className="card">
-            <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
-              Model Registry Trust
+            <h2 className="mb-1 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+              AI Components Touching This Customer's Data
             </h2>
+            <p className="mb-2 text-[11px]" style={{ color: 'var(--ink-mute)' }}>From the Model Registry — hover a chip for its explainability method.</p>
             <div className="flex flex-wrap gap-1.5">
               {registry?.slice(0, 4).map((m) => (
                 <span key={m.id} className="rounded-full border px-2 py-0.5 text-[10px]" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }} title={m.explainability_method}>

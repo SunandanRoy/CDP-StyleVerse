@@ -91,9 +91,11 @@ export default function FitPassportAdmin() {
               </h3>
               <div className="max-h-40 space-y-1 overflow-y-auto scrollbar-thin text-xs">
                 {members?.map((m) => (
-                  <div key={m.id} className="flex justify-between border-b py-1" style={{ borderColor: 'var(--edge)' }}>
-                    <span>{m.name}</span>
-                    <span style={{ color: 'var(--ink-mute)' }}>{m.loyalty_id ? 'bridged' : m.channels[0]}</span>
+                  <div key={m.id} className="flex items-center justify-between gap-2 border-b py-1" style={{ borderColor: 'var(--edge)' }}>
+                    <span className="truncate">{m.name}</span>
+                    <span className="shrink-0 text-right" style={{ color: 'var(--ink-mute)' }}>
+                      {m.loyalty_id ? 'bridged' : m.channels[0]} · shopping for {m.fit_passport.shopping_for}
+                    </span>
                   </div>
                 ))}
                 {members?.length === 0 && <p style={{ color: 'var(--ink-mute)' }}>No customers of this archetype for the selected brand.</p>}

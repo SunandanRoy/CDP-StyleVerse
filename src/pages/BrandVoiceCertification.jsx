@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import { api } from '../lib/api'
@@ -23,6 +23,11 @@ export default function BrandVoiceCertification() {
   const historyParams = new URLSearchParams({ _r: String(refreshKey) })
   if (historyFilter) historyParams.set('brand_id', historyFilter)
   const { data: history } = useFetch(`/certification-history?${historyParams.toString()}`)
+
+  const passRate = useMemo(() => {
+    if (!history?.length) return null
+    return Math.round((history.filter((h) => h.verdict === 'Pass').length / history.length) * 100)
+  }, [history])
 
   const runCertify = async () => {
     if (!draft.trim()) return
@@ -81,13 +86,19 @@ export default function BrandVoiceCertification() {
       </div>
 
       <div className="mt-6">
-        <div className="mb-2 flex items-center justify-between">
+        <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
           <h2 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>Certification History</h2>
           <select value={historyFilter} onChange={(e) => setHistoryFilter(e.target.value)} className="rounded-md border px-2.5 py-1.5 text-xs" style={{ borderColor: 'var(--edge)' }}>
             <option value="">All brands</option>
             {brands.map((b) => <option key={b.id} value={b.id}>{b.name}</option>)}
           </select>
         </div>
+        {passRate !== null && (
+          <div className="mb-3 flex items-center gap-3 rounded-md border p-2.5 text-xs" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
+            <span className="font-heading text-lg font-bold" style={{ color: passRate >= 85 ? '#15803d' : '#b45309' }}>{passRate}%</span>
+            <span style={{ color: 'var(--ink-mute)' }}>first-submission pass rate for this filter · target &gt;85% by Month 9</span>
+          </div>
+        )}
         <div className="overflow-x-auto rounded-lg border scrollbar-thin" style={{ borderColor: 'var(--edge)' }}>
           <table className="w-full min-w-[560px] text-sm">
             <thead style={{ background: 'var(--surface-alt)' }}>

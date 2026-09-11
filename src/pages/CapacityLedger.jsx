@@ -51,6 +51,35 @@ export default function CapacityLedger() {
         <KpiCard label="Sub-teams" value={subTeams.length} />
       </div>
 
+      <div className="mt-6 card">
+        <div className="mb-1 flex items-center justify-between">
+          <h2 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+            Zero-Layoff Pledge — Enterprise Reference Figures
+          </h2>
+          <span className="rounded-full border px-2 py-0.5 text-[10px] font-semibold" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}>
+            Tier C — extrapolated assumption
+          </span>
+        </div>
+        <p className="mb-3 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+          Extrapolated from Round 1's Marketing &amp; CX headcount ratio. Every automated task must have a named, funded, tracked destination for the hours it releases — this is where that claim is verified, not asserted.
+        </p>
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+          {[
+            ['DCX headcount', '≈540'],
+            ['FTE-equivalents released', '≈119'],
+            ['Natural exits (attrition)', '≈130'],
+            ['Coverage ratio', '≈1.09×'],
+            ['Redeployments published by name', '20'],
+            ['DCX champions (1:55 ratio)', '≈10']
+          ].map(([label, value]) => (
+            <div key={label} className="rounded-md border p-2 text-center" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
+              <div className="font-heading text-lg font-bold" style={{ color: 'var(--brand-accent)' }}>{value}</div>
+              <div className="mt-0.5 text-[10px] leading-tight" style={{ color: 'var(--ink-mute)' }}>{label}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-2">
         <div className="card">
           <h2 className="mb-3 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>Hours Freed by Gate</h2>

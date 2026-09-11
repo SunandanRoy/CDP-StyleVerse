@@ -11,15 +11,40 @@ const MODE_BADGE = {
   rules_engine_only: 'rules'
 }
 
+function buildCaseBrief(kase, customerDetail) {
+  if (!customerDetail) return null
+  const { name, fit_passport, channels } = customerDetail
+  const orders = customerDetail.orders || []
+  const returns = customerDetail.returns || []
+  const mostRecent = [...orders].sort((a, b) => (a.date < b.date ? 1 : -1))[0]
+  const interceptedCount = returns.filter((r) => r.intercepted).length
+  const firstChannel = kase.channel_log[0]?.channel || channels[0]
+  const openedDate = kase.channel_log[0]?.timestamp?.slice(0, 10)
+
+  const parts = [
+    `${name} (${fit_passport.archetype}, shopping for ${fit_passport.shopping_for}) is active on ${channels.join(' + ')}.`,
+    orders.length
+      ? `${orders.length} order(s) on file; most recent ${mostRecent.product_name} — "${mostRecent.status}" via ${mostRecent.channel} on ${mostRecent.date}.`
+      : 'No orders on file yet.',
+    returns.length
+      ? `${returns.length} return(s) on file, ${interceptedCount} intercepted.`
+      : 'No returns on file.',
+    `Case opened via ${firstChannel} on ${openedDate}, currently ${kase.status}.`
+  ]
+  return parts.join(' ')
+}
+
 export default function CaseThreadDetail() {
   const { id } = useParams()
   const { data: kase, loading } = useFetch(`/cases/${id}`)
   const { brand, dial } = useBrand()
+  const { data: customerDetail } = useFetch(kase ? `/customers/${kase.customer.id}` : null)
 
   if (loading || !kase) return <div className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading case…</div>
 
   const isAdvisorMediated = dial?.disclosure_mode === 'Advisor-Mediated'
   const previewName = isAdvisorMediated ? `${brand?.name} Styling Advisor` : 'StyleVerse AI Assistant'
+  const brief = buildCaseBrief(kase, customerDetail)
 
   return (
     <div className="max-w-4xl">
@@ -45,6 +70,24 @@ export default function CaseThreadDetail() {
       )}
 
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_320px]">
+        <div className="space-y-6">
+        <div className="card">
+          <div className="mb-1 flex items-center justify-between">
+            <h2 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+              Case Brief
+            </h2>
+            <Badge variant="rag" />
+          </div>
+          {brief ? (
+            <p className="text-sm" style={{ color: 'var(--ink)' }}>{brief}</p>
+          ) : (
+            <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>Assembling brief…</p>
+          )}
+          <p className="mt-2 text-[11px] font-medium" style={{ color: '#b45309' }}>
+            🛈 AI-assisted summary, verify before acting — retrieval-grounded over this customer's own order, return and case records, never free generation.
+          </p>
+        </div>
+
         <div className="card">
           <h2 className="mb-3 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
             Merged Channel Log
@@ -63,6 +106,7 @@ export default function CaseThreadDetail() {
             ))}
           </div>
         </div>
+        </div>
 
         <div className="space-y-4">
           <div className="card">
@@ -73,6 +117,9 @@ export default function CaseThreadDetail() {
               Customer will see this as: <strong>{previewName}</strong>
             </p>
             <GeminiAction endpoint="/gemini/draft-outreach" payload={{ caseId: kase.id }} label="Draft outreach message" resultTitle={previewName} />
+            <p className="mt-2 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+              🛈 AI-assisted draft, verify before sending — every outreach message is brand-voice certified (Module 9) before it reaches a customer.
+            </p>
           </div>
         </div>
       </div>

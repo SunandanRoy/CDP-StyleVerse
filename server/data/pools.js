@@ -189,3 +189,21 @@ export const OVERRIDE_OUTCOMES = [
   'Customer retained, repeat purchase within 30 days', 'Return avoided, exchange accepted', 'NPS follow-up score of 9/10',
   'Case resolved in one touch instead of three', 'Escalation avoided entirely', 'Customer upgraded to loyalty tier'
 ]
+
+// Fit Passport detail fields (Module 1 / Module 3): concrete height + bust/
+// waist/hip ranges per archetype, consistent with each archetype's
+// measurement_range band, for generating a specific customer-level reading.
+export const ARCHETYPE_MEASUREMENT_PROFILES = {
+  arch_petite_slim: { heightCm: [147, 157], bust: [30, 32], waist: [24, 26], hip: [33, 35] },
+  arch_petite_curvy: { heightCm: [147, 157], bust: [34, 36], waist: [28, 30], hip: [38, 40] },
+  arch_regular_slim: { heightCm: [158, 168], bust: [32, 34], waist: [26, 28], hip: [35, 37] },
+  arch_regular_athletic: { heightCm: [158, 168], bust: [34, 36], waist: [28, 30], hip: [36, 38] },
+  arch_regular_curvy: { heightCm: [158, 168], bust: [38, 40], waist: [32, 34], hip: [42, 44] },
+  arch_tall_slim: { heightCm: [169, 180], bust: [33, 35], waist: [27, 29], hip: [36, 38] },
+  arch_tall_athletic: { heightCm: [169, 180], bust: [36, 38], waist: [30, 32], hip: [38, 40] },
+  arch_plus_curvy: { heightCm: [158, 168], bust: [44, 46], waist: [38, 40], hip: [48, 50] },
+  arch_plus_straight: { heightCm: [158, 168], bust: [42, 44], waist: [40, 42], hip: [44, 46] },
+  arch_broad_athletic: { heightCm: [173, 185], bust: [40, 42], waist: [32, 34], hip: [38, 40] }
+}
+
+export const SHOPPING_FOR_OPTIONS = ['myself', 'someone else']

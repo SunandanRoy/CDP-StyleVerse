@@ -29,10 +29,47 @@ function Slider({ label, field, value, onCommit, hint }) {
   )
 }
 
+function BoolToggle({ label, value, onChange, hint, locked = false, lockedReason = '' }) {
+  return (
+    <div className="mb-4 flex items-start justify-between gap-4 rounded-md border p-3" style={{ borderColor: 'var(--edge)', background: locked ? 'var(--surface-alt)' : 'transparent' }}>
+      <div className="min-w-0">
+        <div className="flex items-center gap-1.5 text-sm font-medium">
+          {label}
+          {locked && (
+            <span className="cursor-help text-xs" title={lockedReason}>
+              🔒
+            </span>
+          )}
+        </div>
+        {hint && <p className="mt-0.5 text-[11px]" style={{ color: 'var(--ink-mute)' }}>{hint}</p>}
+        {locked && lockedReason && (
+          <p className="mt-1 text-[11px] font-medium" style={{ color: '#b45309' }}>{lockedReason}</p>
+        )}
+      </div>
+      <button
+        type="button"
+        disabled={locked}
+        onClick={() => !locked && onChange(!value)}
+        aria-pressed={value}
+        title={locked ? lockedReason : undefined}
+        className="relative h-6 w-11 shrink-0 rounded-full transition disabled:cursor-not-allowed disabled:opacity-60"
+        style={{ background: value ? 'var(--brand-accent)' : 'var(--edge)' }}
+      >
+        <span
+          className="absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all"
+          style={{ left: value ? '22px' : '2px' }}
+        />
+      </button>
+    </div>
+  )
+}
+
 export default function AIDial() {
   const { brand, dial, updateDial } = useBrand()
 
   if (!brand || !dial) return <div className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading…</div>
+
+  const clientFacingLocked = brand.ai_tooling_mode === 'internal_llm_only'
 
   return (
     <div className="max-w-3xl">
@@ -54,6 +91,26 @@ export default function AIDial() {
         <Slider label="Automation Frequency" field="automation_frequency" value={dial.automation_frequency} onCommit={(f, v) => updateDial({ [f]: v })} hint="How often the AI acts without a human trigger." />
         <Slider label="Proactivity Threshold" field="proactivity_threshold" value={dial.proactivity_threshold} onCommit={(f, v) => updateDial({ [f]: v })} hint="Lower = the system reaches out proactively sooner." />
         <Slider label="Escalation Threshold" field="escalation_threshold" value={dial.escalation_threshold} onCommit={(f, v) => updateDial({ [f]: v })} hint="Higher = more is handled before escalating to a human." />
+
+        <BoolToggle
+          label="Escalation Path Visible to Customer"
+          value={dial.escalation_visible}
+          onChange={(v) => updateDial({ escalation_visible: v })}
+          hint="Shows a one-tap 'talk to a human' option at every AI touchpoint."
+        />
+
+        <BoolToggle
+          label="Generative Content — Client-Facing"
+          value={dial.generative_content_allowed_clientfacing}
+          onChange={(v) => updateDial({ generative_content_allowed_clientfacing: v })}
+          hint="Whether AI-generated text may reach a customer directly, vs. staying internal-only (draft/QA tools)."
+          locked={clientFacingLocked}
+          lockedReason={
+            clientFacingLocked
+              ? 'Locked OFF — this brand\'s hard limit prohibits generative content client-facing. AI-informed curation stays permitted with human sign-off; internal Gemini tools (Explain Score, Certify Voice, etc.) remain fully functional.'
+              : ''
+          }
+        />
 
         <div className="mb-4">
           <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--ink-mute)' }}>Tone</label>

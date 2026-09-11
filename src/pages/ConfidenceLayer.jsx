@@ -16,6 +16,11 @@ export default function ConfidenceLayer() {
   const { brandId, dial } = useBrand()
   const { data: products } = useFetch(brandId ? `/products?brand_id=${brandId}` : null)
   const { data: archetypes } = useFetch('/archetypes')
+  // Picks an archetype that reliably surfaces a <60% item for this brand's
+  // catalog on first load, so the Checkout Preview's fit-alert path is
+  // demonstrable rather than left to chance — still a real computed score,
+  // just a sensible default. Resets whenever the brand changes.
+  const { data: demoArchetype } = useFetch(brandId ? `/confidence-demo-archetype?brand_id=${brandId}` : null)
   const [productId, setProductId] = useState(null)
   const [archetypeId, setArchetypeId] = useState(null)
 
@@ -23,14 +28,24 @@ export default function ConfidenceLayer() {
     if (products?.length && !productId) setProductId(products[0].id)
   }, [products, productId])
   useEffect(() => {
-    if (archetypes?.length && !archetypeId) setArchetypeId(archetypes[0].id)
-  }, [archetypes, archetypeId])
+    if (demoArchetype?.archetype_id) setArchetypeId(demoArchetype.archetype_id)
+  }, [demoArchetype])
   useEffect(() => {
     if (products?.length) setProductId(products[0].id)
   }, [brandId]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const product = products?.find((p) => p.id === productId)
   const { data: confidence } = useFetch(productId && archetypeId ? `/confidence/${productId}?archetype_id=${archetypeId}` : null)
+  const { data: batchConfidence } = useFetch(brandId && archetypeId ? `/confidence-batch?brand_id=${brandId}&archetype_id=${archetypeId}` : null)
+
+  const cartItems = (() => {
+    if (!products?.length || !batchConfidence?.length) return []
+    const byId = new Map(batchConfidence.map((c) => [c.product_id, c]))
+    const ranked = [...products]
+      .filter((p) => byId.has(p.id))
+      .sort((a, b) => byId.get(a.id).confidence_score - byId.get(b.id).confidence_score)
+    return ranked.slice(0, 3).map((p) => ({ product: p, confidence: byId.get(p.id) }))
+  })()
 
   const isAdvisorMediated = dial?.disclosure_mode === 'Advisor-Mediated'
   const explainerName = isAdvisorMediated ? 'Your Styling Advisor' : 'StyleVerse AI Assistant'
@@ -143,17 +158,18 @@ export default function ConfidenceLayer() {
               </div>
 
               <div className="card">
-                <div className="mb-2 flex items-center justify-between">
+                <div className="mb-1 flex items-center justify-between">
                   <h3 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
-                    Customer View Preview
+                    Customer Checkout Preview
                   </h3>
                   <span className="rounded-full border px-2 py-0.5 text-[10px] font-semibold" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}>
                     READ-ONLY
                   </span>
                 </div>
-                {confidence && (
-                  <CheckoutPreview product={product} confidence={confidence} isAdvisorMediated={isAdvisorMediated} />
-                )}
+                <p className="mb-2 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+                  Simulated cart for this archetype — the {cartItems.length}-item basket a shopper would see the fit-check interstitial applied to.
+                </p>
+                {cartItems.length > 0 && <CheckoutPreview items={cartItems} isAdvisorMediated={isAdvisorMediated} />}
               </div>
             </div>
           </div>
@@ -163,33 +179,71 @@ export default function ConfidenceLayer() {
   )
 }
 
-function CheckoutPreview({ product, confidence, isAdvisorMediated }) {
-  const belowThreshold = confidence.confidence_score < 60
+function CheckoutPreview({ items, isAdvisorMediated }) {
+  const [resolved, setResolved] = useState({}) // product_id -> 'updated' | 'continued'
+  const flaggedCount = items.filter((it) => it.confidence.confidence_score < 60).length
+
   return (
-    <div className="rounded-md border p-3" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
-      <div className="flex items-center gap-3">
-        <ProductImage src={product.image_url} category={product.category} className="h-16 w-14 rounded object-cover" />
-        <div className="text-sm">
-          <div className="font-medium">{product.name}</div>
-          <div style={{ color: 'var(--ink-mute)' }}>₹{product.price_inr.toLocaleString('en-IN')} · Size M</div>
-        </div>
-      </div>
-      {belowThreshold ? (
-        <div className="mt-3 rounded-md border p-2.5 text-xs" style={{ borderColor: '#f2c98d', background: '#fdf1e0', color: '#92400e' }}>
-          <p className="font-semibold">⚠ This item may not fit as expected.</p>
-          <p className="mt-1">
-            {isAdvisorMediated ? 'Your styling advisor suggests' : 'We suggest'} trying <strong>one size up</strong> based on shoppers with a similar fit profile.
-          </p>
-          <div className="mt-2 flex gap-2">
-            <button className="rounded bg-white px-2.5 py-1 font-semibold" style={{ border: '1px solid #f2c98d' }}>Update size</button>
-            <button className="rounded px-2.5 py-1 font-semibold text-white" style={{ background: 'var(--brand-accent)' }}>Continue anyway</button>
-          </div>
-        </div>
-      ) : (
-        <div className="mt-3 rounded-md border p-2.5 text-xs" style={{ borderColor: '#bfe3c8', background: '#e4f7e9', color: '#166534' }}>
-          ✓ This should fit true to size based on your profile ({confidence.confidence_score}% confidence).
-        </div>
+    <div>
+      {flaggedCount > 0 && (
+        <p className="mb-2 text-[11px] font-semibold" style={{ color: '#b45309' }}>
+          ⚠ {flaggedCount} of {items.length} items may not fit as expected
+        </p>
       )}
+      <div className="space-y-2.5">
+        {items.map(({ product, confidence }) => {
+          const belowThreshold = confidence.confidence_score < 60
+          const midSize = product.sizes[Math.floor((product.sizes.length - 1) / 2)]
+          const sizeIdx = product.sizes.indexOf(midSize)
+          const suggestedSize = product.sizes[Math.min(sizeIdx + 1, product.sizes.length - 1)]
+          const state = resolved[product.id]
+          return (
+            <div key={product.id} className="rounded-md border p-3" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
+              <div className="flex items-center gap-3">
+                <ProductImage src={product.image_url} category={product.category} className="h-14 w-12 rounded object-cover" />
+                <div className="min-w-0 text-sm">
+                  <div className="truncate font-medium">{product.name}</div>
+                  <div style={{ color: 'var(--ink-mute)' }}>₹{product.price_inr.toLocaleString('en-IN')} · Size {midSize}</div>
+                </div>
+                <div className="ml-auto shrink-0 text-right text-xs" style={{ color: belowThreshold ? '#b45309' : '#15803d' }}>
+                  {confidence.confidence_score}% confidence
+                </div>
+              </div>
+              {belowThreshold && !state && (
+                <div className="mt-2.5 rounded-md border p-2.5 text-xs" style={{ borderColor: '#f2c98d', background: '#fdf1e0', color: '#92400e' }}>
+                  <p className="font-semibold">⚠ This item may not fit as expected.</p>
+                  <p className="mt-1">
+                    {isAdvisorMediated ? 'Your styling advisor suggests' : 'We suggest'} trying <strong>size {suggestedSize}</strong> based on shoppers with a similar fit profile.
+                  </p>
+                  <div className="mt-2 flex gap-2">
+                    <button onClick={() => setResolved((r) => ({ ...r, [product.id]: 'updated' }))} className="rounded bg-white px-2.5 py-1 font-semibold" style={{ border: '1px solid #f2c98d' }}>
+                      Update to {suggestedSize}
+                    </button>
+                    <button onClick={() => setResolved((r) => ({ ...r, [product.id]: 'continued' }))} className="rounded px-2.5 py-1 font-semibold text-white" style={{ background: 'var(--brand-accent)' }}>
+                      Continue anyway
+                    </button>
+                  </div>
+                </div>
+              )}
+              {belowThreshold && state === 'updated' && (
+                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: '#bfe3c8', background: '#e4f7e9', color: '#166534' }}>
+                  ✓ Size updated to {suggestedSize}.
+                </div>
+              )}
+              {belowThreshold && state === 'continued' && (
+                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: 'var(--edge)', background: 'var(--surface)', color: 'var(--ink-mute)' }}>
+                  Continuing with original size {midSize}.
+                </div>
+              )}
+              {!belowThreshold && (
+                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: '#bfe3c8', background: '#e4f7e9', color: '#166534' }}>
+                  ✓ Should fit true to size based on your profile.
+                </div>
+              )}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }

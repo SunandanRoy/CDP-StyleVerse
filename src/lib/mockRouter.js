@@ -7,6 +7,8 @@
 import { buildSeedData } from '../../server/data/seed.js'
 import { computeProductConfidence } from '../../server/lib/scoring.js'
 import { BRANDS } from '../../server/data/brands.js'
+import { buildDialSettings, applyDialPatch } from '../../shared/dial.js'
+import { simulateReturnInterception } from '../../shared/interception.js'
 
 const seed = buildSeedData()
 export const db = {
@@ -18,16 +20,7 @@ export const db = {
   archetypesById: new Map(seed.archetypes.map((a) => [a.id, a]))
 }
 
-const DIAL_DEFAULTS = {
-  speedstyle: { automation_frequency: 85, tone: 'Energetic', proactivity_threshold: 70, escalation_threshold: 80 },
-  urbanedge: { automation_frequency: 55, tone: 'Professional', proactivity_threshold: 50, escalation_threshold: 60 },
-  maisonluxe: { automation_frequency: 20, tone: 'Warm & Refined', proactivity_threshold: 30, escalation_threshold: 20 },
-  ecoweave: { automation_frequency: 40, tone: 'Warm & Honest', proactivity_threshold: 55, escalation_threshold: 65 },
-  threadbasics: { automation_frequency: 90, tone: 'Straightforward', proactivity_threshold: 75, escalation_threshold: 85 }
-}
-const dialSettings = new Map(
-  BRANDS.map((b) => [b.id, { brand_id: b.id, ...DIAL_DEFAULTS[b.id], disclosure_mode: b.disclosure_mode }])
-)
+const dialSettings = buildDialSettings(BRANDS)
 
 function customerChannelGroup(c) {
   if (c.channels.length === 2) return 'bridged'
@@ -88,9 +81,13 @@ const GET_ROUTES = [
     ([id]) => {
       const customer = db.customersById.get(id)
       if (!customer) return notFound('customer not found')
-      const orders = db.orders.filter((o) => o.customer_id === customer.id)
+      const orders = db.orders
+        .filter((o) => o.customer_id === customer.id)
+        .map((o) => ({ ...o, product_name: db.productsById.get(o.product_id)?.name, customer_name: customer.name }))
       const orderIds = new Set(orders.map((o) => o.id))
-      const returns = db.returns.filter((r) => orderIds.has(r.order_id))
+      const returns = db.returns
+        .filter((r) => orderIds.has(r.order_id))
+        .map((r) => ({ ...r, product_name: orders.find((o) => o.id === r.order_id)?.product_name }))
       const cases = db.cases.filter((c) => c.customer_id === customer.id)
       const timeline = [
         ...orders.map((o) => ({ type: 'order', date: o.date, ref: o })),
@@ -123,6 +120,31 @@ const GET_ROUTES = [
       if (!db.archetypesById.get(archetypeId)) return Promise.reject(Object.assign(new Error('invalid archetype_id'), { status: 400 }))
       const signals = computeProductConfidence(product, archetypeId, db)
       return ok({ product_id: product.id, archetype_id: archetypeId, ...signals })
+    }
+  ],
+  [
+    /^\/confidence-batch$/,
+    (_p, q) => {
+      const { brand_id, archetype_id } = q
+      if (!brand_id || !archetype_id) return Promise.reject(Object.assign(new Error('brand_id and archetype_id are required'), { status: 400 }))
+      if (!db.archetypesById.get(archetype_id)) return Promise.reject(Object.assign(new Error('invalid archetype_id'), { status: 400 }))
+      const rows = db.products
+        .filter((p) => p.brand_id === brand_id)
+        .map((p) => ({ product_id: p.id, ...computeProductConfidence(p, archetype_id, db) }))
+      return ok(rows)
+    }
+  ],
+  [
+    /^\/confidence-demo-archetype$/,
+    (_p, q) => {
+      const { brand_id } = q
+      if (!brand_id) return Promise.reject(Object.assign(new Error('brand_id is required'), { status: 400 }))
+      const brandProducts = db.products.filter((p) => p.brand_id === brand_id)
+      for (const archetype of db.archetypes) {
+        const scores = brandProducts.map((p) => computeProductConfidence(p, archetype.id, db).confidence_score).sort((a, b) => a - b)
+        if (scores.slice(0, 3).some((s) => s < 60)) return ok({ archetype_id: archetype.id })
+      }
+      return ok({ archetype_id: db.archetypes[0].id })
     }
   ],
   [
@@ -289,20 +311,9 @@ const POST_ROUTES = [
       if (!customer || !order) return notFound('customer or order not found')
       const product = db.productsById.get(order.product_id)
       const brand = db.brandsById.get(customer.brand_id)
-      const isFitDriven = reason_code === 'fit_runs_small' || reason_code === 'fit_runs_large'
-      let intercepted, exchange_offered, exchange_accepted, rationale
-      if (isFitDriven) {
-        intercepted = true
-        exchange_offered = true
-        const suggestedSize = reason_code === 'fit_runs_small' ? 'one size up' : 'one size down'
-        exchange_accepted = brand.ai_tooling_mode !== 'rules_engine_only'
-        rationale = `Fit-driven return detected for ${product?.name}. Interception logic would offer an exchange (${suggestedSize}) using ${customer.name}'s Fit Passport before the return is finalized.`
-      } else {
-        intercepted = false
-        exchange_offered = reason_code === 'change_of_mind'
-        rationale = `Reason code "${reason_code}" is not fit-driven, so interception logic would route this straight to standard return processing${exchange_offered ? ', with an optional exchange offer' : ''}.`
-      }
-      return ok({ simulated: true, customer_id, order_id, reason_code, intercepted, exchange_offered, exchange_accepted, rationale })
+      const { confidence_score } = computeProductConfidence(product, customer.archetype_id, db)
+      const result = simulateReturnInterception({ customer, order, product, brand, reasonCode: reason_code, confidenceScore: confidence_score })
+      return ok({ simulated: true, customer_id, order_id, reason_code, ...result })
     }
   ],
   [
@@ -333,9 +344,7 @@ const PATCH_ROUTES = [
     ([brandId], _q, body) => {
       const current = dialSettings.get(brandId)
       if (!current) return notFound('brand not found')
-      const allowed = ['automation_frequency', 'tone', 'proactivity_threshold', 'escalation_threshold', 'disclosure_mode']
-      const next = { ...current }
-      for (const k of allowed) if (body[k] !== undefined) next[k] = body[k]
+      const next = applyDialPatch(brandId, current, body)
       dialSettings.set(brandId, next)
       const brand = db.brandsById.get(brandId)
       return ok({ ...next, ai_tooling_mode: brand.ai_tooling_mode, hard_limit: brand.hard_limit })

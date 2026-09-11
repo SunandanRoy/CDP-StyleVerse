@@ -6,7 +6,8 @@ import {
   FIRST_NAMES, LAST_NAMES, EMPLOYEE_NAMES, SUB_TEAMS, PRODUCT_NAME_PARTS,
   REVIEW_TEXT_TEMPLATES_FIT, REVIEW_TEXT_TEMPLATES_GENERAL, CASE_OPENER_TEMPLATES,
   CASE_AGENT_REPLIES, CASE_STATUSES, ORDER_STATUSES, CAPACITY_TASK_NAMES,
-  REDEPLOYMENT_TARGETS, CAREER_LATTICE, OVERRIDE_SUGGESTIONS, OVERRIDE_REASONS, OVERRIDE_OUTCOMES
+  REDEPLOYMENT_TARGETS, CAREER_LATTICE, OVERRIDE_SUGGESTIONS, OVERRIDE_REASONS, OVERRIDE_OUTCOMES,
+  ARCHETYPE_MEASUREMENT_PROFILES
 } from './pools.js'
 
 const SEED = 20260307
@@ -139,6 +140,11 @@ export const customers = []
         const archetype = rng.pick(archetypes)
         const channels = group === 'd2c_only' ? ['D2C'] : group === 'marketplace_only' ? ['Marketplace'] : ['D2C', 'Marketplace']
         const loyalty_id = group === 'bridged' ? `FP-${100000 + rng.int(0, 899999)}` : null
+        const profile = ARCHETYPE_MEASUREMENT_PROFILES[archetype.id]
+        const height_cm = rng.int(profile.heightCm[0], profile.heightCm[1])
+        const bust = rng.int(profile.bust[0], profile.bust[1])
+        const waist = rng.int(profile.waist[0], profile.waist[1])
+        const hip = rng.int(profile.hip[0], profile.hip[1])
         customers.push({
           id: `cust_${String(custSeq).padStart(3, '0')}`,
           name: `${first} ${last}`,
@@ -147,6 +153,13 @@ export const customers = []
           archetype_id: archetype.id,
           brand_id: brand.id,
           signup_date: simulatedDate(),
+          fit_passport: {
+            archetype: archetype.label,
+            height_cm,
+            measurements: `Bust ${bust}in · Waist ${waist}in · Hip ${hip}in`,
+            confidence: rng.int(68, 97),
+            shopping_for: rng.pickWeighted([['myself', 8], ['someone else', 2]])
+          },
           _group: group
         })
         custSeq++
@@ -176,27 +189,27 @@ export const products = []
     Accessories: ['Free Size']
   }
   for (const brand of BRANDS) {
-    // 8 products per brand, category counts [2,2,1,1,1,1] rotated per brand
-    const rotated = [...CATEGORY_LIST.slice(BRAND_IDS.indexOf(brand.id) % 6), ...CATEGORY_LIST.slice(0, BRAND_IDS.indexOf(brand.id) % 6)]
-    const counts = [2, 2, 1, 1, 1, 1]
-    const plan = rotated.map((cat, i) => [cat, counts[i]])
-    for (const [category, count] of plan) {
-      for (let n = 0; n < count; n++) {
-        const namePool = PRODUCT_NAME_PARTS[category][brand.id]
-        const name = `${brand.name} ${rng.pick(namePool)}`
+    // 12 products per brand, 2 per category, full 6-category coverage every brand
+    for (const category of CATEGORY_LIST) {
+      const namePool = rng.shuffle(PRODUCT_NAME_PARTS[category][brand.id])
+      for (let n = 0; n < 2; n++) {
+        const name = `${brand.name} ${namePool[n % namePool.length]}`
         const [lo, hi] = priceRangeByBrand[brand.id]
         const price_inr = Math.round((lo + rng.float() * (hi - lo)) / 10) * 10
         const baseFitBias = brand.return_rate >= 20 ? -8 : brand.return_rate <= 10 ? 6 : 0
         const base_fit_match_pct = Math.max(55, Math.min(96, 78 + baseFitBias + rng.int(-10, 10)))
         const img = imageForIndex(category, categoryUsageCount[category])
         categoryUsageCount[category]++
+        const sizes = sizesByCategory[category]
+        const out_of_stock_sizes = sizes.length > 1 && rng.bool(0.22) ? [rng.pick(sizes)] : []
         products.push({
           id: `prod_${String(prodSeq).padStart(3, '0')}`,
           name,
           brand_id: brand.id,
           category,
           price_inr,
-          sizes: sizesByCategory[category],
+          sizes,
+          out_of_stock_sizes,
           base_fit_match_pct,
           image_url: img.image_url,
           image_url_detail: img.image_url_detail

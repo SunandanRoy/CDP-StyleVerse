@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import { api } from '../lib/api'
+import DecisionLogicNote from '../components/DecisionLogicNote'
 
 const REASON_CODES = ['fit_runs_small', 'fit_runs_large', 'change_of_mind', 'quality', 'other']
 
@@ -39,7 +40,12 @@ export default function ReturnInterception() {
   return (
     <div className="max-w-6xl">
       <h1 className="font-heading text-2xl font-bold">Return Interception</h1>
-      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>Monitoring and a what-if simulator for the interception logic.</p>
+      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
+        Monitoring and a what-if simulator for the interception logic. Choice architecture: a pre-filled exchange is the path of least resistance, so the fit signal is captured instead of lost to a plain refund.
+      </p>
+      <div className="mt-2">
+        <DecisionLogicNote />
+      </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
         <div>
@@ -123,7 +129,7 @@ export default function ReturnInterception() {
 
           {simResult && (
             <div className="mt-3 rounded-md border p-3 text-xs" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
-              <div className="mb-1 flex gap-2">
+              <div className="mb-2 flex flex-wrap gap-1.5">
                 <span className="rounded-full px-2 py-0.5 font-semibold" style={{ background: simResult.intercepted ? '#e4f7e9' : '#f4f4f5', color: simResult.intercepted ? '#15803d' : '#71717a' }}>
                   {simResult.intercepted ? 'Would intercept' : 'Would not intercept'}
                 </span>
@@ -133,6 +139,24 @@ export default function ReturnInterception() {
                   </span>
                 )}
               </div>
+              {simResult.corrected_size !== null && (
+                <div className="mb-2 grid grid-cols-3 gap-2 text-center">
+                  <div className="rounded border px-1.5 py-1" style={{ borderColor: 'var(--edge)', background: 'var(--surface)' }}>
+                    <div style={{ color: 'var(--ink-mute)' }}>corrected size</div>
+                    <div className="font-semibold" style={{ color: 'var(--ink)' }}>{simResult.corrected_size}</div>
+                  </div>
+                  <div className="rounded border px-1.5 py-1" style={{ borderColor: 'var(--edge)', background: 'var(--surface)' }}>
+                    <div style={{ color: 'var(--ink-mute)' }}>in stock</div>
+                    <div className="font-semibold" style={{ color: simResult.corrected_size_in_stock ? '#15803d' : '#b91c1c' }}>
+                      {simResult.corrected_size_in_stock ? 'Yes' : 'No'}
+                    </div>
+                  </div>
+                  <div className="rounded border px-1.5 py-1" style={{ borderColor: 'var(--edge)', background: 'var(--surface)' }}>
+                    <div style={{ color: 'var(--ink-mute)' }}>confidence</div>
+                    <div className="font-semibold" style={{ color: 'var(--ink)' }}>{simResult.corrected_size_confidence}%</div>
+                  </div>
+                </div>
+              )}
               <p style={{ color: 'var(--ink-mute)' }}>{simResult.rationale}</p>
             </div>
           )}

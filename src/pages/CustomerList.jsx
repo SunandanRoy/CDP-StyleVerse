@@ -80,7 +80,7 @@ export default function CustomerList() {
                     <span className="text-xs font-medium" style={{ color: '#b45309' }}>Not yet bridged</span>
                   )}
                 </td>
-                <td className="px-4 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{c.archetype_id.replace('arch_', '').replaceAll('_', ' ')}</td>
+                <td className="px-4 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{c.fit_passport.archetype}</td>
                 <td className="px-4 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{c.signup_date}</td>
               </tr>
             ))}

@@ -48,6 +48,15 @@ export default function OverrideWins() {
       <h1 className="font-heading text-2xl font-bold">Override Wins</h1>
       <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>16 seeded cases where a human overrode an AI suggestion, with the outcome.</p>
 
+      <div className="mt-4 card">
+        <p className="text-sm">
+          <strong>Healthy override band: 15–30%.</strong> Below 15% signals automation bias — people rubber-stamping AI suggestions without scrutiny. Above 30% signals the model isn't trusted, or isn't good.
+        </p>
+        <p className="mt-1.5 text-xs" style={{ color: 'var(--ink-mute)' }}>
+          Governance note: no punitive performance-rating linkage to AI-collaboration metrics in Year 1. Overrides are logged and celebrated by name — specific, visible feedback on skill exercised, not an opaque aggregate score.
+        </p>
+      </div>
+
       <div className="mt-4 flex items-center gap-3">
         <select value={brandFilter} onChange={(e) => setBrandFilter(e.target.value)} className="rounded-md border px-2.5 py-1.5 text-sm" style={{ borderColor: 'var(--edge)' }}>
           <option value="">All brands</option>

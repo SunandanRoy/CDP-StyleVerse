@@ -7,6 +7,7 @@ import dotenv from 'dotenv'
 import { db, getDialSettings, updateDialSettings } from './data/db.js'
 import { computeProductConfidence } from './lib/scoring.js'
 import { runStartupImageHealthCheck } from './data/imageLibrary.js'
+import { simulateReturnInterception } from '../shared/interception.js'
 import geminiRouter from './routes/gemini.js'
 
 dotenv.config()
@@ -78,9 +79,13 @@ app.get('/api/customers/:id', (req, res) => {
   const customer = db.customersById.get(req.params.id)
   if (!customer) return res.status(404).json({ error: 'customer not found' })
 
-  const orders = db.orders.filter((o) => o.customer_id === customer.id)
+  const orders = db.orders
+    .filter((o) => o.customer_id === customer.id)
+    .map((o) => ({ ...o, product_name: db.productsById.get(o.product_id)?.name, customer_name: customer.name }))
   const orderIds = new Set(orders.map((o) => o.id))
-  const returns = db.returns.filter((r) => orderIds.has(r.order_id))
+  const returns = db.returns
+    .filter((r) => orderIds.has(r.order_id))
+    .map((r) => ({ ...r, product_name: orders.find((o) => o.id === r.order_id)?.product_name }))
   const cases = db.cases.filter((c) => c.customer_id === customer.id)
 
   const timeline = [
@@ -126,6 +131,32 @@ app.get('/api/confidence/:productId', (req, res) => {
   if (!db.archetypesById.get(archetypeId)) return res.status(400).json({ error: 'invalid archetype_id' })
   const signals = computeProductConfidence(product, archetypeId, db)
   res.json({ product_id: product.id, archetype_id: archetypeId, ...signals })
+})
+
+// Batch confidence — powers Module 2's multi-item Customer Checkout Preview
+// without N separate round trips.
+app.get('/api/confidence-batch', (req, res) => {
+  const { brand_id, archetype_id } = req.query
+  if (!brand_id || !archetype_id) return res.status(400).json({ error: 'brand_id and archetype_id are required' })
+  if (!db.archetypesById.get(archetype_id)) return res.status(400).json({ error: 'invalid archetype_id' })
+  const rows = db.products
+    .filter((p) => p.brand_id === brand_id)
+    .map((p) => ({ product_id: p.id, ...computeProductConfidence(p, archetype_id, db) }))
+  res.json(rows)
+})
+
+// Picks an archetype that reliably surfaces a <60% item for this brand's
+// catalog, so the Checkout Preview's fit-alert path is demonstrable on
+// first load rather than left to chance. Always computed from real scores.
+app.get('/api/confidence-demo-archetype', (req, res) => {
+  const { brand_id } = req.query
+  if (!brand_id) return res.status(400).json({ error: 'brand_id is required' })
+  const brandProducts = db.products.filter((p) => p.brand_id === brand_id)
+  for (const archetype of db.archetypes) {
+    const scores = brandProducts.map((p) => computeProductConfidence(p, archetype.id, db).confidence_score).sort((a, b) => a - b)
+    if (scores.slice(0, 3).some((s) => s < 60)) return res.json({ archetype_id: archetype.id })
+  }
+  res.json({ archetype_id: db.archetypes[0].id })
 })
 
 // ---------------------------------------------------------------- orders
@@ -188,31 +219,11 @@ app.post('/api/returns/simulate', (req, res) => {
   if (!customer || !order) return res.status(404).json({ error: 'customer or order not found' })
   const product = db.productsById.get(order.product_id)
   const brand = db.brandsById.get(customer.brand_id)
+  const { confidence_score } = computeProductConfidence(product, customer.archetype_id, db)
 
-  const isFitDriven = reason_code === 'fit_runs_small' || reason_code === 'fit_runs_large'
-  let intercepted = false
-  let exchange_offered = false
-  let exchange_accepted = false
-  let rationale = ''
+  const result = simulateReturnInterception({ customer, order, product, brand, reasonCode: reason_code, confidenceScore: confidence_score })
 
-  if (isFitDriven) {
-    intercepted = true
-    exchange_offered = true
-    const suggestedSize = reason_code === 'fit_runs_small' ? 'one size up' : 'one size down'
-    exchange_accepted = brand.ai_tooling_mode !== 'rules_engine_only' // simulated propensity
-    rationale = `Fit-driven return detected for ${product?.name}. Interception logic would offer an exchange (${suggestedSize}) using ${customer.name}'s Fit Passport before the return is finalized.`
-  } else {
-    intercepted = false
-    exchange_offered = reason_code === 'change_of_mind'
-    rationale = `Reason code "${reason_code}" is not fit-driven, so interception logic would route this straight to standard return processing${exchange_offered ? ', with an optional exchange offer' : ''}.`
-  }
-
-  res.json({
-    simulated: true,
-    customer_id, order_id, reason_code,
-    intercepted, exchange_offered, exchange_accepted,
-    rationale
-  })
+  res.json({ simulated: true, customer_id, order_id, reason_code, ...result })
 })
 
 // ---------------------------------------------------------------- reviews

@@ -1,5 +1,6 @@
 import { buildSeedData } from './seed.js'
 import { BRANDS } from './brands.js'
+import { buildDialSettings, applyDialPatch } from '../../shared/dial.js'
 
 const seed = buildSeedData()
 
@@ -13,26 +14,9 @@ export const db = {
 }
 
 // ---- Module 8: AI Involvement Dial — mutable, per-brand governance settings.
-// Seed defaults per brand posture; the ai_tooling_mode/hard_limit fields stay
-// read-only (sourced straight from brands.js), only the rest are adjustable.
-const DIAL_DEFAULTS = {
-  speedstyle: { automation_frequency: 85, tone: 'Energetic', proactivity_threshold: 70, escalation_threshold: 80 },
-  urbanedge: { automation_frequency: 55, tone: 'Professional', proactivity_threshold: 50, escalation_threshold: 60 },
-  maisonluxe: { automation_frequency: 20, tone: 'Warm & Refined', proactivity_threshold: 30, escalation_threshold: 20 },
-  ecoweave: { automation_frequency: 40, tone: 'Warm & Honest', proactivity_threshold: 55, escalation_threshold: 65 },
-  threadbasics: { automation_frequency: 90, tone: 'Straightforward', proactivity_threshold: 75, escalation_threshold: 85 }
-}
-
-export const dialSettings = new Map(
-  BRANDS.map((b) => [
-    b.id,
-    {
-      brand_id: b.id,
-      ...DIAL_DEFAULTS[b.id],
-      disclosure_mode: b.disclosure_mode // 'Advisor-Mediated' | 'Self-Directed', toggleable
-    }
-  ])
-)
+// Defaults and mutation rules live in shared/dial.js. The ai_tooling_mode/
+// hard_limit fields stay read-only (sourced straight from brands.js).
+export const dialSettings = buildDialSettings(BRANDS)
 
 export function getDialSettings(brandId) {
   return dialSettings.get(brandId)
@@ -41,11 +25,7 @@ export function getDialSettings(brandId) {
 export function updateDialSettings(brandId, patch) {
   const current = dialSettings.get(brandId)
   if (!current) return null
-  const allowedKeys = ['automation_frequency', 'tone', 'proactivity_threshold', 'escalation_threshold', 'disclosure_mode']
-  const next = { ...current }
-  for (const key of allowedKeys) {
-    if (patch[key] !== undefined) next[key] = patch[key]
-  }
+  const next = applyDialPatch(brandId, current, patch)
   dialSettings.set(brandId, next)
   return next
 }

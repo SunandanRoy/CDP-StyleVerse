@@ -126,7 +126,24 @@ h1, h2, h3, h4, .font-heading {
   border: 1px solid var(--edge);
   border-radius: var(--radius);
   padding: var(--card-padding);
+  box-shadow: 0 1px 2px rgba(15, 15, 20, 0.04), 0 1px 1px rgba(15, 15, 20, 0.03);
+  transition: box-shadow 150ms ease, transform 150ms ease;
 }
 
 .scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 6px; }
+
+/* Table polish: sticky header inside scroll containers + zebra striping */
+table thead tr { position: sticky; top: 0; z-index: 1; }
+table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-alt) 55%, transparent); }
+table tbody tr:hover { background: var(--brand-accent-soft); }
+
+/* Visible keyboard focus, everywhere */
+a:focus-visible, button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--brand-accent);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}

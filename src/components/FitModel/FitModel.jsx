@@ -109,6 +109,15 @@ export default function FitModel({ archetypeId, productCategory, confidenceScore
             AI Fit Confidence: {confidenceScore}%
           </div>
         )}
+        {!activeDot && (
+          <div
+            className="absolute bottom-1.5 left-1.5 z-10 select-none rounded px-1.5 py-0.5 text-[9px] font-medium tracking-wide"
+            style={{ background: 'rgba(0,0,0,0.38)', color: 'rgba(255,255,255,0.85)' }}
+            title="This visualization is AI-generated — a stylised archetype rendering, not a photograph of the customer or a diffusion-photorealistic render."
+          >
+            AI-GENERATED VISUALIZATION
+          </div>
+        )}
         <div className="absolute right-2 top-2 z-10 rounded-full border px-2 py-0.5 text-[10px] font-medium" style={{ borderColor: 'var(--edge)', background: 'var(--surface)', color: 'var(--ink-mute)' }}>
           {VIEW_LABEL[view]} view
         </div>

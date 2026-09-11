@@ -1,6 +1,7 @@
 export default function KpiCard({ label, value, sub, accent = false }) {
   return (
-    <div className="card flex flex-col gap-1">
+    <div className="card relative flex flex-col gap-1 overflow-hidden pl-4">
+      <div className="absolute inset-y-0 left-0 w-1" style={{ background: accent ? 'var(--brand-accent)' : 'var(--edge)' }} />
       <div className="text-xs font-medium uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
         {label}
       </div>

@@ -8,6 +8,7 @@
   :root{
     --accent:#2563eb;
     --accent-dark:#1d4ed8;
+    --accent-soft:#2563eb18;
     --heading-font: system-ui, -apple-system, "Segoe UI", sans-serif;
     --body-font: system-ui, -apple-system, "Segoe UI", sans-serif;
     --bg:#f7f7f8;
@@ -16,11 +17,13 @@
     --muted:#6b7280;
     --border:#e5e7eb;
     --radius:10px;
+    --radius-lg:16px;
     --green:#16a34a;
     --amber:#d97706;
     --red:#dc2626;
+    --shadow-sm: 0 1px 2px rgba(15,23,42,.06);
     --shadow: 0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-    --shadow-lg: 0 10px 30px rgba(0,0,0,.15);
+    --shadow-lg: 0 14px 36px rgba(15,23,42,.16);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -29,86 +32,128 @@
     background:var(--bg);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    line-height:1.45;
   }
-  h1,h2,h3,h4{font-family:var(--heading-font); margin:0 0 .4em 0; letter-spacing:0.01em;}
+  h1,h2,h3,h4{font-family:var(--heading-font); margin:0 0 .4em 0; letter-spacing:0.01em; line-height:1.2;}
+  h1{font-size:30px; font-weight:800;}
+  h2{font-size:21px; font-weight:700;}
   a{color:inherit;}
   button{font-family:inherit; cursor:pointer;}
   img{display:block; max-width:100%;}
   .container{max-width:1180px; margin:0 auto; padding:0 20px;}
   .hidden{display:none !important;}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--accent); margin-bottom:8px;
+  }
+  .eyebrow::before{content:""; width:16px; height:2px; background:var(--accent); border-radius:2px;}
+  ::selection{background:var(--accent); color:#fff;}
+  *:focus-visible{outline:2px solid var(--accent); outline-offset:2px;}
 
   /* ---------- Top Nav ---------- */
   #topnav{
     position:sticky; top:0; z-index:50;
     background:var(--surface);
     border-bottom:1px solid var(--border);
+    box-shadow:var(--shadow-sm);
   }
   #topnav .bar{
     display:flex; align-items:center; justify-content:space-between;
-    max-width:1180px; margin:0 auto; padding:12px 20px; gap:16px;
+    max-width:1180px; margin:0 auto; padding:13px 20px; gap:16px;
   }
-  #topnav .brand-mark{display:flex; align-items:center; gap:10px; font-family:var(--heading-font); font-weight:700; font-size:20px; cursor:pointer;}
-  #topnav .brand-dot{width:12px; height:12px; border-radius:50%; background:var(--accent);}
-  #topnav nav{display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+  #topnav .brand-mark{display:flex; align-items:center; gap:9px; font-family:var(--heading-font); font-weight:800; font-size:19px; cursor:pointer; letter-spacing:-.01em;}
+  #topnav .brand-dot{width:13px; height:13px; border-radius:50%; background:linear-gradient(135deg, var(--accent), var(--accent-dark)); box-shadow:0 0 0 4px var(--accent-soft);}
+  #topnav nav{display:flex; align-items:center; gap:4px; flex-wrap:wrap;}
   #topnav nav button.navlink{
-    background:none; border:none; color:var(--text); font-size:14px; padding:6px 4px;
-    border-bottom:2px solid transparent;
+    background:none; border:none; color:var(--muted); font-size:13.5px; font-weight:600; padding:8px 11px;
+    border-radius:7px; transition:background .12s ease, color .12s ease;
   }
-  #topnav nav button.navlink:hover{border-bottom-color:var(--accent);}
+  #topnav nav button.navlink:hover{background:var(--accent-soft); color:var(--text);}
   #topnav .cart-count{
     display:inline-flex; align-items:center; justify-content:center;
-    background:var(--accent); color:#fff; border-radius:50%; min-width:18px; height:18px;
-    font-size:11px; padding:0 4px; margin-left:4px;
+    background:var(--accent); color:#fff; border-radius:50%; min-width:17px; height:17px;
+    font-size:10.5px; padding:0 4px; margin-left:5px; font-weight:700;
   }
-  #topnav .switch-persona{font-size:13px; color:var(--muted); background:none; border:1px solid var(--border); border-radius:6px; padding:6px 10px;}
+  #topnav .switch-persona{font-size:12.5px; color:var(--muted); background:none; border:1px solid var(--border); border-radius:20px; padding:7px 13px; font-weight:600;}
+  #topnav .switch-persona:hover{border-color:var(--accent); color:var(--accent);}
   .escalation-pill{
     background:#fff; border:1px solid var(--accent); color:var(--accent); border-radius:20px;
-    padding:5px 12px; font-size:12px; font-weight:600; display:inline-flex; align-items:center; gap:6px;
+    padding:5px 12px; font-size:12px; font-weight:700; display:inline-flex; align-items:center; gap:6px;
   }
+  .escalation-pill:hover{background:var(--accent-soft);}
 
   /* ---------- Generic layout ---------- */
-  .page{padding:28px 0 60px 0;}
+  .page{padding:32px 0 64px 0;}
   .section-title{font-size:22px; margin-bottom:14px;}
-  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow);}
+  .card{background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); box-shadow:var(--shadow-sm); transition:box-shadow .15s ease;}
   .btn{
     display:inline-flex; align-items:center; justify-content:center; gap:6px;
-    background:var(--accent); color:#fff; border:none; border-radius:8px;
-    padding:11px 18px; font-size:14px; font-weight:600; transition:transform .1s ease, opacity .15s ease;
+    background:var(--accent); color:#fff; border:none; border-radius:9px;
+    padding:11px 19px; font-size:14px; font-weight:700; transition:transform .1s ease, opacity .15s ease, box-shadow .15s ease;
+    box-shadow:0 1px 2px rgba(0,0,0,.08);
   }
-  .btn:hover{opacity:.9;}
-  .btn:active{transform:scale(.98);}
-  .btn.secondary{background:transparent; color:var(--accent); border:1.5px solid var(--accent);}
-  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--border);}
-  .btn:disabled{opacity:.45; cursor:not-allowed;}
-  .btn.small{padding:7px 12px; font-size:12.5px;}
-  .badge{display:inline-block; padding:3px 9px; border-radius:20px; font-size:11.5px; font-weight:700;}
+  .btn:hover{opacity:.92; box-shadow:0 4px 14px rgba(0,0,0,.14);}
+  .btn:active{transform:scale(.97);}
+  .btn.secondary{background:transparent; color:var(--accent); border:1.5px solid var(--accent); box-shadow:none;}
+  .btn.ghost{background:transparent; color:var(--text); border:1px solid var(--border); box-shadow:none;}
+  .btn:disabled{opacity:.45; cursor:not-allowed; box-shadow:none;}
+  .btn.small{padding:7px 13px; font-size:12.5px;}
+  .badge{display:inline-block; padding:3px 10px; border-radius:20px; font-size:11.5px; font-weight:800; letter-spacing:.01em;}
   .badge.high{background:#dcfce7; color:#166534;}
   .badge.medium{background:#fef3c7; color:#92400e;}
   .badge.low{background:#fee2e2; color:#991b1b;}
   .badge.ai{background:#ede9fe; color:#5b21b6;}
   .pill{background:var(--bg); border:1px solid var(--border); border-radius:20px; padding:4px 10px; font-size:12px;}
 
+  /* ---------- Home hero ---------- */
+  .hero{
+    border-radius:var(--radius-lg); padding:40px 36px; margin-bottom:28px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%); color:#fff;
+  }
+  .hero::after{
+    content:""; position:absolute; right:-60px; top:-60px; width:260px; height:260px; border-radius:50%;
+    background:rgba(255,255,255,.08);
+  }
+  .hero::before{
+    content:""; position:absolute; left:30%; bottom:-90px; width:220px; height:220px; border-radius:50%;
+    background:rgba(255,255,255,.06);
+  }
+  .hero h1{color:#fff; font-size:32px; margin-bottom:8px; position:relative;}
+  .hero p{color:rgba(255,255,255,.85); font-size:14.5px; max-width:520px; position:relative;}
+  .hero .hero-meta{display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; position:relative;}
+  .hero .hero-meta span{background:rgba(255,255,255,.16); padding:6px 12px; border-radius:20px; font-size:12px; font-weight:600;}
+  .stats-strip{display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; margin-bottom:28px;}
+  .stat-tile{padding:16px 18px;}
+  .stat-tile .stat-value{font-size:24px; font-weight:800; font-family:var(--heading-font);}
+  .stat-tile .stat-label{font-size:11.5px; color:var(--muted); margin-top:2px;}
+
   /* ---------- Persona Selector ---------- */
-  #persona-screen{min-height:100vh; background:linear-gradient(160deg,#111827,#1f2937); padding:50px 20px;}
-  .ps-header{text-align:center; color:#fff; margin-bottom:36px;}
-  .ps-header h1{font-size:38px; color:#fff;}
-  .ps-header p{color:#cbd5e1; font-size:15px;}
+  #persona-screen{min-height:100vh; background:radial-gradient(1200px 600px at 20% -10%, #1e293b, #0b1220 60%); padding:56px 20px;}
+  .ps-header{text-align:center; color:#fff; margin-bottom:40px;}
+  .ps-header .ps-kicker{color:#818cf8; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; margin-bottom:10px;}
+  .ps-header h1{font-size:42px; color:#fff; background:linear-gradient(90deg,#fff,#c7d2fe); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+  .ps-header p{color:#94a3b8; font-size:15px; max-width:560px; margin:8px auto 0 auto;}
   .persona-grid{
     max-width:1180px; margin:0 auto; display:grid; gap:18px;
     grid-template-columns:repeat(auto-fill, minmax(270px,1fr));
   }
   .persona-card{
-    background:#fff; border-radius:14px; padding:20px; cursor:pointer;
-    border:1px solid rgba(255,255,255,.1); transition:transform .15s ease, box-shadow .15s ease;
+    background:#fff; border-radius:16px; padding:22px; cursor:pointer; position:relative;
+    border:1px solid rgba(255,255,255,.08); transition:transform .16s ease, box-shadow .16s ease;
   }
-  .persona-card:hover{transform:translateY(-4px); box-shadow:0 16px 32px rgba(0,0,0,.35);}
+  .persona-card:hover{transform:translateY(-5px); box-shadow:0 20px 40px rgba(0,0,0,.4);}
+  .persona-card .persona-icon{
+    width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+    font-size:19px; margin-bottom:12px; background:var(--bg);
+  }
   .persona-card .brand-badge{
-    display:inline-block; color:#fff; font-size:11px; font-weight:700; padding:4px 10px;
-    border-radius:20px; margin-bottom:10px; letter-spacing:.03em;
+    display:inline-block; color:#fff; font-size:10.5px; font-weight:800; padding:4px 10px;
+    border-radius:20px; margin-bottom:10px; letter-spacing:.04em; position:absolute; top:22px; right:22px;
   }
-  .persona-card h3{font-size:17px; margin-bottom:6px;}
-  .persona-card p{font-size:13px; color:var(--muted); line-height:1.4; margin:0;}
-  .persona-card .scenario-tag{font-size:10.5px; color:#9ca3af; margin-top:10px; text-transform:uppercase; letter-spacing:.04em;}
+  .persona-card h3{font-size:16.5px; margin-bottom:6px; padding-right:70px;}
+  .persona-card p{font-size:12.8px; color:var(--muted); line-height:1.45; margin:0;}
+  .persona-card .scenario-tag{font-size:10.5px; color:#9ca3af; margin-top:12px; text-transform:uppercase; letter-spacing:.04em; border-top:1px solid var(--border); padding-top:10px;}
 
   /* ---------- Banners ---------- */
   .banner{
@@ -156,15 +201,22 @@
   .choice-card.selected{border-color:var(--accent); background:#eff6ff;}
 
   /* ---------- Catalog ---------- */
-  .filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px; align-items:center;}
+  .filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; align-items:center; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px;}
   .filter-bar select{padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:#fff;}
-  .product-grid{display:grid; gap:20px; grid-template-columns:repeat(auto-fill, minmax(220px,1fr));}
-  .product-card{overflow:hidden; cursor:pointer; transition:box-shadow .15s ease;}
-  .product-card:hover{box-shadow:var(--shadow-lg);}
-  .product-card .thumb{width:100%; aspect-ratio:3/4; object-fit:cover; background:#f1f1f1;}
-  .product-card .pc-body{padding:12px 14px;}
-  .product-card h4{font-size:14px; margin-bottom:4px;}
-  .product-card .price{font-size:14px; font-weight:700; margin-bottom:8px;}
+  .filter-bar .price-filter{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);}
+  .filter-bar .price-filter input[type=range]{width:120px; accent-color:var(--accent);}
+  .filter-bar .result-count{margin-left:auto; font-size:12px; color:var(--muted);}
+  .product-grid{display:grid; gap:22px; grid-template-columns:repeat(auto-fill, minmax(220px,1fr));}
+  .product-card{overflow:hidden; cursor:pointer; transition:box-shadow .18s ease, transform .18s ease;}
+  .product-card:hover{box-shadow:var(--shadow-lg); transform:translateY(-3px);}
+  .product-card .thumb-wrap{position:relative; overflow:hidden;}
+  .product-card .thumb{width:100%; aspect-ratio:3/4; object-fit:cover; background:#f1f1f1; transition:transform .35s ease;}
+  .product-card:hover .thumb{transform:scale(1.06);}
+  .product-card .thumb-wrap .badge{position:absolute; top:10px; right:10px; box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  .product-card .pc-body{padding:13px 15px;}
+  .product-card h4{font-size:14px; margin-bottom:4px; font-weight:700;}
+  .product-card .price{font-size:14.5px; font-weight:800; margin-bottom:2px;}
+  .product-card .pc-cat{font-size:11px; color:var(--muted); margin-bottom:8px;}
 
   /* ---------- Product Detail ---------- */
   .pd-grid{display:grid; grid-template-columns:1fr 1fr; gap:36px;}
@@ -188,6 +240,11 @@
   /* ---------- Fit Model ---------- */
   .fit-model-wrap{border:1px solid var(--border); border-radius:12px; padding:16px; background:#fafafa; position:relative;}
   .fit-model-wrap.compact{padding:10px;}
+  .fit-model-wrap.compact .fm-stage{max-width:150px;}
+  .fit-model-wrap.compact .fm-hint{display:none;}
+  .fit-model-wrap.compact .fm-controls button{font-size:11px;}
+  .fit-model-wrap.compact .fm-controls button:not(.wide){width:26px; height:26px;}
+  .fit-model-wrap.compact .fm-controls button.wide{padding:0 9px; height:26px;}
   .ai-watermark{position:absolute; top:10px; left:10px; font-size:9.5px; background:rgba(255,255,255,.9); border:1px solid var(--border); padding:2px 8px; border-radius:10px; color:var(--muted); z-index:5;}
   .fm-stage{width:100%; max-width:260px; margin:0 auto; touch-action:pan-y; user-select:none; -webkit-user-select:none; overflow:visible; cursor:grab;}
   .fm-stage:active{cursor:grabbing;}
@@ -261,7 +318,57 @@
   .log-entry{font-size:12.5px; padding:9px 0; border-bottom:1px solid var(--border); color:var(--muted);}
   .log-entry b{color:var(--text);}
 
-  footer.app-footer{text-align:center; padding:30px 20px; font-size:11.5px; color:var(--muted);}
+  footer.app-footer{padding:34px 20px 26px 20px; font-size:12px; color:var(--muted); border-top:1px solid var(--border); margin-top:20px;}
+  footer.app-footer .footer-inner{max-width:1180px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+  footer.app-footer .footer-links{display:flex; gap:16px; flex-wrap:wrap;}
+  footer.app-footer button.footer-link{background:none; border:none; color:var(--muted); font-size:12px; text-decoration:underline; padding:0;}
+  footer.app-footer button.footer-link:hover{color:var(--accent);}
+
+  /* ---------- Brand posture dials ---------- */
+  .dial-row{margin-bottom:14px;}
+  .dial-row .dial-label{display:flex; justify-content:space-between; font-size:12px; margin-bottom:5px;}
+  .dial-row .dial-label b{font-weight:700;}
+  .dial-row .dial-label span{color:var(--muted);}
+  .dial-track{height:7px; border-radius:4px; background:var(--border); overflow:hidden;}
+  .dial-fill{height:100%; border-radius:4px; background:linear-gradient(90deg, var(--accent), var(--accent-dark));}
+
+  /* ---------- Impact dashboard ---------- */
+  .kpi-grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); margin-bottom:28px;}
+  .kpi-card{padding:16px 18px;}
+  .kpi-card .kpi-feature{font-size:10.5px; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--accent); margin-bottom:8px;}
+  .kpi-card .kpi-metric{font-size:13.5px; font-weight:700; margin-bottom:6px;}
+  .kpi-card .kpi-move{display:flex; align-items:baseline; gap:8px;}
+  .kpi-card .kpi-move .from{font-size:13px; color:var(--muted); text-decoration:line-through;}
+  .kpi-card .kpi-move .to{font-size:19px; font-weight:800; color:var(--green);}
+  .kpi-card .kpi-ambition{font-size:11px; color:var(--muted); margin-top:4px;}
+  .data-table{width:100%; border-collapse:collapse; font-size:12.5px;}
+  .data-table th{text-align:left; padding:10px 12px; background:var(--bg); border-bottom:2px solid var(--border); font-size:11px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted);}
+  .data-table td{padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:top;}
+  .data-table tr:last-child td{border-bottom:none;}
+  .table-wrap{overflow-x:auto; border:1px solid var(--border); border-radius:12px; margin-bottom:26px;}
+  .table-wrap .data-table{margin:0;}
+  .funnel-bar-row{display:flex; align-items:center; gap:12px; margin-bottom:10px;}
+  .funnel-bar-row .fb-label{width:150px; font-size:12px; flex-shrink:0;}
+  .funnel-bar-track{flex:1; height:22px; background:var(--bg); border-radius:6px; overflow:hidden; position:relative;}
+  .funnel-bar-fill{height:100%; background:linear-gradient(90deg, var(--accent), var(--accent-dark)); border-radius:6px;}
+  .funnel-bar-row .fb-volume{width:150px; text-align:right; font-size:11.5px; font-weight:700; color:var(--text); flex-shrink:0;}
+  .funnel-bar-row .fb-advance{width:110px; text-align:right; font-size:12px; font-weight:700; color:var(--muted); flex-shrink:0;}
+
+  /* ---------- About / governance ---------- */
+  .limitations-list{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:10px;}
+  .limitations-list li{display:flex; gap:10px; font-size:13px; padding:12px 14px; background:var(--surface); border:1px solid var(--border); border-radius:10px;}
+  .limitations-list li .num{flex-shrink:0; width:22px; height:22px; border-radius:50%; background:var(--accent-soft); color:var(--accent); font-size:11px; font-weight:800; display:flex; align-items:center; justify-content:center;}
+  .changelog-item{display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:12.5px;}
+  .changelog-item .ver{flex-shrink:0; width:38px; font-weight:800; color:var(--accent);}
+
+  /* ---------- Gifting / share link ---------- */
+  .share-link-box{border:1.5px dashed var(--border); border-radius:10px; padding:14px 16px; margin-top:12px; background:var(--bg);}
+  .share-link-box .link-row{display:flex; gap:8px; margin-top:8px;}
+  .share-link-box .link-row input{flex:1; padding:8px 10px; border:1px solid var(--border); border-radius:7px; font-size:12px; background:#fff; color:var(--muted);}
+
+  .tab-row{display:flex; gap:6px; margin-bottom:20px; border-bottom:1px solid var(--border);}
+  .tab-btn{background:none; border:none; padding:10px 16px; font-size:13.5px; font-weight:600; color:var(--muted); border-bottom:2px solid transparent; margin-bottom:-1px;}
+  .tab-btn.active{color:var(--accent); border-bottom-color:var(--accent);}
 </style>
 </head>
 <body>
@@ -279,27 +386,37 @@ const BRANDS = [
     hardLimit:"Synthetic imagery labelled; no implied fit accuracy beyond product capability",
     accent:"#e8491d", accentDark:"#b3350f", headingFont:'"Arial Narrow", "Oswald", sans-serif', bodyFont:'system-ui, sans-serif',
     bg:"#141414", surface:"#1f1f1f", text:"#f5f5f5", muted:"#a3a3a3", border:"#3a3a3a", contrast:"high",
-    clientFacingAI:true, escalationVisible:false },
+    clientFacingAI:true, escalationVisible:false,
+    disclosureMode:"AI-labeled", automationLevel:90, generativeContentAllowed:true,
+    tagline:"Fast fashion, faster fit answers." },
   { id:"urbanedge", name:"UrbanEdge", posture:"Balanced, Self-Directed",
     hardLimit:"Disclosure at every AI touchpoint, one-tap human escalation always visible",
     accent:"#2563eb", accentDark:"#1d4ed8", headingFont:'system-ui, sans-serif', bodyFont:'system-ui, sans-serif',
     bg:"#f3f6fb", surface:"#ffffff", text:"#0f172a", muted:"#64748b", border:"#dbeafe", contrast:"mid",
-    clientFacingAI:true, escalationVisible:true },
+    clientFacingAI:true, escalationVisible:true,
+    disclosureMode:"AI-labeled + escalation", automationLevel:60, generativeContentAllowed:true,
+    tagline:"Everyday style, always a human within reach." },
   { id:"maisonluxe", name:"Maison Luxe", posture:"Amplify-dominant, Advisor-Mediated",
     hardLimit:"Generative content PROHIBITED client-facing — a client never meets a bot first",
     accent:"#8a7250", accentDark:"#6b5738", headingFont:'Georgia, "Times New Roman", serif', bodyFont:'Georgia, serif',
     bg:"#faf8f5", surface:"#ffffff", text:"#2b2620", muted:"#8a7f70", border:"#e8e0d3", contrast:"low",
-    clientFacingAI:false, escalationVisible:false },
+    clientFacingAI:false, escalationVisible:false,
+    disclosureMode:"Advisor-mediated — no client-facing AI", automationLevel:22, generativeContentAllowed:false,
+    tagline:"A client never meets a bot first." },
   { id:"ecoweave", name:"EcoWeave", posture:"Augment-led",
     hardLimit:"Zero generative fallback on claims; every claim must trace to verified data",
     accent:"#4f7942", accentDark:"#3d5e33", headingFont:'system-ui, sans-serif', bodyFont:'system-ui, sans-serif',
     bg:"#f6f8f2", surface:"#ffffff", text:"#1f2a17", muted:"#6b7a5e", border:"#dbe6cf", contrast:"natural",
-    clientFacingAI:false, escalationVisible:false },
+    clientFacingAI:false, escalationVisible:false,
+    disclosureMode:"Verified-claim text only", automationLevel:45, generativeContentAllowed:false,
+    tagline:"Every claim traces to verified supplier data." },
   { id:"threadbasics", name:"ThreadBasics", posture:"Rules-engine automate",
     hardLimit:"Cheapest viable AI, no bespoke models; still full model-card obligation",
     accent:"#334155", accentDark:"#1e293b", headingFont:'system-ui, sans-serif', bodyFont:'system-ui, sans-serif',
     bg:"#f4f5f7", surface:"#ffffff", text:"#111827", muted:"#6b7280", border:"#e2e8f0", contrast:"none",
-    clientFacingAI:false, escalationVisible:false }
+    clientFacingAI:false, escalationVisible:false,
+    disclosureMode:"Rules-engine templated", automationLevel:80, generativeContentAllowed:false,
+    tagline:"No-frills basics, honestly automated." }
 ];
 function getBrand(id){ return BRANDS.find(b=>b.id===id); }
 
@@ -569,8 +686,22 @@ const personas = [
       { id:"SV-ORD-9002", channel:"d2c", date:"2026-08-10", status:"Delivered", items:[{productId:"ss-foot", size:"M", qty:1}] },
       { id:"SV-ORD-9003", channel:"d2c", date:"2026-07-19", status:"Delivered", items:[{productId:"ss-acc", size:"M", qty:2}] },
       { id:"SV-ORD-9004", channel:"d2c", date:"2026-09-02", status:"Shipped", items:[{productId:"ss-bottom", size:"M", qty:1}] },
-      { id:"SV-ORD-9005", channel:"d2c", date:"2026-09-06", status:"Processing", items:[{productId:"ss-outer", size:"L", qty:1}] }
-    ], marketplaceOrders:[], returns:[], cases:[] },
+      { id:"SV-ORD-9005", channel:"d2c", date:"2026-09-06", status:"Ordered", items:[{productId:"ss-outer", size:"L", qty:1}] },
+      { id:"SV-ORD-9006", channel:"d2c", date:"2026-06-05", status:"Delivered", items:[{productId:"ss-dress", size:"M", qty:1}] }
+    ], marketplaceOrders:[],
+    returns:[
+      { id:"SV-RET-410", orderId:"SV-ORD-9006", productId:"ss-dress", size:"M", status:"exchanged",
+        reason:"doesnt_fit", fitIssue:"running_large", step:"exchange-confirm", _suggestedSize:"S",
+        resolvedType:"exchange", exchangeSize:"S", trackingRef:null, newDeliveryDate:"2026-06-14", date:"2026-06-08" }
+    ],
+    cases:[
+      { id:"CASE-101", subject:"Sizing question — Turbo-Fit Track Pants", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"chat", text:"Do the track pants run true to size for a 5'9\" athletic build?", ts:"2026-07-17T09:12:00" },
+          { from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:"2026-07-17T09:12:40" },
+          { from:"system", channel:"chat", text:"For Regular/Athletic builds these run true to size at the waist with a touch of room at the hem — your usual size is the right call.", ts:"2026-07-17T09:15:00" }
+        ] }
+    ] },
 
   { id:"p2", name:"Ananya Iyer", brandId:"speedstyle", scenario:6,
     scenarioLabel:"Has a fit-driven return mid-flow — resumable right where they left off",
@@ -579,13 +710,25 @@ const personas = [
     orders:[
       { id:"SV-ORD-9101", channel:"d2c", date:"2026-08-20", status:"Return in Progress", items:[{productId:"ss-outer", size:"M", qty:1}] },
       { id:"SV-ORD-9102", channel:"d2c", date:"2026-07-15", status:"Delivered", items:[{productId:"ss-top", size:"L", qty:1}] },
-      { id:"SV-ORD-9103", channel:"d2c", date:"2026-06-30", status:"Delivered", items:[{productId:"ss-foot", size:"L", qty:1}] }
+      { id:"SV-ORD-9103", channel:"d2c", date:"2026-06-30", status:"Delivered", items:[{productId:"ss-foot", size:"L", qty:1}] },
+      { id:"SV-ORD-9104", channel:"d2c", date:"2026-06-10", status:"Delivered", items:[{productId:"ss-acc", size:"M", qty:1}] }
     ], marketplaceOrders:[],
     returns:[
       { id:"SV-RET-501", orderId:"SV-ORD-9101", productId:"ss-outer", size:"M", status:"in_progress",
         reason:"doesnt_fit", fitIssue:"running_small", step:"exchange-offer", _suggestedSize:"L",
-        resolvedType:null, exchangeSize:null, trackingRef:null, date:"2026-08-22" }
-    ], cases:[] },
+        resolvedType:null, exchangeSize:null, trackingRef:null, date:"2026-08-22" },
+      { id:"SV-RET-402", orderId:"SV-ORD-9103", productId:"ss-foot", size:"L", status:"requested",
+        reason:"quality_issue", fitIssue:null, step:"return-confirm", _suggestedSize:null,
+        resolvedType:"return", exchangeSize:null, trackingRef:"RET-TRK-773204", pickupPref:"pickup", refundPref:"original", date:"2026-07-08" }
+    ],
+    cases:[
+      { id:"CASE-102", subject:"Update on exchange for SV-ORD-9101", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"chat", text:"Hi, any update on the exchange for my windbreaker jacket?", ts:"2026-08-23T14:02:00" },
+          { from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:"2026-08-23T14:02:40" },
+          { from:"system", channel:"email", text:"Your exchange for the Blitz Windbreaker Jacket (size L) is confirmed and on its way — expect it within 4 days.", ts:"2026-08-23T15:40:00" }
+        ] }
+    ] },
 
   { id:"p3", name:"Karan Mehta", brandId:"urbanedge", scenario:2,
     scenarioLabel:"Marketplace-only shopper — hasn't linked their StyleVerse account yet",
@@ -594,21 +737,34 @@ const personas = [
     orders:[], marketplaceOrders:[
       { id:"MKT-7701", channel:"marketplace", date:"2026-07-02", status:"Delivered", items:[{productId:"ue-top", size:"L", qty:1}] },
       { id:"MKT-7702", channel:"marketplace", date:"2026-07-22", status:"Delivered", items:[{productId:"ue-acc", size:"M", qty:1}] },
-      { id:"MKT-7703", channel:"marketplace", date:"2026-08-14", status:"Delivered", items:[{productId:"ue-foot", size:"L", qty:1}] }
-    ], returns:[], cases:[] },
+      { id:"MKT-7703", channel:"marketplace", date:"2026-08-14", status:"Delivered", items:[{productId:"ue-foot", size:"L", qty:1}] },
+      { id:"MKT-7704", channel:"marketplace", date:"2026-06-18", status:"Delivered", items:[{productId:"ue-bottom", size:"L", qty:1}] }
+    ], returns:[],
+    cases:[
+      { id:"CASE-103", subject:"Can I link my marketplace orders here?", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"chat", text:"I've bought UrbanEdge stuff on the marketplace app before — can I see that history here?", ts:"2026-08-30T11:20:00" },
+          { from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:"2026-08-30T11:20:40" },
+          { from:"system", channel:"chat", text:"Yes! Link your loyalty number from the home screen banner and your marketplace orders will merge into Track Everywhere automatically.", ts:"2026-08-30T11:23:00" }
+        ] }
+    ] },
 
   { id:"p4", name:"Priya Nair", brandId:"urbanedge", scenario:7,
     scenarioLabel:"Predicted delay on a recent order — proactive outreach waiting for them",
     loyaltyId:"SV-10233", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"curvy-regular", completedAt:"2026-03-18" },
     shoppingFor:"myself", secondaryProfile:null, predictedGrievance:true, proactiveOutreachSent:false,
     orders:[
-      { id:"SV-ORD-9201", channel:"d2c", date:"2026-09-04", status:"Processing", items:[{productId:"ue-outer", size:"M", qty:1}] },
-      { id:"SV-ORD-9202", channel:"d2c", date:"2026-08-02", status:"Delivered", items:[{productId:"ue-dress", size:"M", qty:1}] }
+      { id:"SV-ORD-9201", channel:"d2c", date:"2026-09-04", status:"Ordered", items:[{productId:"ue-outer", size:"M", qty:1}] },
+      { id:"SV-ORD-9202", channel:"d2c", date:"2026-08-02", status:"Delivered", items:[{productId:"ue-dress", size:"M", qty:1}] },
+      { id:"SV-ORD-9203", channel:"d2c", date:"2026-06-27", status:"Delivered", items:[{productId:"ue-top", size:"M", qty:2}] }
     ], marketplaceOrders:[], returns:[],
     cases:[
       { id:"CASE-301", subject:"Order SV-ORD-9201 — possible delivery delay", predictedGrievance:true,
         channelLog:[
-          { from:"system", channel:"chat", text:"We noticed a possible delay with your recent order (SV-ORD-9201) — here's what we're doing about it: your courier partner is running behind in your area, and we've already flagged this order for priority dispatch. We expect it to move within 24 hours.", ts:"2026-09-06T10:15:00" }
+          { from:"system", channel:"chat", text:"We noticed a possible delay with your recent order (SV-ORD-9201) — here's what we're doing about it: your courier partner is running behind in your area, and we've already flagged this order for priority dispatch. We expect it to move within 24 hours.", ts:"2026-09-06T10:15:00" },
+          { from:"customer", channel:"chat", text:"Thanks for the heads up — is there a new delivery estimate yet?", ts:"2026-09-06T10:41:00" },
+          { from:"system", channel:"email", text:"Updated estimate: your Commuter Bomber Jacket is now expected by 12 Sep. We'll notify you the moment it ships.", ts:"2026-09-06T12:05:00" },
+          { from:"customer", channel:"call", text:"Called in to confirm — advisor verified the new dispatch window and offered a ₹150 delivery credit for the delay.", ts:"2026-09-07T16:30:00" }
         ] }
     ] },
 
@@ -619,8 +775,16 @@ const personas = [
     orders:[], marketplaceOrders:[
       { id:"MKT-7801", channel:"marketplace", date:"2026-06-19", status:"Delivered", items:[{productId:"ml-acc", size:"M", qty:1}] },
       { id:"MKT-7802", channel:"marketplace", date:"2026-07-30", status:"Delivered", items:[{productId:"ml-foot", size:"M", qty:1}] },
-      { id:"MKT-7803", channel:"marketplace", date:"2026-08-11", status:"Delivered", items:[{productId:"ml-top", size:"M", qty:1}] }
-    ], returns:[], cases:[] },
+      { id:"MKT-7803", channel:"marketplace", date:"2026-08-11", status:"Delivered", items:[{productId:"ml-top", size:"M", qty:1}] },
+      { id:"MKT-7804", channel:"marketplace", date:"2026-05-28", status:"Delivered", items:[{productId:"ml-bottom", size:"M", qty:1}] }
+    ], returns:[],
+    cases:[
+      { id:"CASE-104", subject:"Finishing my account linking", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"email", text:"I started linking my loyalty number but got interrupted — will my marketplace purchase history carry over once I finish?", ts:"2026-08-25T08:00:00" },
+          { from:"system", channel:"email", text:"Your Style Advisor, Priya — Yes, once you complete the link from your account page, all your marketplace orders merge into Track Everywhere immediately. Happy to walk you through it on a call if that's easier.", ts:"2026-08-25T09:30:00" }
+        ] }
+    ] },
 
   { id:"p6", name:"Ishaan Kapoor", brandId:"maisonluxe", scenario:9,
     scenarioLabel:"Bridged account with order history across both channels",
@@ -628,11 +792,24 @@ const personas = [
     shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
     orders:[
       { id:"SV-ORD-9401", channel:"d2c", date:"2026-08-25", status:"Delivered", items:[{productId:"ml-outer", size:"L", qty:1}] },
-      { id:"SV-ORD-9402", channel:"d2c", date:"2026-07-05", status:"Delivered", items:[{productId:"ml-dress", size:"L", qty:1}] }
+      { id:"SV-ORD-9402", channel:"d2c", date:"2026-07-05", status:"Delivered", items:[{productId:"ml-dress", size:"L", qty:1}] },
+      { id:"SV-ORD-9403", channel:"d2c", date:"2026-05-22", status:"Delivered", items:[{productId:"ml-foot", size:"L", qty:1}] }
     ], marketplaceOrders:[
       { id:"MKT-7901", channel:"marketplace", date:"2026-06-12", status:"Delivered", items:[{productId:"ml-bottom", size:"L", qty:1}] },
       { id:"MKT-7902", channel:"marketplace", date:"2026-08-01", status:"Delivered", items:[{productId:"ml-acc", size:"M", qty:1}] }
-    ], returns:[], cases:[] },
+    ],
+    returns:[
+      { id:"SV-RET-620", orderId:"SV-ORD-9402", productId:"ml-dress", size:"L", status:"exchanged",
+        reason:"doesnt_fit", fitIssue:"running_small", step:"exchange-confirm", _suggestedSize:"XL",
+        resolvedType:"exchange", exchangeSize:"XL", trackingRef:null, newDeliveryDate:"2026-07-13", date:"2026-07-07" }
+    ],
+    cases:[
+      { id:"CASE-105", subject:"Alterations question on the Cashmere Wrap Coat", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"call", text:"Called in about sleeve length on the wrap coat — advisor Priya noted preference for a half-inch shorter cuff on future pieces.", ts:"2026-08-27T17:00:00" },
+          { from:"system", channel:"email", text:"Your Style Advisor, Priya — noted your cuff preference on file for next season's pieces. Always a pleasure, Ishaan.", ts:"2026-08-27T18:10:00" }
+        ] }
+    ] },
 
   { id:"p7", name:"Meera Pillai", brandId:"ecoweave", scenario:4,
     scenarioLabel:"Bridged account — marketplace and D2C history merged under one loyalty ID",
@@ -640,11 +817,24 @@ const personas = [
     shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
     orders:[
       { id:"SV-ORD-9501", channel:"d2c", date:"2026-08-30", status:"Out for Delivery", items:[{productId:"ew-top", size:"S", qty:1}] },
-      { id:"SV-ORD-9502", channel:"d2c", date:"2026-07-11", status:"Delivered", items:[{productId:"ew-dress", size:"S", qty:1}] }
+      { id:"SV-ORD-9502", channel:"d2c", date:"2026-07-11", status:"Delivered", items:[{productId:"ew-dress", size:"S", qty:1}] },
+      { id:"SV-ORD-9503", channel:"d2c", date:"2026-05-30", status:"Delivered", items:[{productId:"ew-bottom", size:"S", qty:1}] }
     ], marketplaceOrders:[
       { id:"MKT-8001", channel:"marketplace", date:"2026-06-05", status:"Delivered", items:[{productId:"ew-acc", size:"S", qty:1}] },
       { id:"MKT-8002", channel:"marketplace", date:"2026-08-15", status:"Delivered", items:[{productId:"ew-foot", size:"S", qty:1}] }
-    ], returns:[], cases:[] },
+    ],
+    returns:[
+      { id:"SV-RET-711", orderId:"SV-ORD-9503", productId:"ew-bottom", size:"S", status:"requested",
+        reason:"changed_mind", fitIssue:null, step:"return-confirm", _suggestedSize:null,
+        resolvedType:"return", exchangeSize:null, trackingRef:"RET-TRK-551982", pickupPref:"dropoff", refundPref:"wallet", date:"2026-06-04" }
+    ],
+    cases:[
+      { id:"CASE-106", subject:"Sourcing question — Recycled Wool Overcoat", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"email", text:"Can you confirm the wool percentage that's recycled on the overcoat? Want to make sure before I buy.", ts:"2026-08-20T10:00:00" },
+          { from:"system", channel:"email", text:"Verified from our supplier data sheet: the Recycled Wool Overcoat is 72% post-consumer recycled wool, 28% recycled polyester lining. Certificate available on request.", ts:"2026-08-20T13:45:00" }
+        ] }
+    ] },
 
   { id:"p8", name:"Aditi Rao", brandId:"ecoweave", scenario:8,
     scenarioLabel:"Shopping for someone else, with a saved secondary fit profile",
@@ -655,8 +845,22 @@ const personas = [
     orders:[
       { id:"SV-ORD-9601", channel:"d2c", date:"2026-08-17", status:"Delivered", items:[{productId:"ew-bottom", size:"S", qty:1}] },
       { id:"SV-ORD-9602", channel:"d2c", date:"2026-07-28", status:"Delivered", items:[{productId:"ew-outer", size:"S", qty:1}] },
-      { id:"SV-ORD-9603", channel:"d2c", date:"2026-06-14", status:"Delivered", items:[{productId:"ew-top", size:"S", qty:1}] }
-    ], marketplaceOrders:[], returns:[], cases:[] },
+      { id:"SV-ORD-9603", channel:"d2c", date:"2026-06-14", status:"Delivered", items:[{productId:"ew-top", size:"S", qty:1}] },
+      { id:"SV-ORD-9604", channel:"d2c", date:"2026-05-19", status:"Delivered", items:[{productId:"ew-dress", size:"S", qty:1}] }
+    ], marketplaceOrders:[],
+    returns:[
+      { id:"SV-RET-812", orderId:"SV-ORD-9604", productId:"ew-dress", size:"S", status:"exchanged",
+        reason:"doesnt_fit", fitIssue:"running_large", step:"exchange-confirm", _suggestedSize:"S",
+        resolvedType:"exchange", exchangeSize:"S", trackingRef:null, newDeliveryDate:"2026-05-27", date:"2026-05-21" }
+    ],
+    cases:[
+      { id:"CASE-107", subject:"Gifting question — sizing for someone else", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"chat", text:"If I save a profile for my brother, does the size recommendation update for him specifically?", ts:"2026-08-05T12:00:00" },
+          { from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:"2026-08-05T12:00:35" },
+          { from:"system", channel:"chat", text:"Yes — toggle to his saved profile on your account page and every size recommendation and fit preview switches to his archetype.", ts:"2026-08-05T12:03:00" }
+        ] }
+    ] },
 
   { id:"p9", name:"Sanjay Gupta", brandId:"threadbasics", scenario:5,
     scenarioLabel:"Brand new shopper — no orders, no Fit Passport yet",
@@ -669,15 +873,89 @@ const personas = [
     loyaltyId:"SV-10788", bridgingStatus:"linked-native", fitPassport:{ archetypeId:"regular-broad", completedAt:"2026-01-15" },
     shoppingFor:"myself", secondaryProfile:null, predictedGrievance:false, proactiveOutreachSent:false,
     orders:[
-      { id:"SV-ORD-9701", channel:"d2c", date:"2026-09-01", status:"Processing", items:[{productId:"tb-top", size:"M", qty:2}] },
+      { id:"SV-ORD-9701", channel:"d2c", date:"2026-09-01", status:"Ordered", items:[{productId:"tb-top", size:"M", qty:2}] },
       { id:"SV-ORD-9702", channel:"d2c", date:"2026-08-19", status:"Shipped", items:[{productId:"tb-bottom", size:"M", qty:1}] },
       { id:"SV-ORD-9703", channel:"d2c", date:"2026-08-03", status:"Delivered", items:[{productId:"tb-outer", size:"L", qty:1}] },
       { id:"SV-ORD-9704", channel:"d2c", date:"2026-07-12", status:"Delivered", items:[{productId:"tb-foot", size:"M", qty:1}] },
       { id:"SV-ORD-9705", channel:"d2c", date:"2026-06-21", status:"Delivered", items:[{productId:"tb-dress", size:"M", qty:1}] },
-      { id:"SV-ORD-9706", channel:"d2c", date:"2026-06-01", status:"Delivered", items:[{productId:"tb-acc", size:"M", qty:3}] }
-    ], marketplaceOrders:[], returns:[], cases:[] }
+      { id:"SV-ORD-9706", channel:"d2c", date:"2026-06-01", status:"Delivered", items:[{productId:"tb-acc", size:"M", qty:3}] },
+      { id:"SV-ORD-9707", channel:"d2c", date:"2026-05-14", status:"Delivered", items:[{productId:"tb-top", size:"M", qty:1}] }
+    ], marketplaceOrders:[],
+    returns:[
+      { id:"SV-RET-905", orderId:"SV-ORD-9704", productId:"tb-foot", size:"M", status:"exchanged",
+        reason:"doesnt_fit", fitIssue:"running_small", step:"exchange-confirm", _suggestedSize:"L",
+        resolvedType:"exchange", exchangeSize:"L", trackingRef:null, newDeliveryDate:"2026-07-19", date:"2026-07-14" },
+      { id:"SV-RET-906", orderId:"SV-ORD-9706", productId:"tb-acc", size:"M", status:"requested",
+        reason:"other", fitIssue:null, step:"return-confirm", _suggestedSize:null,
+        resolvedType:"return", exchangeSize:null, trackingRef:"RET-TRK-338817", pickupPref:"pickup", refundPref:"original", date:"2026-06-06" }
+    ],
+    cases:[
+      { id:"CASE-108", subject:"Bulk order confirmation — beanies", predictedGrievance:false,
+        channelLog:[
+          { from:"customer", channel:"chat", text:"Placed an order for 3 beanies — can you confirm they'll ship together?", ts:"2026-06-02T09:00:00" },
+          { from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:"2026-06-02T09:00:30" },
+          { from:"system", channel:"email", text:"Confirmed — all 3 Cotton Beanies in order SV-ORD-9706 ship together in one package.", ts:"2026-06-02T11:15:00" }
+        ] }
+    ] }
 ];
 function getPersonaTemplate(id){ return personas.find(p=>p.id===id); }
+
+/* ---------------------------- IMPACT / KPI DATA (PRD §2, §8) ---------------------------- */
+const FUNNEL_DATA = [
+  { stage:"Site/app visit", volume:"9.2M sessions", volumeNum:9200000, advance:"55%", cause:"Intent unknown at entry", feature:"F2 Identity Bridge" },
+  { stage:"Product exploration", volume:"5.1M views", volumeNum:5100000, advance:"19%", cause:"Low purchase confidence, weak personalization", feature:"F6 Confidence badges, F7 Fit Preview, F11 Advisor" },
+  { stage:"Add to cart", volume:"966,000", volumeNum:966000, advance:"57%", cause:"Size/fit uncertainty", feature:"F7 Confidence-weighted size pre-fill" },
+  { stage:"Checkout initiated", volume:"552,000", volumeNum:552000, advance:"42%", cause:"Payment/delivery drop-off", feature:"F8 Cart-level fit check" },
+  { stage:"Order completed", volume:"230,000", volumeNum:230000, advance:"2.5% end-to-end", cause:"—", feature:"F9 Ambient order status" }
+];
+const FUNNEL_TAIL = { stage:"Returns & service", volume:"48,000 returns · 26,000 contacts · 48-hr resolution", cause:"Disconnected history, repeated information", feature:"F10a Interception, F10b Unified thread" };
+const KPI_DATA = [
+  { feature:"F6, F7, F11", metric:"Product-view → cart", from:"19%", to:"22%", ambition:"25%" },
+  { feature:"F7, F3", metric:"First-time fit accuracy", from:"58%", to:"68%", ambition:"75%" },
+  { feature:"F8", metric:"Cart abandonment", from:"81%", to:"78%", ambition:"75%" },
+  { feature:"F8, F10a", metric:"SpeedStyle return rate", from:"28%", to:"22.4% blended", ambition:"20%" },
+  { feature:"F9, F10b", metric:"Blended resolution time", from:"48 hrs", to:"18 hrs", ambition:"8 hrs (SpeedStyle 72→24 hrs)" },
+  { feature:"F10a, F10b", metric:"Repeat purchase rate (SpeedStyle)", from:"32%", to:"36%", ambition:"40%" },
+  { feature:"F2, F3", metric:"Fit Passport opt-in", from:"0%", to:">25% (6-month target)", ambition:"—" },
+  { feature:"All", metric:"End-to-end digital conversion", from:"2.5%", to:"2.9%", ambition:"3.2%" },
+  { feature:"All", metric:"Average order value", from:"~₹3,195", to:"+8%", ambition:"+15%" },
+  { feature:"F10b", metric:"NPS (SpeedStyle)", from:"35", to:"45", ambition:"52" }
+];
+const GOVERNANCE_DATA = [
+  { obligation:"Synthetic-content disclosure (Article 50-style)", where:"Watermark badge on every Fit Model render" },
+  { obligation:"SpeedStyle: no implied fit accuracy beyond capability", where:"Empty state instead of a generic preview when no passport exists" },
+  { obligation:"UrbanEdge: one-tap human escalation at every AI touchpoint", where:"Persistent \"Talk to a human\" button in Support" },
+  { obligation:"Maison Luxe: no client-facing generative content", where:"Component-level substitution in Product Detail, Support, Style Advisor" },
+  { obligation:"EcoWeave: zero generative fallback on claims", where:"Retrieval/static text only" },
+  { obligation:"ThreadBasics: full model-card obligation despite rules engine", where:"Registered in Enterprise Console Module 11" },
+  { obligation:"Consent as a first-class field", where:"Fit Passport is opt-in; identity bridge is an explicit value exchange" },
+  { obligation:"DPDP Act 2023 / GDPR residency", where:"Production CDP concern; stated as a prototype delta" }
+];
+const DELTAS_DATA = [
+  { area:"Auth", prototype:"Persona selector", production:"Real accounts, deterministic identity resolution on login" },
+  { area:"Archetype assignment", prototype:"Rule-based from 3 inputs", production:"K-means/GMM over a measurement space, 8–12 clusters per size band" },
+  { area:"Fit rendering", prototype:"Pre-drawn 2D SVG archetypes", production:"Thin-plate-spline or diffusion image-to-image warping on real photography" },
+  { area:"Confidence score", prototype:"Deterministic formula", production:"LightGBM/XGBoost propensity model, SHAP statements, weekly retraining" },
+  { area:"Return reason", prototype:"Card selection only", production:"Card selection + fine-tuned text classifier on free-text reasons" },
+  { area:"Proactive outreach", prototype:"Static templated message", production:"Anomaly detection over delivery events → RAG-grounded draft → human send" },
+  { area:"Support thread", prototype:"Canned acknowledgements", production:"RAG-grounded case brief, tiered routing, human-in-the-loop above Tier 1" },
+  { area:"Data", prototype:"In-file seed objects", production:"Warehouse-native CDP branched off the enterprise thin data spine" },
+  { area:"Marketplace order visibility", prototype:"Seeded merged history", production:"Requires marketplace data-sharing arrangement; text-badge fallback as Plan B" }
+];
+const LIMITATIONS_DATA = [
+  "Fit Preview renders are stylised and illustrative, not photorealistic — deliberately, per the pilot-feasible rendering tier.",
+  "Social-proof rates are computed over seeded orders, so they demonstrate the mechanism, not production statistical power.",
+  "The identity bridge accepts any loyalty number; real bridging depends on a loyalty-programme integration and a negotiated marketplace arrangement.",
+  "Only two Gemini call sites exist here versus four in the Enterprise Console — a deliberate scoping choice, not an architectural limit.",
+  "No payment or delivery mechanics: Stage 4 drop-off is largely Order Fulfilment's remit and is flagged as unaddressed rather than force-fitted with a feature."
+];
+const CHANGELOG_DATA = [
+  { ver:"0.4", change:"Image sourcing moved to self-curated hotlinkable URLs", why:"Removed API-key dependency" },
+  { ver:"0.5", change:"Fit Preview upgraded from static illustration to interactive rotating model", why:"Static render read as decoration, not model output" },
+  { ver:"0.6", change:"Cart-level fit check (F8) added", why:"Confidence Layer previously stopped at the product page while Stage 3→4 still leaked" },
+  { ver:"0.7", change:"Output format changed to a single self-contained HTML file", why:"Submission format requirement" },
+  { ver:"1.0", change:"Brand gating moved to component-level substitution", why:"Silently not calling an identical button is not an enforced constraint" }
+];
 
 /* ---------------------------- GLOBAL STATE ---------------------------- */
 const state = {
@@ -692,7 +970,7 @@ const state = {
   bridgeModal: null,        // {step, prefilled}
   proactiveShown: false,
   supportDraft: "",
-  catalogFilters: { category:"all", confidence:"all" },
+  catalogFilters: { category:"all", confidence:"all", price:"all" },
   returnFlowByProductOrder: {}, // in-progress return flow UI state, keyed by orderId
   fitModelRegistry: {}      // instanceId -> controller
 };
@@ -706,6 +984,18 @@ function escapeHtml(s){
   return String(s==null?"":s).replace(/[&<>"']/g, function(c){
     return { "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c];
   });
+}
+function shareLinkFor(name){
+  const slug = String(name).toLowerCase().replace(/[^a-z0-9]+/g,"-").replace(/(^-|-$)/g,"");
+  return "https://styleverse.example/fit/" + slug + "-" + hashStr(name).toString(36).slice(0,6);
+}
+function renderShareLinkBox(profileName){
+  return ''
+    + '<div class="share-link-box">'
+    +   '<strong style="font-size:13px;">Share this fit profile</strong>'
+    +   '<p style="font-size:12px; color:var(--muted); margin:4px 0 0 0;">Send this link to '+escapeHtml(profileName)+' so they can view their own Fit Preview — we never render it against your body.</p>'
+    +   '<div class="link-row"><input type="text" readonly value="'+shareLinkFor(profileName)+'"><button class="btn ghost small" data-action="noop">Copy</button></div>'
+    + '</div>';
 }
 function fmtDate(iso){
   const dt = new Date(iso);
@@ -890,10 +1180,11 @@ function fmMarkersSvg(view, category, archetypeId){
   const arch = getArchetype(archetypeId);
   const g = fmGeom(view, arch);
   const zones = (fitMatrix[category] && fitMatrix[category][archetypeId]) || { shoulders:"true_to_size", waist:"true_to_size", length:"true_to_size" };
+  const lengthIsHem = category==="Tops" || category==="Outerwear" || category==="Dresses" || category==="Accessories";
   const pts = [
     { zone:"shoulders", xy:g.markShoulder },
     { zone:"waist", xy:g.markWaist },
-    { zone:"length", xy:g.markLength }
+    { zone:"length", xy: lengthIsHem ? g.markHem : g.markLength }
   ];
   return pts.map(function(pt){
     const dir = zones[pt.zone];
@@ -1157,6 +1448,7 @@ function renderNav(){
     +       '<button class="navlink" data-action="go-returns">My Returns</button>'
     +       '<button class="navlink" data-action="go-account">Account</button>'
     +       '<button class="navlink" data-action="go-support">Support</button>'
+    +       '<button class="navlink" data-action="go-impact">Impact</button>'
     +       '<button class="navlink" data-action="go-cart">Cart<span class="cart-count">'+cartCount+'</span></button>'
     +       (brand.escalationVisible ? '<span class="escalation-pill" data-action="go-support">Talk to a human</span>' : '')
     +       '<button class="switch-persona" data-action="switch-persona">&#8635; Switch Persona</button>'
@@ -1185,8 +1477,14 @@ function render(){
   }
 }
 function renderFooter(){
-  return '<footer class="app-footer">StyleVerse prototype — demo data only. Brand posture: '
-    + escapeHtml(activeBrand().posture) + '</footer>';
+  return ''
+    + '<footer class="app-footer"><div class="footer-inner">'
+    +   '<span>StyleVerse prototype — demo data only. Brand posture: ' + escapeHtml(activeBrand().posture) + '</span>'
+    +   '<span class="footer-links">'
+    +     '<button class="footer-link" data-action="go-impact">Impact Dashboard</button>'
+    +     '<button class="footer-link" data-action="go-about">About this prototype</button>'
+    +   '</span>'
+    + '</div></footer>';
 }
 function renderScreenBody(){
   switch(state.screen){
@@ -1202,11 +1500,13 @@ function renderScreenBody(){
     case "returns": return renderReturnsListScreen();
     case "return-flow": return renderReturnFlowScreen(state.screenParams.returnKey);
     case "support": return renderSupportScreen();
+    case "impact": return renderImpactScreen();
+    case "about": return renderAboutScreen();
     default: return renderHomeScreen();
   }
 }
 function afterRender(){
-  if(state.screen === "fit-onboarding" && state.screenParams.step === 4){
+  if(state.screen === "fit-onboarding" && state.screenParams.step === 4 && state.screenParams.shoppingFor !== "other"){
     initFitModel("onboard-fm", state.screenParams.previewArchetypeId, "Tops");
   }
   if(state.screen === "account"){
@@ -1228,11 +1528,14 @@ function renderProductCard(p){
   const tier = confidenceTier(score);
   return ''
     + '<div class="card product-card" data-action="open-product" data-id="'+p.id+'">'
-    +   '<img class="thumb" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+    +   '<div class="thumb-wrap">'
+    +     '<img class="thumb" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+    +     '<span class="badge '+tier+'">'+score+'%</span>'
+    +   '</div>'
     +   '<div class="pc-body">'
     +     '<h4>'+escapeHtml(p.name)+'</h4>'
+    +     '<div class="pc-cat">'+escapeHtml(brand.name)+' &middot; '+escapeHtml(p.category)+'</div>'
     +     '<div class="price">'+money(p.priceInr)+'</div>'
-    +     '<span class="badge '+tier+'">'+score+'% fit confidence</span>'
     +   '</div>'
     + '</div>';
 }
@@ -1255,21 +1558,32 @@ function renderCatalogScreen(){
   if(f.confidence !== "all"){
     list = list.filter(function(p){ return confidenceTier(confidenceScore(p, activeArchetypeId())) === f.confidence; });
   }
+  if(f.price && f.price !== "all"){
+    const bounds = f.price.split("-");
+    const lo = Number(bounds[0]), hi = bounds[1] === "max" ? Infinity : Number(bounds[1]);
+    list = list.filter(function(p){ return p.priceInr >= lo && p.priceInr <= hi; });
+  }
   const cards = list.map(renderProductCard).join("") || '<p style="color:var(--muted);">No products match these filters.</p>';
   const brandOptions = BRANDS.map(function(b){ return '<option value="'+b.id+'" '+(b.id===brand.id?"selected":"")+'>'+escapeHtml(b.name)+'</option>'; }).join("");
   const catOptions = CATEGORIES.map(function(c){ return '<option value="'+c+'" '+(f.category===c?"selected":"")+'>'+c+'</option>'; }).join("");
+  const priceOptions = [
+    ["all","All prices"], ["0-1500","Under ₹1,500"], ["1500-4000","₹1,500 – ₹4,000"],
+    ["4000-8000","₹4,000 – ₹8,000"], ["8000-max","Above ₹8,000"]
+  ].map(function(o){ return '<option value="'+o[0]+'" '+(f.price===o[0]?"selected":"")+'>'+o[1]+'</option>'; }).join("");
   return ''
     + '<div class="page container">'
     +   '<h1>Catalog</h1>'
     +   '<div class="filter-bar">'
     +     '<select data-action="browse-brand-select">'+brandOptions+'</select>'
     +     '<select data-action="filter-category"><option value="all">All categories</option>'+catOptions+'</select>'
+    +     '<select data-action="filter-price">'+priceOptions+'</select>'
     +     '<select data-action="filter-confidence">'
     +       '<option value="all">All fit confidence</option>'
     +       '<option value="high" '+(f.confidence==="high"?"selected":"")+'>High (&ge;80%)</option>'
     +       '<option value="medium" '+(f.confidence==="medium"?"selected":"")+'>Medium (60–79%)</option>'
     +       '<option value="low" '+(f.confidence==="low"?"selected":"")+'>Low (&lt;60%)</option>'
     +     '</select>'
+    +     '<span class="result-count">'+list.length+' item'+(list.length===1?"":"s")+'</span>'
     +   '</div>'
     +   '<div class="product-grid">'+cards+'</div>'
     + '</div>';
@@ -1521,7 +1835,7 @@ function placeOrder(){
   const orderId = "SV-ORD-" + Math.floor(1000+Math.random()*8999);
   const deliveryDate = new Date(Date.now() + (3 + Math.floor(Math.random()*4))*86400000).toISOString().slice(0,10);
   const items = state.cart.map(function(l){ return { productId:l.productId, size:l.size, qty:l.qty }; });
-  const order = { id: orderId, channel:"d2c", date:new Date().toISOString().slice(0,10), status:"Processing", items: items };
+  const order = { id: orderId, channel:"d2c", date:new Date().toISOString().slice(0,10), status:"Ordered", items: items };
   p.orders.unshift(order);
   state.cart = [];
   navigate("order-confirm", { order: order, deliveryDate: deliveryDate });
@@ -1582,7 +1896,7 @@ function renderOrderConfirmScreen(){
 }
 
 /* ---------------------------- SCREEN 9 — TRACK EVERYWHERE ---------------------------- */
-const STATUS_STEPS = ["Processing","Shipped","Out for Delivery","Delivered"];
+const STATUS_STEPS = ["Ordered","Shipped","Out for Delivery","Delivered"];
 function getTimelineOrders(p){
   const isBridged = p.bridgingStatus === "linked";
   let list = p.orders.map(function(o){ return Object.assign({}, o, { channel:"d2c" }); });
@@ -1863,6 +2177,9 @@ function handleAppClick(e){
     case "go-returns": navigate("returns", {}); break;
     case "go-account": navigate("account", {}); break;
     case "go-support": navigate("support", {}); break;
+    case "go-impact": navigate("impact", {}); break;
+    case "go-about": navigate("about", { tab:"governance" }); break;
+    case "about-tab": setAboutTab(val); break;
     case "go-cart": navigate("cart", {}); break;
     case "open-bridge-modal": openBridgeModal(); break;
     case "dismiss-bridge-banner": dismissBridgeBanner(); break;
@@ -1911,6 +2228,7 @@ function handleAppChange(e){
     case "browse-brand-select": browseBrand(el.value); break;
     case "filter-category": setFilter("category", el.value); break;
     case "filter-confidence": setFilter("confidence", el.value); break;
+    case "filter-price": setFilter("price", el.value); break;
     case "cart-size": cartLineChangeSize(parseInt(el.getAttribute("data-idx"),10), el.value); break;
     default: break;
   }
@@ -1935,6 +2253,83 @@ if(document.readyState === "loading"){
 } else {
   initApp();
 }
+
+/* ---------------------------- IMPACT DASHBOARD ---------------------------- */
+function renderImpactScreen(){
+  const maxVol = FUNNEL_DATA[0].volumeNum;
+  const bars = FUNNEL_DATA.map(function(f){
+    const pct = Math.max(6, Math.round((f.volumeNum / maxVol) * 100));
+    return ''
+      + '<div class="funnel-bar-row">'
+      +   '<div class="fb-label">'+escapeHtml(f.stage)+'</div>'
+      +   '<div class="funnel-bar-track"><div class="funnel-bar-fill" style="width:'+pct+'%"></div></div>'
+      +   '<div class="fb-volume">'+escapeHtml(f.volume)+'</div>'
+      +   '<div class="fb-advance">advances '+escapeHtml(f.advance)+'</div>'
+      + '</div>';
+  }).join("");
+  const funnelRows = FUNNEL_DATA.map(function(f){
+    return '<tr><td><strong>'+escapeHtml(f.stage)+'</strong></td><td>'+escapeHtml(f.volume)+'</td><td>'+escapeHtml(f.advance)+'</td><td>'+escapeHtml(f.cause)+'</td><td>'+escapeHtml(f.feature)+'</td></tr>';
+  }).join("") + '<tr><td><strong>'+escapeHtml(FUNNEL_TAIL.stage)+'</strong></td><td colspan="2">'+escapeHtml(FUNNEL_TAIL.volume)+'</td><td>'+escapeHtml(FUNNEL_TAIL.cause)+'</td><td>'+escapeHtml(FUNNEL_TAIL.feature)+'</td></tr>';
+  const kpiCards = KPI_DATA.map(function(k){
+    return ''
+      + '<div class="card kpi-card">'
+      +   '<div class="kpi-feature">'+escapeHtml(k.feature)+'</div>'
+      +   '<div class="kpi-metric">'+escapeHtml(k.metric)+'</div>'
+      +   '<div class="kpi-move"><span class="from">'+escapeHtml(k.from)+'</span><span>&rarr;</span><span class="to">'+escapeHtml(k.to)+'</span></div>'
+      +   (k.ambition && k.ambition!=="—" ? '<div class="kpi-ambition">Ambition: '+escapeHtml(k.ambition)+'</div>' : '')
+      + '</div>';
+  }).join("");
+  return ''
+    + '<div class="page container">'
+    +   '<div class="eyebrow">Business case</div>'
+    +   '<h1>Impact Dashboard</h1>'
+    +   '<p style="color:var(--muted); max-width:640px; margin-bottom:26px;">The behavioural failure this prototype targets: purchase-decision uncertainty, pre- and post-purchase. Every feature below is mapped to the funnel stage it addresses and the KPI it is committed to move.</p>'
+    +   '<h2 class="section-title">Funnel — where the leak happens</h2>'
+    +   '<div class="card" style="padding:20px 22px; margin-bottom:26px;">' + bars + '</div>'
+    +   '<div class="table-wrap"><table class="data-table"><thead><tr><th>Stage</th><th>Volume</th><th>Advance</th><th>Named cause</th><th>Feature response</th></tr></thead><tbody>'+funnelRows+'</tbody></table></div>'
+    +   '<h2 class="section-title">Feature &rarr; KPI attribution</h2>'
+    +   '<div class="kpi-grid">'+kpiCards+'</div>'
+    + '</div>';
+}
+
+/* ---------------------------- ABOUT / GOVERNANCE ---------------------------- */
+function renderAboutScreen(){
+  const tab = state.screenParams.tab || "governance";
+  const tabs = [
+    ["governance","Governance & Disclosure"],
+    ["deltas","Prototype → Production"],
+    ["limitations","Known Limitations"],
+    ["changelog","Changelog"]
+  ];
+  const tabHtml = tabs.map(function(t){
+    return '<button class="tab-btn '+(tab===t[0]?"active":"")+'" data-action="about-tab" data-val="'+t[0]+'">'+t[1]+'</button>';
+  }).join("");
+  let body = "";
+  if(tab === "governance"){
+    const rows = GOVERNANCE_DATA.map(function(g){ return '<tr><td>'+escapeHtml(g.obligation)+'</td><td>'+escapeHtml(g.where)+'</td></tr>'; }).join("");
+    body = '<div class="table-wrap"><table class="data-table"><thead><tr><th>Obligation</th><th>Where it appears in this prototype</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else if(tab === "deltas"){
+    const rows = DELTAS_DATA.map(function(d0){ return '<tr><td><strong>'+escapeHtml(d0.area)+'</strong></td><td>'+escapeHtml(d0.prototype)+'</td><td>'+escapeHtml(d0.production)+'</td></tr>'; }).join("");
+    body = '<div class="table-wrap"><table class="data-table"><thead><tr><th>Area</th><th>This prototype</th><th>Production</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+  } else if(tab === "limitations"){
+    body = '<ul class="limitations-list">' + LIMITATIONS_DATA.map(function(l,i){
+      return '<li><span class="num">'+(i+1)+'</span><span>'+escapeHtml(l)+'</span></li>';
+    }).join("") + '</ul>';
+  } else if(tab === "changelog"){
+    body = CHANGELOG_DATA.map(function(c){
+      return '<div class="changelog-item"><span class="ver">v'+c.ver+'</span><span><strong>'+escapeHtml(c.change)+'</strong><br><span style="color:var(--muted);">'+escapeHtml(c.why)+'</span></span></div>';
+    }).join("");
+  }
+  return ''
+    + '<div class="page container" style="max-width:900px;">'
+    +   '<div class="eyebrow">Read before you demo</div>'
+    +   '<h1>About this prototype</h1>'
+    +   '<p style="color:var(--muted); margin-bottom:22px;">StyleVerse is a single self-contained HTML file demonstrating the Consumer Storefront half of the Confidence Engine. This page states, honestly, what is real mechanism vs. seeded demo data, and what production would add.</p>'
+    +   '<div class="tab-row">'+tabHtml+'</div>'
+    +   body
+    + '</div>';
+}
+function setAboutTab(tab){ state.screenParams.tab = tab; render(); }
 
 /* ---------------------------- SCREEN 4 — ACCOUNT ---------------------------- */
 function setShoppingProfile(val){
@@ -1977,6 +2372,7 @@ function renderAccountScreen(){
       +     '<button class="toggle-btn '+(p.shoppingFor==="other"?"active":"")+'" data-action="set-profile" data-val="other">'+escapeHtml(p.secondaryProfile.name)+'</button>'
       +   '</div>'
       +   '<p style="font-size:11.5px; color:var(--muted); margin-top:6px;">Active profile: <strong>'+(p.shoppingFor==="other"?escapeHtml(p.secondaryProfile.name):"Myself")+'</strong></p>'
+      +   (p.shoppingFor==="other" ? renderShareLinkBox(p.secondaryProfile.name) : "")
       + '</div>';
   }
 
@@ -2013,20 +2409,29 @@ function renderAccountScreen(){
     +     '<div class="card acct-section">'
     +       '<h3>Brand Posture</h3>'
     +       '<p style="font-size:13px;">'+escapeHtml(brand.posture)+'</p>'
+    +       '<p style="font-size:12px; color:var(--muted); font-style:italic;">"'+escapeHtml(brand.tagline)+'"</p>'
     +       '<p style="font-size:12px; color:var(--muted);">'+escapeHtml(brand.hardLimit)+'</p>'
-    +       '<p style="font-size:12px; margin-top:8px;">Client-facing AI: <strong>'+(brand.clientFacingAI ? "Enabled (Gemini, labeled)" : "Disabled — advisor/rules-routed")+'</strong></p>'
+    +       '<div class="dial-row" style="margin-top:14px;">'
+    +         '<div class="dial-label"><b>Automation level</b><span>'+brand.automationLevel+'/100</span></div>'
+    +         '<div class="dial-track"><div class="dial-fill" style="width:'+brand.automationLevel+'%"></div></div>'
+    +       '</div>'
+    +       '<p style="font-size:12px;">Disclosure mode: <strong>'+escapeHtml(brand.disclosureMode)+'</strong></p>'
+    +       '<p style="font-size:12px;">Client-facing generative AI: <strong>'+(brand.generativeContentAllowed ? "Enabled (Gemini, labeled)" : "Disabled — advisor/rules-routed")+'</strong></p>'
+    +       '<p style="font-size:12px;">Human escalation always visible: <strong>'+(brand.escalationVisible ? "Yes" : "No")+'</strong></p>'
     +     '</div>'
     +   '</div>'
     + '</div>';
 }
 
 /* ---------------------------- SCREEN 1 — PERSONA SELECTOR ---------------------------- */
+const PERSONA_ICONS = {1:"✨",2:"🔁",3:"🔄",4:"🔗",5:"⏳",6:"🔁",7:"🪞",8:"👥",9:"⚠️",10:"👤"};
 function renderPersonaSelectScreen(){
   const cards = personas.map(function(p){
     const brand = getBrand(p.brandId);
     return ''
       + '<div class="persona-card" data-action="select-persona" data-id="'+p.id+'">'
       +   '<span class="brand-badge" style="background:'+brand.accent+'">'+escapeHtml(brand.name)+'</span>'
+      +   '<div class="persona-icon">'+(PERSONA_ICONS[p.scenario]||"🛍️")+'</div>'
       +   '<h3>'+escapeHtml(p.name)+'</h3>'
       +   '<p>'+escapeHtml(p.scenarioLabel)+'</p>'
       +   '<div class="scenario-tag">Scenario '+p.scenario+' of 10</div>'
@@ -2034,7 +2439,7 @@ function renderPersonaSelectScreen(){
   }).join("");
   return ''
     + '<div id="persona-screen">'
-    +   '<div class="ps-header"><h1>StyleVerse</h1><p>Pick a shopper persona to enter the demo. Each one shows a different piece of the D2C fit &amp; identity story.</p></div>'
+    +   '<div class="ps-header"><div class="ps-kicker">D2C Confidence Engine · Consumer Storefront</div><h1>StyleVerse</h1><p>Pick a shopper persona to enter the demo. Each one shows a different piece of the D2C fit &amp; identity story — five brands, one confidence engine.</p></div>'
     +   '<div class="persona-grid">' + cards + '</div>'
     + '</div>';
 }
@@ -2090,11 +2495,24 @@ function renderHomeScreen(){
   }
   const featured = products.filter(function(pr){ return pr.brandId === brand.id; }).slice(0,4);
   const featuredHtml = featured.map(renderProductCard).join("");
+  const timeline = getTimelineOrders(p);
+  const arch = p.fitPassport ? getArchetype(p.fitPassport.archetypeId) : null;
+  const activeReturns = (p.returns||[]).filter(function(r){ return r.status==="in_progress"; }).length;
+  const statsHtml = ''
+    + '<div class="card stat-tile"><div class="stat-value">'+timeline.length+'</div><div class="stat-label">Orders across channels</div></div>'
+    + '<div class="card stat-tile"><div class="stat-value">'+(arch ? arch.label : "Not set")+'</div><div class="stat-label">Fit archetype</div></div>'
+    + '<div class="card stat-tile"><div class="stat-value">'+(p.bridgingStatus==="linked" ? "Linked" : p.bridgingStatus==="started" ? "In progress" : p.bridgingStatus==="linked-native" ? "D2C-native" : "Not linked")+'</div><div class="stat-label">Identity bridge</div></div>'
+    + '<div class="card stat-tile"><div class="stat-value">'+activeReturns+'</div><div class="stat-label">Active returns</div></div>';
   return ''
     + '<div class="page container">'
+    +   '<div class="hero">'
+    +     '<div class="eyebrow" style="color:rgba(255,255,255,.85);"><span style="width:16px;height:2px;background:#fff;display:inline-block;border-radius:2px;"></span>'+escapeHtml(brand.name)+' &middot; '+escapeHtml(brand.posture)+'</div>'
+    +     '<h1>Welcome back, '+escapeHtml(p.name.split(" ")[0])+'</h1>'
+    +     '<p>'+escapeHtml(brand.hardLimit)+'</p>'
+    +     '<div class="hero-meta"><span>'+(brand.clientFacingAI ? "Live AI, always labeled" : "No live AI — human or rules-routed")+'</span><span>Disclosure: '+escapeHtml(brand.disclosureMode)+'</span><span>Automation: '+escapeHtml(brand.automationLevel)+'</span></div>'
+    +   '</div>'
     +   banners
-    +   '<h1>Welcome back, '+escapeHtml(p.name.split(" ")[0])+'</h1>'
-    +   '<p style="color:var(--muted); margin-bottom:24px;">Shopping '+escapeHtml(brand.name)+' &middot; '+escapeHtml(brand.posture)+'</p>'
+    +   '<div class="stats-strip">'+statsHtml+'</div>'
     +   '<h2 class="section-title">Picked for you</h2>'
     +   '<div class="product-grid">'+featuredHtml+'</div>'
     + '</div>';
@@ -2185,12 +2603,21 @@ function renderFitOnboardingScreen(){
     body = '<h2 style="text-align:center;">Finding your fit...</h2><div class="spinner"></div>';
   } else if(sp.step === 4){
     const arch = getArchetype(sp.previewArchetypeId);
-    body = ''
-      + '<h2>You\'re all set!</h2>'
-      + '<div class="card" style="padding:16px; margin-bottom:18px;">Based on your answers, your fit archetype is <strong>'+escapeHtml(arch.label)+'</strong> — '+escapeHtml(arch.measurementRange)+'.</div>'
-      + '<h3>Your Fit Model</h3>'
-      + '<div id="onboard-fm">' + renderFitModel({ archetypeId: sp.previewArchetypeId, category:"Tops" }) + '</div>'
-      + '<button class="btn" style="margin-top:18px;" data-action="go-home">Continue Shopping</button>';
+    if(sp.shoppingFor === "other"){
+      const profileName = state.currentPersona.secondaryProfile ? state.currentPersona.secondaryProfile.name : "New profile";
+      body = ''
+        + '<h2>Profile saved!</h2>'
+        + '<div class="card" style="padding:16px; margin-bottom:18px;">We\'ve matched this to the <strong>'+escapeHtml(arch.label)+'</strong> archetype — '+escapeHtml(arch.measurementRange)+'. Since this profile is for someone else, we won\'t render a fit preview against your own body.</div>'
+        + renderShareLinkBox(profileName)
+        + '<button class="btn" style="margin-top:18px;" data-action="go-home">Continue Shopping</button>';
+    } else {
+      body = ''
+        + '<h2>You\'re all set!</h2>'
+        + '<div class="card" style="padding:16px; margin-bottom:18px;">Based on your answers, your fit archetype is <strong>'+escapeHtml(arch.label)+'</strong> — '+escapeHtml(arch.measurementRange)+'.</div>'
+        + '<h3>Your Fit Model</h3>'
+        + '<div id="onboard-fm">' + renderFitModel({ archetypeId: sp.previewArchetypeId, category:"Tops" }) + '</div>'
+        + '<button class="btn" style="margin-top:18px;" data-action="go-home">Continue Shopping</button>';
+    }
   }
   return ''
     + '<div class="page container" style="max-width:640px;">'

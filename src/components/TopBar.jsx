@@ -1,17 +1,41 @@
 import { useBrand } from '../context/BrandContext'
 
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-4 w-4">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.2 4.2l1.4 1.4M18.4 18.4l1.4 1.4M2 12h2M20 12h2M4.2 19.8l1.4-1.4M18.4 5.6l1.4-1.4" />
+    </svg>
+  )
+}
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4">
+      <path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a.5.5 0 0 0-.6-.7A9.5 9.5 0 1 0 21.2 15.2a.5.5 0 0 0-.7-.6Z" />
+    </svg>
+  )
+}
+function SearchIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-3.5 w-3.5">
+      <circle cx="11" cy="11" r="7" />
+      <path d="m20 20-3.2-3.2" />
+    </svg>
+  )
+}
+
 export default function TopBar() {
-  const { brands, brandId, setBrandId, brand } = useBrand()
+  const { brands, brandId, setBrandId, brand, effectiveTheme, toggleTheme } = useBrand()
 
   return (
     <header
-      className="flex h-16 shrink-0 items-center justify-between border-b px-6"
-      style={{ borderColor: 'var(--edge)', background: 'var(--surface)' }}
+      className="glass sticky top-0 z-30 flex shrink-0 items-center justify-between px-6"
+      style={{ height: 'var(--topbar-h)' }}
     >
       <div className="flex items-center gap-3">
         <div
-          className="flex h-8 w-8 items-center justify-center rounded font-heading text-sm font-bold text-white"
-          style={{ background: 'var(--brand-accent)' }}
+          className="flex h-8 w-8 items-center justify-center rounded font-heading text-sm font-bold"
+          style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}
         >
           SV
         </div>
@@ -19,17 +43,30 @@ export default function TopBar() {
           StyleVerse Confidence Engine
         </div>
         <span
-          className="ml-1 rounded-full px-2 py-0.5 text-[11px] font-medium"
+          className="ml-1 hidden rounded-full px-2 py-0.5 text-[11px] font-medium sm:inline-block"
           style={{ background: 'var(--brand-accent-soft)', color: 'var(--brand-accent)' }}
         >
           Enterprise Console
         </span>
       </div>
 
-      <div className="flex items-center gap-4">
-        <span className="text-xs font-medium" style={{ color: 'var(--ink-mute)' }}>
+      <div className="flex items-center gap-3">
+        <button
+          type="button"
+          onClick={() => window.dispatchEvent(new CustomEvent('styleverse:open-command-palette'))}
+          className="hidden items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-xs md:flex"
+          style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)', background: 'color-mix(in srgb, var(--surface) 55%, transparent)' }}
+          title="Search &amp; jump to any module"
+        >
+          <SearchIcon />
+          Jump to…
+          <kbd className="ml-1 rounded border px-1 font-sans text-[10px]" style={{ borderColor: 'var(--edge)' }}>⌘K</kbd>
+        </button>
+
+        <span className="hidden text-xs font-medium lg:inline" style={{ color: 'var(--ink-mute)' }}>
           Last 6 months
         </span>
+
         <select
           value={brandId}
           onChange={(e) => setBrandId(e.target.value)}
@@ -42,6 +79,7 @@ export default function TopBar() {
             </option>
           ))}
         </select>
+
         {brand && (
           <span
             className="hidden rounded-full px-2.5 py-1 text-[11px] font-semibold sm:inline-block"
@@ -50,6 +88,17 @@ export default function TopBar() {
             {brand.posture}
           </span>
         )}
+
+        <button
+          type="button"
+          onClick={toggleTheme}
+          aria-label={effectiveTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          title={effectiveTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border"
+          style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}
+        >
+          {effectiveTheme === 'dark' ? <SunIcon /> : <MoonIcon />}
+        </button>
       </div>
     </header>
   )

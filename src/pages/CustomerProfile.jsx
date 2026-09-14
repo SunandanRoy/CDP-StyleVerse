@@ -17,7 +17,7 @@ function TimelineRow({ entry }) {
     const o = entry.ref
     return (
       <div className="flex items-start gap-3 py-2">
-        <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: '#e6edfd', color: '#1d4ed8' }}>ORDER</span>
+        <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: 'var(--info-soft)', color: 'var(--info)' }}>ORDER</span>
         <div className="text-sm">
           <span className="font-medium">{o.product_name}</span> · size {o.size} · <span style={{ color: 'var(--ink-mute)' }}>{o.status} via {o.channel}</span>
           <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{o.date} · {o.id}</div>
@@ -29,7 +29,7 @@ function TimelineRow({ entry }) {
     const r = entry.ref
     return (
       <div className="flex items-start gap-3 py-2">
-        <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: '#fdf1e0', color: '#b45309' }}>RETURN</span>
+        <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: 'var(--warn-soft)', color: 'var(--warn)' }}>RETURN</span>
         <div className="text-sm">
           <span className="font-medium">{r.reason_code.replaceAll('_', ' ')}</span> ·{' '}
           <span style={{ color: 'var(--ink-mute)' }}>
@@ -43,7 +43,7 @@ function TimelineRow({ entry }) {
   const c = entry.ref
   return (
     <div className="flex items-start gap-3 py-2">
-      <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: '#f1e9fe', color: '#7c3aed' }}>CASE</span>
+      <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: 'var(--accent2-soft)', color: 'var(--accent2)' }}>CASE</span>
       <div className="text-sm">
         <Link to={`/cases/${c.id}`} className="font-medium hover:underline" style={{ color: 'var(--brand-accent)' }}>{c.id}</Link> ·{' '}
         <span style={{ color: 'var(--ink-mute)' }}>{c.status}{c.predicted_grievance ? ' · ⚠ grievance likely' : ''}</span>
@@ -82,11 +82,11 @@ export default function CustomerProfile() {
               <span key={ch} className="rounded-full border px-2 py-0.5 text-[11px]" style={{ borderColor: 'var(--edge)' }}>{ch}</span>
             ))}
             {customer.loyalty_id ? (
-              <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: '#e4f7e9', color: '#15803d' }}>
+              <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: 'var(--good-soft)', color: 'var(--good)' }}>
                 Linked via Fit Passport (loyalty_id: {customer.loyalty_id})
               </span>
             ) : (
-              <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: '#fdf1e0', color: '#b45309' }}>
+              <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: 'var(--warn-soft)', color: 'var(--warn)' }}>
                 Not yet bridged — marketplace identity unresolved
               </span>
             )}

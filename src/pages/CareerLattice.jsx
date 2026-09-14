@@ -4,7 +4,7 @@ import { useFetch } from '../lib/useFetch'
 const GATE_BY_TRANSITION = [
   'Automate', 'Augment', 'Eliminate', 'Augment', 'Amplify', 'Augment'
 ]
-const GATE_COLORS = { Automate: '#1d4ed8', Augment: '#7c3aed', Amplify: '#15803d', Eliminate: '#b45309' }
+const GATE_COLORS = { Automate: 'var(--info)', Augment: 'var(--accent2)', Amplify: 'var(--good)', Eliminate: 'var(--warn)' }
 
 export default function CareerLattice() {
   const { data: lattice, loading } = useFetch('/career-lattice')
@@ -30,7 +30,7 @@ export default function CareerLattice() {
                     {t.from_role}
                   </div>
                   <span className="text-lg" style={{ color: 'var(--brand-accent)' }}>→</span>
-                  <div className="rounded-md px-3 py-2 text-sm font-semibold text-white" style={{ background: 'var(--brand-accent)' }}>
+                  <div className="rounded-md px-3 py-2 text-sm font-semibold" style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}>
                     {t.to_role}
                   </div>
                 </div>

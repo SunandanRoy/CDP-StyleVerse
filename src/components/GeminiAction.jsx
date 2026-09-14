@@ -27,8 +27,8 @@ export default function GeminiAction({ endpoint, payload, label, resultTitle = '
       <button
         onClick={run}
         disabled={state === 'loading'}
-        className="rounded-md px-3.5 py-2 text-sm font-semibold text-white disabled:opacity-60"
-        style={{ background: 'var(--brand-accent)' }}
+        className="rounded-md px-3.5 py-2 text-sm font-semibold disabled:opacity-60"
+        style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}
       >
         {state === 'loading' ? 'Generating…' : label}
       </button>

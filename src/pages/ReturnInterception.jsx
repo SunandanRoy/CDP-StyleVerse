@@ -75,7 +75,7 @@ export default function ReturnInterception() {
                     <td className="px-3 py-2">{r.product_name}</td>
                     <td className="px-3 py-2 text-xs">{r.reason_code.replaceAll('_', ' ')}</td>
                     <td className="px-3 py-2">
-                      <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: r.intercepted ? '#e4f7e9' : '#f4f4f5', color: r.intercepted ? '#15803d' : '#71717a' }}>
+                      <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: r.intercepted ? 'var(--good-soft)' : 'var(--neutral-soft)', color: r.intercepted ? 'var(--good)' : 'var(--neutral)' }}>
                         {r.intercepted ? 'Yes' : 'No'}
                       </span>
                     </td>
@@ -121,8 +121,8 @@ export default function ReturnInterception() {
           <button
             onClick={runSimulation}
             disabled={!simCustomerId || !simOrderId || simLoading}
-            className="w-full rounded-md px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
-            style={{ background: 'var(--brand-accent)' }}
+            className="w-full rounded-md px-3 py-2 text-sm font-semibold disabled:opacity-50"
+            style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}
           >
             {simLoading ? 'Simulating…' : 'Run simulation'}
           </button>
@@ -130,11 +130,11 @@ export default function ReturnInterception() {
           {simResult && (
             <div className="mt-3 rounded-md border p-3 text-xs" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
               <div className="mb-2 flex flex-wrap gap-1.5">
-                <span className="rounded-full px-2 py-0.5 font-semibold" style={{ background: simResult.intercepted ? '#e4f7e9' : '#f4f4f5', color: simResult.intercepted ? '#15803d' : '#71717a' }}>
+                <span className="rounded-full px-2 py-0.5 font-semibold" style={{ background: simResult.intercepted ? 'var(--good-soft)' : 'var(--neutral-soft)', color: simResult.intercepted ? 'var(--good)' : 'var(--neutral)' }}>
                   {simResult.intercepted ? 'Would intercept' : 'Would not intercept'}
                 </span>
                 {simResult.exchange_offered && (
-                  <span className="rounded-full px-2 py-0.5 font-semibold" style={{ background: '#e6edfd', color: '#1d4ed8' }}>
+                  <span className="rounded-full px-2 py-0.5 font-semibold" style={{ background: 'var(--info-soft)', color: 'var(--info)' }}>
                     Exchange {simResult.exchange_accepted ? 'likely accepted' : 'offered'}
                   </span>
                 )}
@@ -147,7 +147,7 @@ export default function ReturnInterception() {
                   </div>
                   <div className="rounded border px-1.5 py-1" style={{ borderColor: 'var(--edge)', background: 'var(--surface)' }}>
                     <div style={{ color: 'var(--ink-mute)' }}>in stock</div>
-                    <div className="font-semibold" style={{ color: simResult.corrected_size_in_stock ? '#15803d' : '#b91c1c' }}>
+                    <div className="font-semibold" style={{ color: simResult.corrected_size_in_stock ? 'var(--good)' : 'var(--bad)' }}>
                       {simResult.corrected_size_in_stock ? 'Yes' : 'No'}
                     </div>
                   </div>

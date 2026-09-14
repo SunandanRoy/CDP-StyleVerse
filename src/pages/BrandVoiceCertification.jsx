@@ -62,8 +62,8 @@ export default function BrandVoiceCertification() {
         <button
           onClick={runCertify}
           disabled={loading || !draft.trim()}
-          className="mt-3 rounded-md px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
-          style={{ background: 'var(--brand-accent)' }}
+          className="mt-3 rounded-md px-4 py-2 text-sm font-semibold disabled:opacity-50"
+          style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}
         >
           {loading ? 'Certifying…' : 'Certify'}
         </button>
@@ -73,7 +73,7 @@ export default function BrandVoiceCertification() {
             <div className="mb-1 flex flex-wrap items-center gap-2">
               <span
                 className="rounded-full px-2.5 py-0.5 text-xs font-bold"
-                style={result.verdict === 'Pass' ? { background: '#e4f7e9', color: '#15803d' } : { background: '#fdece8', color: '#b91c1c' }}
+                style={result.verdict === 'Pass' ? { background: 'var(--good-soft)', color: 'var(--good)' } : { background: 'var(--bad-soft)', color: 'var(--bad)' }}
               >
                 {result.verdict}
               </span>
@@ -95,7 +95,7 @@ export default function BrandVoiceCertification() {
         </div>
         {passRate !== null && (
           <div className="mb-3 flex items-center gap-3 rounded-md border p-2.5 text-xs" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
-            <span className="font-heading text-lg font-bold" style={{ color: passRate >= 85 ? '#15803d' : '#b45309' }}>{passRate}%</span>
+            <span className="font-heading text-lg font-bold" style={{ color: passRate >= 85 ? 'var(--good)' : 'var(--warn)' }}>{passRate}%</span>
             <span style={{ color: 'var(--ink-mute)' }}>first-submission pass rate for this filter · target &gt;85% by Month 9</span>
           </div>
         )}
@@ -114,7 +114,7 @@ export default function BrandVoiceCertification() {
                 <tr key={h.id} className="border-t" style={{ borderColor: 'var(--edge)' }}>
                   <td className="max-w-xs truncate px-3 py-2 text-xs">{h.draft_excerpt}</td>
                   <td className="px-3 py-2">
-                    <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={h.verdict === 'Pass' ? { background: '#e4f7e9', color: '#15803d' } : { background: '#fdece8', color: '#b91c1c' }}>{h.verdict}</span>
+                    <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={h.verdict === 'Pass' ? { background: 'var(--good-soft)', color: 'var(--good)' } : { background: 'var(--bad-soft)', color: 'var(--bad)' }}>{h.verdict}</span>
                   </td>
                   <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{h.reason}</td>
                   <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{h.date}</td>

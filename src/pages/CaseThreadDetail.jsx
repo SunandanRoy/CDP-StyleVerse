@@ -63,7 +63,7 @@ export default function CaseThreadDetail() {
       </div>
 
       {kase.predicted_grievance && (
-        <div className="mt-4 rounded-md border p-3 text-sm" style={{ borderColor: '#f3b8b8', background: '#fdece8', color: '#991b1b' }}>
+        <div className="mt-4 rounded-md border p-3 text-sm" style={{ borderColor: 'var(--bad-border)', background: 'var(--bad-soft)', color: 'var(--bad)' }}>
           <p className="font-semibold">⚠ Grievance likely — Predictive Grievance model flagged this case.</p>
           <p className="mt-0.5 text-xs">{kase.proactive_outreach_sent ? 'Proactive outreach has already been sent.' : 'No proactive outreach sent yet.'}</p>
         </div>
@@ -83,7 +83,7 @@ export default function CaseThreadDetail() {
           ) : (
             <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>Assembling brief…</p>
           )}
-          <p className="mt-2 text-[11px] font-medium" style={{ color: '#b45309' }}>
+          <p className="mt-2 text-[11px] font-medium" style={{ color: 'var(--warn)' }}>
             🛈 AI-assisted summary, verify before acting — retrieval-grounded over this customer's own order, return and case records, never free generation.
           </p>
         </div>

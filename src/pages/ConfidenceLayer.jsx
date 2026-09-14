@@ -7,9 +7,9 @@ import GeminiAction from '../components/GeminiAction'
 import FitModel from '../components/FitModel/FitModel.jsx'
 
 function scoreColor(score) {
-  if (score >= 75) return '#15803d'
-  if (score >= 60) return '#b45309'
-  return '#b91c1c'
+  if (score >= 75) return 'var(--good)'
+  if (score >= 60) return 'var(--warn)'
+  return 'var(--bad)'
 }
 
 export default function ConfidenceLayer() {
@@ -186,7 +186,7 @@ function CheckoutPreview({ items, isAdvisorMediated }) {
   return (
     <div>
       {flaggedCount > 0 && (
-        <p className="mb-2 text-[11px] font-semibold" style={{ color: '#b45309' }}>
+        <p className="mb-2 text-[11px] font-semibold" style={{ color: 'var(--warn)' }}>
           ⚠ {flaggedCount} of {items.length} items may not fit as expected
         </p>
       )}
@@ -205,28 +205,28 @@ function CheckoutPreview({ items, isAdvisorMediated }) {
                   <div className="truncate font-medium">{product.name}</div>
                   <div style={{ color: 'var(--ink-mute)' }}>₹{product.price_inr.toLocaleString('en-IN')} · Size {midSize}</div>
                 </div>
-                <div className="ml-auto shrink-0 text-right text-xs" style={{ color: belowThreshold ? '#b45309' : '#15803d' }}>
+                <div className="ml-auto shrink-0 text-right text-xs" style={{ color: belowThreshold ? 'var(--warn)' : 'var(--good)' }}>
                   {confidence.confidence_score}% confidence
                 </div>
               </div>
               {belowThreshold && !state && (
-                <div className="mt-2.5 rounded-md border p-2.5 text-xs" style={{ borderColor: '#f2c98d', background: '#fdf1e0', color: '#92400e' }}>
+                <div className="mt-2.5 rounded-md border p-2.5 text-xs" style={{ borderColor: 'var(--warn-border)', background: 'var(--warn-soft)', color: 'var(--warn-strong)' }}>
                   <p className="font-semibold">⚠ This item may not fit as expected.</p>
                   <p className="mt-1">
                     {isAdvisorMediated ? 'Your styling advisor suggests' : 'We suggest'} trying <strong>size {suggestedSize}</strong> based on shoppers with a similar fit profile.
                   </p>
                   <div className="mt-2 flex gap-2">
-                    <button onClick={() => setResolved((r) => ({ ...r, [product.id]: 'updated' }))} className="rounded bg-white px-2.5 py-1 font-semibold" style={{ border: '1px solid #f2c98d' }}>
+                    <button onClick={() => setResolved((r) => ({ ...r, [product.id]: 'updated' }))} className="rounded px-2.5 py-1 font-semibold" style={{ background: 'var(--surface)', border: '1px solid var(--warn-border)' }}>
                       Update to {suggestedSize}
                     </button>
-                    <button onClick={() => setResolved((r) => ({ ...r, [product.id]: 'continued' }))} className="rounded px-2.5 py-1 font-semibold text-white" style={{ background: 'var(--brand-accent)' }}>
+                    <button onClick={() => setResolved((r) => ({ ...r, [product.id]: 'continued' }))} className="rounded px-2.5 py-1 font-semibold" style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}>
                       Continue anyway
                     </button>
                   </div>
                 </div>
               )}
               {belowThreshold && state === 'updated' && (
-                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: '#bfe3c8', background: '#e4f7e9', color: '#166534' }}>
+                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: 'var(--good-border)', background: 'var(--good-soft)', color: 'var(--good)' }}>
                   ✓ Size updated to {suggestedSize}.
                 </div>
               )}
@@ -236,7 +236,7 @@ function CheckoutPreview({ items, isAdvisorMediated }) {
                 </div>
               )}
               {!belowThreshold && (
-                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: '#bfe3c8', background: '#e4f7e9', color: '#166534' }}>
+                <div className="mt-2.5 rounded-md border p-2 text-xs font-medium" style={{ borderColor: 'var(--good-border)', background: 'var(--good-soft)', color: 'var(--good)' }}>
                   ✓ Should fit true to size based on your profile.
                 </div>
               )}

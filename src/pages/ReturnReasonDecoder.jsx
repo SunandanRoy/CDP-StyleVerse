@@ -66,7 +66,7 @@ export default function ReturnReasonDecoder() {
               data={Object.entries(stats.byReason).map(([code, value]) => ({
                 label: REASON_LABELS[code],
                 value,
-                color: code.startsWith('fit_') ? 'var(--brand-accent)' : '#a1a1aa'
+                color: code.startsWith('fit_') ? 'var(--brand-accent)' : 'var(--neutral)'
               }))}
             />
           </div>
@@ -77,8 +77,8 @@ export default function ReturnReasonDecoder() {
             </h2>
             <BarChart
               data={[
-                { label: 'Runs small', value: stats.smallCount, color: '#b45309' },
-                { label: 'Runs large', value: stats.largeCount, color: '#1d4ed8' }
+                { label: 'Runs small', value: stats.smallCount, color: 'var(--warn)' },
+                { label: 'Runs large', value: stats.largeCount, color: 'var(--info)' }
               ]}
             />
           </div>

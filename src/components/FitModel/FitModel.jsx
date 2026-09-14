@@ -8,9 +8,9 @@ const VIEW_SCALE_X = { side: 0.32, three_quarter: 0.68, front: 1 }
 const VIEW_LABEL = { side: 'Side', three_quarter: 'Three-Quarter', front: 'Front' }
 
 const DIRECTION_META = {
-  true_to_size: { label: 'True to size', color: '#15803d', bg: '#e4f7e9' },
-  runs_tight: { label: 'Runs tight', color: '#b45309', bg: '#fdf1e0' },
-  runs_loose: { label: 'Runs loose', color: '#1d4ed8', bg: '#e6edfd' }
+  true_to_size: { label: 'True to size', color: 'var(--good)', bg: 'var(--good-soft)' },
+  runs_tight: { label: 'Runs tight', color: 'var(--warn)', bg: 'var(--warn-soft)' },
+  runs_loose: { label: 'Runs loose', color: 'var(--info)', bg: 'var(--info-soft)' }
 }
 
 /**

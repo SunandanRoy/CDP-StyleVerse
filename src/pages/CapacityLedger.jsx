@@ -3,7 +3,7 @@ import { useFetch } from '../lib/useFetch'
 import BarChart from '../components/BarChart'
 import KpiCard from '../components/KpiCard'
 
-const GATE_COLORS = { Automate: '#1d4ed8', Augment: '#7c3aed', Amplify: '#15803d', Eliminate: '#b45309' }
+const GATE_COLORS = { Automate: 'var(--info)', Augment: 'var(--accent2)', Amplify: 'var(--good)', Eliminate: 'var(--warn)' }
 
 export default function CapacityLedger() {
   const [subTeam, setSubTeam] = useState('')

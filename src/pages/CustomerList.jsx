@@ -75,9 +75,9 @@ export default function CustomerList() {
                 </td>
                 <td className="px-4 py-2">
                   {c.loyalty_id ? (
-                    <span className="text-xs font-medium" style={{ color: '#15803d' }}>Linked · {c.loyalty_id}</span>
+                    <span className="text-xs font-medium" style={{ color: 'var(--good)' }}>Linked · {c.loyalty_id}</span>
                   ) : (
-                    <span className="text-xs font-medium" style={{ color: '#b45309' }}>Not yet bridged</span>
+                    <span className="text-xs font-medium" style={{ color: 'var(--warn)' }}>Not yet bridged</span>
                   )}
                 </td>
                 <td className="px-4 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{c.fit_passport.archetype}</td>

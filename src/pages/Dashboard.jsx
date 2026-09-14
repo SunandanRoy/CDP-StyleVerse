@@ -29,7 +29,7 @@ export default function Dashboard() {
       <div className="mb-6">
         <h1 className="font-heading text-2xl font-bold">{brand.name} — Console Overview</h1>
         <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
-          {brand.posture} · ai_tooling_mode: <code className="rounded bg-black/5 px-1 py-0.5 text-xs">{brand.ai_tooling_mode}</code>
+          {brand.posture} · ai_tooling_mode: <code className="rounded px-1 py-0.5 text-xs" style={{ background: 'var(--surface-alt)', color: 'var(--ink)' }}>{brand.ai_tooling_mode}</code>
         </p>
       </div>
 

@@ -68,7 +68,7 @@ export default function MarketplaceSignal() {
         <div className="space-y-4">
           <div className="card">
             <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>Generate Insight</h2>
-            <button onClick={generate} disabled={loading} className="w-full rounded-md px-3 py-2 text-sm font-semibold text-white disabled:opacity-50" style={{ background: 'var(--brand-accent)' }}>
+            <button onClick={generate} disabled={loading} className="w-full rounded-md px-3 py-2 text-sm font-semibold disabled:opacity-50" style={{ background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' }}>
               {loading ? 'Analyzing…' : 'Generate Insight'}
             </button>
             {result && (
@@ -78,7 +78,7 @@ export default function MarketplaceSignal() {
                   {result.example && <span className="rounded-full border px-2 py-0.5" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }} title={result.note}>(example response)</span>}
                 </div>
                 <p style={{ color: 'var(--ink)' }}>{result.text}</p>
-                <p className="mt-2 font-semibold" style={{ color: '#15803d' }}>✓ Sent to Merchandising & Design feedback loop</p>
+                <p className="mt-2 font-semibold" style={{ color: 'var(--good)' }}>✓ Sent to Merchandising & Design feedback loop</p>
               </div>
             )}
           </div>

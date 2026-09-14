@@ -1,6 +1,7 @@
 import { Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
+import CommandPalette from './components/CommandPalette'
 
 import Dashboard from './pages/Dashboard'
 import CustomerList from './pages/CustomerList'
@@ -22,11 +23,13 @@ import CareerLattice from './pages/CareerLattice'
 
 export default function App() {
   return (
-    <div className="flex h-screen flex-col" style={{ background: 'var(--surface)' }}>
-      <TopBar />
-      <div className="flex min-h-0 flex-1">
-        <Sidebar />
-        <main className="min-w-0 flex-1 overflow-y-auto scrollbar-thin p-6">
+    <div className="flex h-screen" style={{ background: 'var(--surface)' }}>
+      <Sidebar />
+      {/* Single scroll container for the right column: TopBar sticks to its
+          top so page content genuinely scrolls beneath the glass chrome. */}
+      <div className="relative flex min-w-0 flex-1 flex-col overflow-y-auto scrollbar-thin">
+        <TopBar />
+        <main className="min-w-0 flex-1 p-6">
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/customers" element={<CustomerList />} />
@@ -49,6 +52,7 @@ export default function App() {
           </Routes>
         </main>
       </div>
+      <CommandPalette />
     </div>
   )
 }

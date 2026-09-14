@@ -5,7 +5,7 @@ import BarChart from '../components/BarChart'
 import FitModel from '../components/FitModel/FitModel.jsx'
 
 const STATUS_COLORS = {
-  Delivered: '#15803d', 'In Transit': '#1d4ed8', Processing: '#b45309', Returned: '#b91c1c', Cancelled: '#71717a'
+  Delivered: 'var(--good)', 'In Transit': 'var(--info)', Processing: 'var(--warn)', Returned: 'var(--bad)', Cancelled: 'var(--neutral)'
 }
 
 export default function TrackEverywhere() {

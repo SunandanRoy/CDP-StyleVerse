@@ -35,7 +35,7 @@ export default function CaseThreadList() {
             </div>
             <div className="flex items-center gap-2">
               {c.predicted_grievance && (
-                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: '#fdece8', color: '#b91c1c' }}>⚠ Grievance likely</span>
+                <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: 'var(--bad-soft)', color: 'var(--bad)' }}>⚠ Grievance likely</span>
               )}
               <span className="rounded-full border px-2 py-0.5 text-[11px]" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}>{c.status}</span>
             </div>

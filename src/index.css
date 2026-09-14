@@ -3,6 +3,9 @@
 @tailwind utilities;
 
 :root {
+  color-scheme: light;
+  --topbar-h: 4rem;
+
   /* SpeedStyle-flavored default — always overridden by [data-brand] below once BrandProvider mounts */
   --brand-accent: #e0401b;
   --brand-accent-soft: #fdebe5;
@@ -18,6 +21,28 @@
   --radius: 10px;
   --card-padding: 1.1rem;
   --section-gap: 1.5rem;
+
+  /* Semantic status tokens — used identically everywhere a pill/badge/stat
+     needs a good/warn/bad/info reading, so dark mode only has to be taught
+     once instead of per-component. */
+  --good: #15803d; --good-soft: #e4f7e9; --good-border: #bfe3c8;
+  --warn: #b45309; --warn-soft: #fdf1e0; --warn-border: #f2c98d; --warn-strong: #92400e;
+  --bad: #b91c1c; --bad-soft: #fdece8; --bad-border: #f3b8b8;
+  --info: #1d4ed8; --info-soft: #e6edfd;
+  --accent2: #7c3aed; --accent2-soft: #f1e9fe;
+  --neutral: #71717a; --neutral-soft: #f4f4f5;
+
+  /* Model Registry badge family (rag/signoff/retrieval/rules) */
+  --teal: #0e7490; --teal-soft: #e0f6fa;
+  --gold: #a6802f; --gold-soft: #f4efe4;
+  --sage: #5c8a5c; --sage-soft: #eaf3ea;
+  --slate: #334155; --slate-soft: #edf0f4;
+
+  /* Liquid-glass chrome (TopBar, floating popovers) */
+  --glass-bg: rgba(255, 255, 255, 0.62);
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-sheen: rgba(255, 255, 255, 0.9);
+  --glass-blur: 20px;
 }
 
 [data-brand='speedstyle'] {
@@ -105,6 +130,66 @@
   --section-gap: 1rem;
 }
 
+/* ================================================================
+   DARK MODE
+   Two layers: (1) brand-agnostic semantic/glass tokens, one definition
+   covers all five brands; (2) per-brand surface/ink/edge overrides, since
+   each brand's dark cockpit should still feel like that brand (warm near-
+   black for Maison Luxe, cool near-black for the others) — not one grey
+   dark theme with five accent colors pasted on top.
+   Accent hues themselves are deliberately UNCHANGED between light and dark:
+   several buttons pair var(--brand-accent) with var(--brand-accent-text)
+   for contrast (e.g. Maison Luxe's dark text on light gold) — brightening
+   accents for dark mode would quietly break that pairing.
+   System preference is the default; an explicit toggle (data-theme) always
+   wins in either direction. ================================================================ */
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --good: #4ade80; --good-soft: rgba(74, 222, 128, 0.16); --good-border: rgba(74, 222, 128, 0.4);
+    --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, 0.16); --warn-border: rgba(251, 191, 36, 0.4); --warn-strong: #fcd34d;
+    --bad: #f87171; --bad-soft: rgba(248, 113, 113, 0.16); --bad-border: rgba(248, 113, 113, 0.4);
+    --info: #60a5fa; --info-soft: rgba(96, 165, 250, 0.16);
+    --accent2: #a78bfa; --accent2-soft: rgba(167, 139, 250, 0.16);
+    --neutral: #a1a1aa; --neutral-soft: rgba(161, 161, 170, 0.14);
+    --teal: #22d3ee; --teal-soft: rgba(34, 211, 238, 0.14);
+    --gold: #d9b168; --gold-soft: rgba(217, 177, 104, 0.14);
+    --sage: #8fc28f; --sage-soft: rgba(143, 194, 143, 0.14);
+    --slate: #94a3b8; --slate-soft: rgba(148, 163, 184, 0.16);
+    --glass-bg: rgba(18, 18, 22, 0.58);
+    --glass-border: rgba(255, 255, 255, 0.09);
+    --glass-sheen: rgba(255, 255, 255, 0.14);
+  }
+  [data-brand='speedstyle']:not([data-theme='light']) { --surface: #121213; --surface-alt: #1b1b1d; --ink: #f3f3f4; --ink-mute: #a5a5aa; --edge: #313134; --brand-accent-soft: rgba(224, 64, 27, 0.2); }
+  [data-brand='urbanedge']:not([data-theme='light']) { --surface: #0f1218; --surface-alt: #171b24; --ink: #eef1f7; --ink-mute: #98a2b3; --edge: #2a3040; --brand-accent-soft: rgba(37, 99, 235, 0.22); }
+  [data-brand='maisonluxe']:not([data-theme='light']) { --surface: #1b1811; --surface-alt: #241f16; --ink: #ece5d6; --ink-mute: #a89c82; --edge: #392f1e; --brand-accent-soft: rgba(166, 128, 47, 0.22); }
+  [data-brand='ecoweave']:not([data-theme='light']) { --surface: #0f130e; --surface-alt: #161b13; --ink: #e6ede2; --ink-mute: #97ac8f; --edge: #293323; --brand-accent-soft: rgba(92, 138, 92, 0.22); }
+  [data-brand='threadbasics']:not([data-theme='light']) { --surface: #10131a; --surface-alt: #181c25; --ink: #eef0f4; --ink-mute: #97a0ae; --edge: #2b3140; --brand-accent-soft: rgba(51, 65, 85, 0.35); }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --good: #4ade80; --good-soft: rgba(74, 222, 128, 0.16); --good-border: rgba(74, 222, 128, 0.4);
+  --warn: #fbbf24; --warn-soft: rgba(251, 191, 36, 0.16); --warn-border: rgba(251, 191, 36, 0.4); --warn-strong: #fcd34d;
+  --bad: #f87171; --bad-soft: rgba(248, 113, 113, 0.16); --bad-border: rgba(248, 113, 113, 0.4);
+  --info: #60a5fa; --info-soft: rgba(96, 165, 250, 0.16);
+  --accent2: #a78bfa; --accent2-soft: rgba(167, 139, 250, 0.16);
+  --neutral: #a1a1aa; --neutral-soft: rgba(161, 161, 170, 0.14);
+  --teal: #22d3ee; --teal-soft: rgba(34, 211, 238, 0.14);
+  --gold: #d9b168; --gold-soft: rgba(217, 177, 104, 0.14);
+  --sage: #8fc28f; --sage-soft: rgba(143, 194, 143, 0.14);
+  --slate: #94a3b8; --slate-soft: rgba(148, 163, 184, 0.16);
+  --glass-bg: rgba(18, 18, 22, 0.58);
+  --glass-border: rgba(255, 255, 255, 0.09);
+  --glass-sheen: rgba(255, 255, 255, 0.14);
+}
+[data-brand='speedstyle'][data-theme='dark'] { --surface: #121213; --surface-alt: #1b1b1d; --ink: #f3f3f4; --ink-mute: #a5a5aa; --edge: #313134; --brand-accent-soft: rgba(224, 64, 27, 0.2); }
+[data-brand='urbanedge'][data-theme='dark'] { --surface: #0f1218; --surface-alt: #171b24; --ink: #eef1f7; --ink-mute: #98a2b3; --edge: #2a3040; --brand-accent-soft: rgba(37, 99, 235, 0.22); }
+[data-brand='maisonluxe'][data-theme='dark'] { --surface: #1b1811; --surface-alt: #241f16; --ink: #ece5d6; --ink-mute: #a89c82; --edge: #392f1e; --brand-accent-soft: rgba(166, 128, 47, 0.22); }
+[data-brand='ecoweave'][data-theme='dark'] { --surface: #0f130e; --surface-alt: #161b13; --ink: #e6ede2; --ink-mute: #97ac8f; --edge: #293323; --brand-accent-soft: rgba(92, 138, 92, 0.22); }
+[data-brand='threadbasics'][data-theme='dark'] { --surface: #10131a; --surface-alt: #181c25; --ink: #eef0f4; --ink-mute: #97a0ae; --edge: #2b3140; --brand-accent-soft: rgba(51, 65, 85, 0.35); }
+
 html, body, #root {
   height: 100%;
 }
@@ -127,14 +212,30 @@ h1, h2, h3, h4, .font-heading {
   border-radius: var(--radius);
   padding: var(--card-padding);
   box-shadow: 0 1px 2px rgba(15, 15, 20, 0.04), 0 1px 1px rgba(15, 15, 20, 0.03);
-  transition: box-shadow 150ms ease, transform 150ms ease;
+  transition: box-shadow 150ms ease, transform 150ms ease, background-color 200ms ease, border-color 200ms ease;
+}
+:root[data-theme='dark'] .card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.2); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) .card { box-shadow: 0 1px 2px rgba(0, 0, 0, 0.25), 0 1px 1px rgba(0, 0, 0, 0.2); }
+}
+
+/* Liquid-glass chrome */
+.glass {
+  background: var(--glass-bg);
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.5);
+  border-bottom: 1px solid var(--glass-border);
+  box-shadow: inset 0 1px 0 var(--glass-sheen), 0 8px 24px -12px rgba(0, 0, 0, 0.25);
 }
 
 .scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 6px; }
 
-/* Table polish: sticky header inside scroll containers + zebra striping */
-table thead tr { position: sticky; top: 0; z-index: 1; }
+/* Table polish: zebra striping + hover. (Sticky <tr> headers were tried and
+   dropped — position:sticky on a table row renders unreliably across
+   browsers once the header isn't at scroll-offset 0, producing a visibly
+   detached header row rather than a pinned one.) */
+table thead tr { background: var(--surface-alt); }
 table tbody tr:nth-child(even) { background: color-mix(in srgb, var(--surface-alt) 55%, transparent); }
 table tbody tr:hover { background: var(--brand-accent-soft); }
 

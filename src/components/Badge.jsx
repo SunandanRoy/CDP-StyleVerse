@@ -1,10 +1,10 @@
 const VARIANTS = {
-  rag: { text: 'RAG-grounded, no free generation', color: '#0e7490', bg: '#e0f6fa' },
-  pii: { text: 'PII isolated', color: '#7c3aed', bg: '#f1e9fe' },
-  escalation: { text: 'Human escalation available', color: '#15803d', bg: '#e4f7e9' },
-  signoff: { text: 'Human sign-off required', color: '#a6802f', bg: '#f4efe4' },
-  retrieval: { text: 'Retrieval-only, zero-hallucination', color: '#5c8a5c', bg: '#eaf3ea' },
-  rules: { text: 'Rules-engine, no LLM', color: '#334155', bg: '#edf0f4' }
+  rag: { text: 'RAG-grounded, no free generation', color: 'var(--teal)', bg: 'var(--teal-soft)' },
+  pii: { text: 'PII isolated', color: 'var(--accent2)', bg: 'var(--accent2-soft)' },
+  escalation: { text: 'Human escalation available', color: 'var(--good)', bg: 'var(--good-soft)' },
+  signoff: { text: 'Human sign-off required', color: 'var(--gold)', bg: 'var(--gold-soft)' },
+  retrieval: { text: 'Retrieval-only, zero-hallucination', color: 'var(--sage)', bg: 'var(--sage-soft)' },
+  rules: { text: 'Rules-engine, no LLM', color: 'var(--slate)', bg: 'var(--slate-soft)' }
 }
 
 export default function Badge({ variant, children, className = '' }) {

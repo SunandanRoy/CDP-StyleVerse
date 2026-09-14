@@ -43,7 +43,7 @@ function BoolToggle({ label, value, onChange, hint, locked = false, lockedReason
         </div>
         {hint && <p className="mt-0.5 text-[11px]" style={{ color: 'var(--ink-mute)' }}>{hint}</p>}
         {locked && lockedReason && (
-          <p className="mt-1 text-[11px] font-medium" style={{ color: '#b45309' }}>{lockedReason}</p>
+          <p className="mt-1 text-[11px] font-medium" style={{ color: 'var(--warn)' }}>{lockedReason}</p>
         )}
       </div>
       <button

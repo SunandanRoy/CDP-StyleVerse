@@ -1,10 +1,12 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { api } from '../lib/api'
+import { toast } from '../lib/toast'
 
 const BrandContext = createContext(null)
 
 const STORAGE_KEY = 'styleverse.selectedBrandId'
 const THEME_KEY = 'styleverse.theme'
+const SIDEBAR_KEY = 'styleverse.sidebarCollapsed'
 
 export function BrandProvider({ children }) {
   const [brands, setBrands] = useState([])
@@ -17,6 +19,8 @@ export function BrandProvider({ children }) {
   const [systemPrefersDark, setSystemPrefersDark] = useState(
     () => typeof window !== 'undefined' && window.matchMedia?.('(prefers-color-scheme: dark)').matches
   )
+
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem(SIDEBAR_KEY) === '1')
 
   useEffect(() => {
     api.get('/brands').then(setBrands).catch(console.error)
@@ -39,16 +43,31 @@ export function BrandProvider({ children }) {
 
   const updateDial = useCallback(
     async (patch) => {
-      setDialState((prev) => (prev ? { ...prev, ...patch } : prev)) // optimistic, drives live UI changes
+      let previous
+      setDialState((prev) => {
+        previous = prev
+        return prev ? { ...prev, ...patch } : prev // optimistic, drives live UI changes
+      })
       try {
         const updated = await api.patch(`/dial/${brandId}`, patch)
         setDialState(updated)
+        toast.success('Dial settings saved')
       } catch (err) {
         console.error('Failed to update dial settings', err)
+        setDialState(previous)
+        toast.error('Failed to save — change reverted')
       }
     },
     [brandId]
   )
+
+  const toggleSidebar = useCallback(() => {
+    setSidebarCollapsed((prev) => {
+      const next = !prev
+      localStorage.setItem(SIDEBAR_KEY, next ? '1' : '0')
+      return next
+    })
+  }, [])
 
   const brand = useMemo(() => brands.find((b) => b.id === brandId) || null, [brands, brandId])
 
@@ -82,8 +101,12 @@ export function BrandProvider({ children }) {
   }, [effectiveTheme, setTheme])
 
   const value = useMemo(
-    () => ({ brands, brandId, setBrandId, brand, dial, updateDial, loading, theme, effectiveTheme, setTheme, toggleTheme }),
-    [brands, brandId, setBrandId, brand, dial, updateDial, loading, theme, effectiveTheme, setTheme, toggleTheme]
+    () => ({
+      brands, brandId, setBrandId, brand, dial, updateDial, loading,
+      theme, effectiveTheme, setTheme, toggleTheme,
+      sidebarCollapsed, toggleSidebar
+    }),
+    [brands, brandId, setBrandId, brand, dial, updateDial, loading, theme, effectiveTheme, setTheme, toggleTheme, sidebarCollapsed, toggleSidebar]
   )
 
   return <BrandContext.Provider value={value}>{children}</BrandContext.Provider>

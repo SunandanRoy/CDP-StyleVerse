@@ -231,6 +231,12 @@ h1, h2, h3, h4, .font-heading {
 .scrollbar-thin::-webkit-scrollbar { height: 8px; width: 8px; }
 .scrollbar-thin::-webkit-scrollbar-thumb { background: var(--edge); border-radius: 6px; }
 
+@keyframes toast-in {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.toast-enter { animation: toast-in 180ms ease-out; }
+
 /* Table polish: zebra striping + hover. (Sticky <tr> headers were tried and
    dropped — position:sticky on a table row renders unreliably across
    browsers once the header isn't at scroll-offset 0, producing a visibly

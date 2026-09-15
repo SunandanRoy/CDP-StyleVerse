@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
+import Skeleton from '../components/Skeleton'
 
 const COLUMNS = [
   { key: 'employee_name', label: 'Employee' },
@@ -77,7 +78,14 @@ export default function OverrideWins() {
             </tr>
           </thead>
           <tbody>
-            {loading && <tr><td colSpan={6} className="px-3 py-6 text-center" style={{ color: 'var(--ink-mute)' }}>Loading…</td></tr>}
+            {loading &&
+              Array.from({ length: 6 }).map((_, i) => (
+                <tr key={`sk-${i}`} className="border-t" style={{ borderColor: 'var(--edge)' }}>
+                  {Array.from({ length: 6 }).map((__, j) => (
+                    <td key={j} className="px-3 py-2.5"><Skeleton className="h-3.5 w-20" /></td>
+                  ))}
+                </tr>
+              ))}
             {sorted.map((r) => (
               <tr key={r.id} className="border-t align-top" style={{ borderColor: 'var(--edge)' }}>
                 <td className="px-3 py-2 font-medium">{r.employee_name}</td>

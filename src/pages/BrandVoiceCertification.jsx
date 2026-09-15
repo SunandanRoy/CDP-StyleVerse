@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import { api } from '../lib/api'
+import { toast } from '../lib/toast'
+import Skeleton from '../components/Skeleton'
 
 function parseVerdict(text) {
   const verdictMatch = text.match(/VERDICT:\s*(Pass|Fail)/i)
@@ -22,7 +24,7 @@ export default function BrandVoiceCertification() {
 
   const historyParams = new URLSearchParams({ _r: String(refreshKey) })
   if (historyFilter) historyParams.set('brand_id', historyFilter)
-  const { data: history } = useFetch(`/certification-history?${historyParams.toString()}`)
+  const { data: history, loading: historyLoading } = useFetch(`/certification-history?${historyParams.toString()}`)
 
   const passRate = useMemo(() => {
     if (!history?.length) return null
@@ -39,6 +41,7 @@ export default function BrandVoiceCertification() {
       setResult({ ...res, verdict, reason })
       await api.post('/certification-history', { brand_id: brandId, draft_excerpt: draft.slice(0, 140), verdict, reason })
       setRefreshKey((k) => k + 1)
+      toast[verdict === 'Pass' ? 'success' : 'error'](`Certification ${verdict === 'Pass' ? 'passed' : 'failed'} — logged to history`)
     } finally {
       setLoading(false)
     }
@@ -110,6 +113,15 @@ export default function BrandVoiceCertification() {
               </tr>
             </thead>
             <tbody>
+              {historyLoading &&
+                Array.from({ length: 4 }).map((_, i) => (
+                  <tr key={`sk-${i}`} className="border-t" style={{ borderColor: 'var(--edge)' }}>
+                    <td className="px-3 py-2.5"><Skeleton className="h-3.5 w-32" /></td>
+                    <td className="px-3 py-2.5"><Skeleton className="h-4 w-12 rounded-full" /></td>
+                    <td className="px-3 py-2.5"><Skeleton className="h-3.5 w-40" /></td>
+                    <td className="px-3 py-2.5"><Skeleton className="h-3.5 w-16" /></td>
+                  </tr>
+                ))}
               {history?.map((h) => (
                 <tr key={h.id} className="border-t" style={{ borderColor: 'var(--edge)' }}>
                   <td className="max-w-xs truncate px-3 py-2 text-xs">{h.draft_excerpt}</td>

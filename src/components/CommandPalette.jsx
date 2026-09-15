@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import NavIcon from './NavIcon'
 import { ALL_NAV_ITEMS } from '../lib/navRegistry'
 import { useBrand } from '../context/BrandContext'
+import { api } from '../lib/api'
 
 function fuzzyMatch(query, text) {
   const q = query.toLowerCase().trim()
@@ -16,7 +17,8 @@ export default function CommandPalette() {
   const [activeIndex, setActiveIndex] = useState(0)
   const inputRef = useRef(null)
   const navigate = useNavigate()
-  const { brands, setBrandId } = useBrand()
+  const { brands, brandId, setBrandId } = useBrand()
+  const [customers, setCustomers] = useState([])
 
   const close = useCallback(() => {
     setOpen(false)
@@ -47,7 +49,15 @@ export default function CommandPalette() {
     if (open) setTimeout(() => inputRef.current?.focus(), 10)
   }, [open])
 
-  const commands = useMemo(() => {
+  // Customers are fetched lazily (only once the palette is open) and only
+  // ever surfaced once the user has typed something, so the default view
+  // stays a short, scannable list of modules + brands.
+  useEffect(() => {
+    if (!open || !brandId) return
+    api.get(`/customers?brand_id=${brandId}`).then(setCustomers).catch(() => setCustomers([]))
+  }, [open, brandId])
+
+  const baseCommands = useMemo(() => {
     const navCommands = ALL_NAV_ITEMS.map((item) => ({
       id: `nav:${item.to}`,
       kind: 'navigate',
@@ -67,10 +77,23 @@ export default function CommandPalette() {
     return [...navCommands, ...brandCommands]
   }, [brands, navigate, setBrandId])
 
-  const filtered = useMemo(
-    () => commands.filter((c) => fuzzyMatch(query, `${c.label} ${c.hint}`)),
-    [commands, query]
+  const customerCommands = useMemo(
+    () =>
+      customers.map((c) => ({
+        id: `customer:${c.id}`,
+        kind: 'customer',
+        icon: 'customers',
+        label: c.name,
+        hint: `Customer · ${c.id}`,
+        run: () => navigate(`/customers/${c.id}`)
+      })),
+    [customers, navigate]
   )
+
+  const filtered = useMemo(() => {
+    const pool = query.trim() ? [...baseCommands, ...customerCommands] : baseCommands
+    return pool.filter((c) => fuzzyMatch(query, `${c.label} ${c.hint}`))
+  }, [baseCommands, customerCommands, query])
 
   useEffect(() => setActiveIndex(0), [query])
 
@@ -118,7 +141,7 @@ export default function CommandPalette() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={onKeyDown}
-            placeholder="Jump to a module, or switch brand…"
+            placeholder="Jump to a module, find a customer, or switch brand…"
             className="w-full bg-transparent text-sm outline-none"
             style={{ color: 'var(--ink)' }}
           />

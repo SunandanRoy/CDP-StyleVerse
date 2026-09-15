@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { api } from '../lib/api'
+import { toast } from '../lib/toast'
 
 /**
  * Reusable wiring for the 4 Gemini call sites. Button-click only (never on
@@ -17,6 +18,7 @@ export default function GeminiAction({ endpoint, payload, label, resultTitle = '
       setResult(res)
     } catch (err) {
       setResult({ success: true, text: 'Something went wrong generating this — please try again.', example: true })
+      toast.info('Live AI call unavailable — showing a fallback response')
     } finally {
       setState('done')
     }

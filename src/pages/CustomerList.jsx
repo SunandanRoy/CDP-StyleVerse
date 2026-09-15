@@ -2,6 +2,17 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
+import Skeleton from '../components/Skeleton'
+import ExportCsvButton from '../components/ExportCsvButton'
+
+const CSV_COLUMNS = [
+  { label: 'Name', key: 'name' },
+  { label: 'Customer ID', key: 'id' },
+  { label: 'Channels', value: (c) => c.channels.join('; ') },
+  { label: 'Fit Passport', value: (c) => (c.loyalty_id ? `Linked · ${c.loyalty_id}` : 'Not yet bridged') },
+  { label: 'Archetype', value: (c) => c.fit_passport.archetype },
+  { label: 'Signup Date', key: 'signup_date' }
+]
 
 const CHANNEL_FILTERS = [
   { value: '', label: 'All channels' },
@@ -41,6 +52,7 @@ export default function CustomerList() {
           ))}
         </select>
         {customers && <span className="text-xs" style={{ color: 'var(--ink-mute)' }}>{customers.length} customers</span>}
+        <ExportCsvButton filename={`styleverse-customers-${brandId}.csv`} rows={customers} columns={CSV_COLUMNS} />
       </div>
 
       <div className="mt-4 overflow-x-auto rounded-lg border scrollbar-thin" style={{ borderColor: 'var(--edge)' }}>
@@ -55,9 +67,16 @@ export default function CustomerList() {
             </tr>
           </thead>
           <tbody>
-            {loading && (
-              <tr><td colSpan={5} className="px-4 py-6 text-center" style={{ color: 'var(--ink-mute)' }}>Loading…</td></tr>
-            )}
+            {loading &&
+              Array.from({ length: 6 }).map((_, i) => (
+                <tr key={`sk-${i}`} className="border-t" style={{ borderColor: 'var(--edge)' }}>
+                  <td className="px-4 py-2.5"><Skeleton className="h-3.5 w-28" /></td>
+                  <td className="px-4 py-2.5"><Skeleton className="h-3.5 w-20" /></td>
+                  <td className="px-4 py-2.5"><Skeleton className="h-3.5 w-24" /></td>
+                  <td className="px-4 py-2.5"><Skeleton className="h-3.5 w-16" /></td>
+                  <td className="px-4 py-2.5"><Skeleton className="h-3.5 w-16" /></td>
+                </tr>
+              ))}
             {customers?.map((c) => (
               <tr key={c.id} className="border-t" style={{ borderColor: 'var(--edge)' }}>
                 <td className="px-4 py-2">

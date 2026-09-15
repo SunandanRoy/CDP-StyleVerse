@@ -1,4 +1,7 @@
+import { useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useBrand } from '../context/BrandContext'
+import { ALL_NAV_ITEMS } from '../lib/navRegistry'
 
 function SunIcon() {
   return (
@@ -24,8 +27,22 @@ function SearchIcon() {
   )
 }
 
+function useCurrentNavItem() {
+  const location = useLocation()
+  return useMemo(() => {
+    const path = location.pathname
+    let best = null
+    for (const item of ALL_NAV_ITEMS) {
+      const matches = path === item.to || (item.to !== '/' && path.startsWith(`${item.to}/`))
+      if (matches && (!best || item.to.length > best.to.length)) best = item
+    }
+    return best
+  }, [location.pathname])
+}
+
 export default function TopBar() {
   const { brands, brandId, setBrandId, brand, effectiveTheme, toggleTheme } = useBrand()
+  const currentItem = useCurrentNavItem()
 
   return (
     <header
@@ -48,6 +65,14 @@ export default function TopBar() {
         >
           Enterprise Console
         </span>
+
+        {currentItem && (
+          <div className="ml-2 hidden items-center gap-1.5 border-l pl-3 text-xs lg:flex" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}>
+            <span>{currentItem.group}</span>
+            <span aria-hidden="true">›</span>
+            <span className="font-medium" style={{ color: 'var(--ink)' }}>{currentItem.label}</span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center gap-3">

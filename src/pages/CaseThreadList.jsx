@@ -2,8 +2,18 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
+import Skeleton from '../components/Skeleton'
+import ExportCsvButton from '../components/ExportCsvButton'
 
 const STATUSES = ['Open', 'In Progress', 'Escalated', 'Resolved', 'Closed']
+
+const CSV_COLUMNS = [
+  { label: 'Case ID', key: 'id' },
+  { label: 'Customer', key: 'customer_name' },
+  { label: 'Status', key: 'status' },
+  { label: 'Messages', value: (c) => c.channel_log.length },
+  { label: 'Grievance Flag', value: (c) => (c.predicted_grievance ? 'Yes' : 'No') }
+]
 
 export default function CaseThreadList() {
   const { brandId } = useBrand()
@@ -23,10 +33,20 @@ export default function CaseThreadList() {
           {STATUSES.map((s) => <option key={s} value={s}>{s}</option>)}
         </select>
         {cases && <span className="text-xs" style={{ color: 'var(--ink-mute)' }}>{cases.length} cases</span>}
+        <ExportCsvButton filename={`styleverse-cases-${brandId}.csv`} rows={cases} columns={CSV_COLUMNS} />
       </div>
 
       <div className="mt-4 space-y-2">
-        {loading && <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading…</p>}
+        {loading &&
+          Array.from({ length: 5 }).map((_, i) => (
+            <div key={`sk-${i}`} className="card flex items-center justify-between">
+              <div className="space-y-1.5">
+                <Skeleton className="h-3.5 w-40" />
+                <Skeleton className="h-3 w-28" />
+              </div>
+              <Skeleton className="h-5 w-16 rounded-full" />
+            </div>
+          ))}
         {cases?.map((c) => (
           <Link key={c.id} to={`/cases/${c.id}`} className="card flex items-center justify-between hover:opacity-90">
             <div>

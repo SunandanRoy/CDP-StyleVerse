@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import { useFetch } from '../lib/useFetch'
+import Skeleton from '../components/Skeleton'
 
 const GATE_BY_TRANSITION = [
   'Automate', 'Augment', 'Eliminate', 'Augment', 'Amplify', 'Augment'
@@ -18,7 +19,18 @@ export default function CareerLattice() {
       </p>
 
       {loading ? (
-        <p className="mt-6 text-sm" style={{ color: 'var(--ink-mute)' }}>Loading…</p>
+        <div className="mt-6 space-y-4">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="card flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="flex flex-1 items-center gap-3">
+                <Skeleton className="h-9 w-28 rounded-md" />
+                <span style={{ color: 'var(--ink-mute)' }}>→</span>
+                <Skeleton className="h-9 w-28 rounded-md" />
+              </div>
+              <Skeleton className="h-8 w-56 rounded-md sm:w-64" />
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="mt-6 space-y-4">
           {lattice?.map((t, i) => {

@@ -2,6 +2,7 @@ import { Routes, Route } from 'react-router-dom'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import CommandPalette from './components/CommandPalette'
+import ToastHost from './components/ToastHost'
 
 import Dashboard from './pages/Dashboard'
 import CustomerList from './pages/CustomerList'
@@ -53,6 +54,7 @@ export default function App() {
         </main>
       </div>
       <CommandPalette />
+      <ToastHost />
     </div>
   )
 }

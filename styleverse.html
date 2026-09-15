@@ -112,6 +112,19 @@
   @keyframes cartBump{0%{transform:scale(1);}45%{transform:scale(1.5);}100%{transform:scale(1);}}
   #topnav .switch-persona{font-size:12.5px; color:var(--muted); background:none; border:1px solid var(--border); border-radius:20px; padding:7px 13px; font-weight:600; white-space:nowrap;}
   #topnav .switch-persona:hover{border-color:var(--accent); color:var(--accent);}
+  .hamburger-btn{display:none; background:none; border:1px solid var(--border); border-radius:8px; font-size:18px; color:var(--text); padding:6px 11px; margin-left:auto;}
+  @media (max-width:860px){
+    .hamburger-btn{display:block;}
+    #topnav .bar{flex-wrap:nowrap;}
+    #topnav nav{
+      display:none; position:absolute; top:100%; left:0; right:0; flex-direction:column; align-items:stretch; gap:0;
+      background:var(--glass-bg-strong); backdrop-filter:blur(var(--glass-blur)) saturate(180%); -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(180%);
+      border-bottom:1px solid var(--glass-border); box-shadow:var(--shadow-lg); padding:6px 20px 14px 20px; max-height:75vh; overflow-y:auto;
+    }
+    #topnav nav.nav-open{display:flex;}
+    #topnav nav button.navlink{text-align:left; padding:13px 4px; border-bottom:1px solid var(--border); border-radius:0; width:100%;}
+    #topnav .escalation-pill{margin-top:10px; justify-content:center;}
+  }
   .escalation-pill{
     background:var(--glass-bg); backdrop-filter:blur(var(--glass-blur)); -webkit-backdrop-filter:blur(var(--glass-blur));
     border:1px solid var(--accent); color:var(--accent); border-radius:20px;
@@ -269,7 +282,10 @@
   .modal .step-dots span.active{background:var(--accent);}
   .field{margin-bottom:14px;}
   .field label{display:block; font-size:12.5px; color:var(--muted); margin-bottom:5px;}
-  .field input{width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px;}
+  .field input{width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:var(--surface); color:var(--text);}
+  .addr-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 14px;}
+  .addr-grid .field{margin-bottom:12px;}
+  @media (max-width:480px){.addr-grid{grid-template-columns:1fr;}}
   .spinner{
     width:34px; height:34px; border:3px solid var(--border); border-top-color:var(--accent); border-radius:50%;
     animation:spin .8s linear infinite; margin:18px auto;
@@ -294,6 +310,17 @@
   .choice-card.selected{border-color:var(--accent); background:#eff6ff;}
 
   /* ---------- Catalog ---------- */
+  .empty-state{text-align:center; padding:60px 20px; border:1.5px dashed var(--border); border-radius:14px;}
+  .empty-state-icon{font-size:40px; opacity:.35; margin-bottom:14px;}
+  .empty-state p{color:var(--muted); font-size:14px; max-width:340px; margin:0 auto 18px auto;}
+  .search-row{position:relative; margin-bottom:14px;}
+  .search-row input{
+    width:100%; padding:12px 40px; border:1.5px solid var(--border); border-radius:10px; font-size:14px;
+    background:var(--surface); color:var(--text);
+  }
+  .search-row input:focus{border-color:var(--accent);}
+  .search-icon{position:absolute; left:13px; top:50%; transform:translateY(-50%); font-size:14px; opacity:.5; pointer-events:none;}
+  .search-clear{position:absolute; right:10px; top:50%; transform:translateY(-50%); background:none; border:none; font-size:18px; color:var(--muted); padding:4px 6px;}
   .filter-bar{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:22px; align-items:center; padding:14px 16px; background:var(--surface); border:1px solid var(--border); border-radius:12px;}
   .filter-bar select{padding:8px 10px; border:1px solid var(--border); border-radius:8px; font-size:13px; background:#fff;}
   .filter-bar .price-filter{display:flex; align-items:center; gap:8px; font-size:12.5px; color:var(--muted);}
@@ -306,6 +333,19 @@
   .product-card .thumb{width:100%; aspect-ratio:3/4; object-fit:cover; background:#f1f1f1; transition:transform .35s ease;}
   .product-card:hover .thumb{transform:scale(1.06);}
   .product-card .thumb-wrap .badge{position:absolute; top:10px; right:10px; box-shadow:0 2px 6px rgba(0,0,0,.15);}
+  .wish-btn{
+    position:absolute; top:9px; left:9px; width:30px; height:30px; border-radius:50%; border:none;
+    background:rgba(255,255,255,.92); color:#dc2626; font-size:15px; display:flex; align-items:center; justify-content:center;
+    box-shadow:0 2px 6px rgba(0,0,0,.15); transition:transform .12s cubic-bezier(.34,1.56,.64,1);
+  }
+  .wish-btn:hover{transform:scale(1.1);}
+  .wish-btn.active{animation:wishPop .3s cubic-bezier(.34,1.56,.64,1);}
+  @keyframes wishPop{0%{transform:scale(1);}45%{transform:scale(1.35);}100%{transform:scale(1);}}
+  .pd-wish-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:6px; width:44px; height:44px; border-radius:9px;
+    border:1px solid var(--border); background:var(--surface); color:#dc2626; font-size:17px; flex-shrink:0;
+  }
+  .pd-wish-btn.active{border-color:#dc2626; background:#fee2e2;}
   .product-card .pc-body{padding:13px 15px;}
   .product-card h4{font-size:14px; margin-bottom:4px; font-weight:700;}
   .product-card .price{font-size:14.5px; font-weight:800; margin-bottom:2px;}
@@ -316,6 +356,11 @@
   @media (max-width:840px){.pd-grid{grid-template-columns:1fr;}}
   .pd-images{display:grid; grid-template-columns:1fr 1fr; gap:10px;}
   .pd-images img{width:100%; aspect-ratio:3/4; object-fit:cover; border-radius:10px; background:#f1f1f1;}
+  .breadcrumb{display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:18px; font-size:12.5px;}
+  .breadcrumb button{background:none; border:none; color:var(--muted); padding:0; font-size:12.5px;}
+  .breadcrumb button:hover{color:var(--accent); text-decoration:underline;}
+  .breadcrumb span{color:var(--border);}
+  .breadcrumb .breadcrumb-current{color:var(--text); font-weight:600;}
   .confidence-row{display:flex; align-items:center; gap:16px; margin-top:16px;}
   .confidence-ring-wrap{flex-shrink:0; filter:drop-shadow(0 2px 6px rgba(0,0,0,.08));}
   .confidence-copy p{font-size:12.5px; color:var(--muted); margin:6px 0 0 0; line-height:1.4; max-width:280px;}
@@ -1187,10 +1232,13 @@ const state = {
   bridgeModal: null,        // {step, prefilled}
   proactiveShown: false,
   supportDraft: "",
-  catalogFilters: { category:"all", confidence:"all", price:"all" },
+  catalogFilters: { category:"all", confidence:"all", price:"all", search:"" },
   returnFlowByProductOrder: {}, // in-progress return flow UI state, keyed by orderId
   fitModelRegistry: {},     // instanceId -> controller
-  consoleOpen: false        // reviewer-only "prototype console" panel, not part of the storefront
+  consoleOpen: false,       // reviewer-only "prototype console" panel, not part of the storefront
+  wishlist: [],             // productIds saved by the active persona this session
+  mobileNavOpen: false,
+  _forceAnim: false
 };
 
 function cloneJSON(o){ return JSON.parse(JSON.stringify(o)); }
@@ -1290,7 +1338,13 @@ function applyTheme(brand){
 function navigate(screen, params){
   state.screenParams = params || {};
   state.screen = screen;
+  state._forceAnim = true;
+  state.mobileNavOpen = false;
   window.scrollTo(0,0);
+  render();
+}
+function toggleMobileNav(){
+  state.mobileNavOpen = !state.mobileNavOpen;
   render();
 }
 
@@ -1698,17 +1752,20 @@ function renderNav(){
   if(!state.currentPersona) return "";
   const brand = activeBrand();
   const cartCount = state.cart.reduce(function(sum,l){ return sum+l.qty; }, 0);
+  const wishCount = state.wishlist.length;
   return ''
     + '<div id="topnav">'
     +   '<div class="bar">'
     +     '<div class="brand-mark" data-action="go-home"><span class="brand-dot"></span>' + escapeHtml(brand.name) + '</div>'
-    +     '<nav>'
+    +     '<button class="hamburger-btn" data-action="toggle-mobile-nav" aria-label="Menu">'+(state.mobileNavOpen?"&times;":"&#9776;")+'</button>'
+    +     '<nav class="'+(state.mobileNavOpen?"nav-open":"")+'">'
     +       '<button class="navlink" data-action="go-home">Home</button>'
     +       '<button class="navlink" data-action="go-catalog">Catalog</button>'
     +       '<button class="navlink" data-action="go-track">Track Everywhere</button>'
     +       '<button class="navlink" data-action="go-returns">My Returns</button>'
     +       '<button class="navlink" data-action="go-account">Account</button>'
     +       '<button class="navlink" data-action="go-support">Support</button>'
+    +       '<button class="navlink" data-action="go-wishlist">Wishlist<span class="cart-count">'+wishCount+'</span></button>'
     +       '<button class="navlink" data-action="go-cart">Cart<span class="cart-count">'+cartCount+'</span></button>'
     +       (brand.escalationVisible ? '<span class="escalation-pill" data-action="go-support">Talk to a human</span>' : '')
     +     '</nav>'
@@ -1720,16 +1777,31 @@ function renderNav(){
 function render(){
   const app = document.getElementById("app");
   destroyAllFitModels();
+  const activeEl = document.activeElement;
+  const activeId = (activeEl && activeEl.id) ? activeEl.id : null;
+  const selStart = (activeEl && typeof activeEl.selectionStart === "number") ? activeEl.selectionStart : null;
+  const selEnd = (activeEl && typeof activeEl.selectionEnd === "number") ? activeEl.selectionEnd : null;
   let html = "";
   if(state.screen === "persona-select"){
     html = renderPersonaSelectScreen();
   } else {
     const brand = activeBrand();
     applyTheme(brand);
-    html = '<div id="page-shell">' + renderNav() + '<div class="screen-anim">' + renderScreenBody() + '</div>' + renderFooter() + '<div id="modal-host"></div></div>' + renderDemoConsole();
+    const animNow = state._forceAnim;
+    state._forceAnim = false;
+    html = '<div id="page-shell">' + renderNav() + '<div class="'+(animNow?"screen-anim":"")+'">' + renderScreenBody() + '</div>' + renderFooter() + '<div id="modal-host"></div></div>' + renderDemoConsole();
   }
   app.innerHTML = html;
   afterRender();
+  if(activeId){
+    const el = document.getElementById(activeId);
+    if(el && typeof el.focus === "function"){
+      el.focus();
+      if(selStart !== null && el.setSelectionRange){
+        try{ el.setSelectionRange(selStart, selEnd); }catch(e){}
+      }
+    }
+  }
   const modalHost = document.getElementById("modal-host");
   if(state.bridgeModal && modalHost){
     modalHost.innerHTML = renderBridgeModal();
@@ -1807,6 +1879,7 @@ function renderScreenBody(){
     case "catalog": return renderCatalogScreen();
     case "product": return renderProductDetailScreen(state.screenParams.productId);
     case "cart": return renderCartScreen();
+    case "wishlist": return renderWishlistScreen();
     case "checkout-interstitial": return renderCheckoutInterstitialScreen();
     case "order-confirm": return renderOrderConfirmScreen();
     case "track": return renderTrackScreen();
@@ -1854,11 +1927,13 @@ function renderProductCard(p){
   const archId = activeArchetypeId();
   const score = confidenceScore(p, archId);
   const tier = confidenceTier(score);
+  const saved = state.wishlist.indexOf(p.id) >= 0;
   return ''
     + '<div class="card product-card" data-action="open-product" data-id="'+p.id+'">'
     +   '<div class="thumb-wrap">'
     +     '<img class="thumb img-loading" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onload="this.classList.remove(\'img-loading\')" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
     +     '<span class="badge '+tier+'">'+score+'%</span>'
+    +     '<button class="wish-btn '+(saved?"active":"")+'" data-action="toggle-wishlist" data-id="'+p.id+'" aria-label="Save to wishlist">'+(saved?"&#9829;":"&#9825;")+'</button>'
     +   '</div>'
     +   '<div class="pc-body">'
     +     '<h4>'+escapeHtml(p.name)+'</h4>'
@@ -1882,6 +1957,10 @@ function renderCatalogScreen(){
   const brand = activeBrand();
   const f = state.catalogFilters;
   let list = products.filter(function(p){ return p.brandId === brand.id; });
+  if(f.search && f.search.trim()){
+    const q = f.search.trim().toLowerCase();
+    list = list.filter(function(p){ return p.name.toLowerCase().indexOf(q) >= 0 || p.category.toLowerCase().indexOf(q) >= 0; });
+  }
   if(f.category !== "all") list = list.filter(function(p){ return p.category === f.category; });
   if(f.confidence !== "all"){
     list = list.filter(function(p){ return confidenceTier(confidenceScore(p, activeArchetypeId())) === f.confidence; });
@@ -1901,6 +1980,11 @@ function renderCatalogScreen(){
   return ''
     + '<div class="page container">'
     +   '<h1>Catalog</h1>'
+    +   '<div class="search-row">'
+    +     '<span class="search-icon">&#128269;</span>'
+    +     '<input type="text" id="catalog-search-input" data-action="catalog-search" placeholder="Search '+escapeHtml(brand.name)+'..." value="'+escapeHtml(f.search||"")+'">'
+    +     (f.search ? '<button class="search-clear" data-action="clear-catalog-search" aria-label="Clear search">&times;</button>' : '')
+    +   '</div>'
     +   '<div class="filter-bar">'
     +     '<select data-action="browse-brand-select">'+brandOptions+'</select>'
     +     '<select data-action="filter-category"><option value="all">All categories</option>'+catOptions+'</select>'
@@ -1958,6 +2042,18 @@ function openProduct(productId){
 function selectSize(sz){ state.screenParams.selectedSize = sz; render(); }
 function changeQty(delta){
   state.screenParams.qty = Math.max(1, (state.screenParams.qty||1) + delta);
+  render();
+}
+function toggleWishlist(productId){
+  const idx = state.wishlist.indexOf(productId);
+  const p = getProduct(productId);
+  if(idx >= 0){
+    state.wishlist.splice(idx,1);
+    showToast(p.name + " removed from wishlist");
+  } else {
+    state.wishlist.push(productId);
+    showToast(p.name + " saved to wishlist");
+  }
   render();
 }
 function addToCart(){
@@ -2070,8 +2166,19 @@ function renderProductDetailScreen(productId){
       + '</div>';
   }
 
+  const crossSell = products.filter(function(o){ return o.brandId===p.brandId && o.id!==p.id; }).slice(0,4);
+  const crossSellHtml = crossSell.length ? ''
+    + '<h2 class="section-title" style="margin-top:40px;">More from '+escapeHtml(brand.name)+'</h2>'
+    + '<div class="product-grid">' + crossSell.map(renderProductCard).join("") + '</div>' : "";
+
   return ''
     + '<div class="page container">'
+    +   '<div class="breadcrumb">'
+    +     '<button data-action="go-home">Home</button><span>/</span>'
+    +     '<button data-action="go-catalog">Catalog</button><span>/</span>'
+    +     '<button data-action="go-catalog-category" data-val="'+p.category+'">'+escapeHtml(p.category)+'</button><span>/</span>'
+    +     '<span class="breadcrumb-current">'+escapeHtml(p.name)+'</span>'
+    +   '</div>'
     +   '<div class="pd-grid">'
     +     '<div class="pd-images">'
     +       '<img class="img-loading" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onload="this.classList.remove(\'img-loading\')" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
@@ -2090,21 +2197,54 @@ function renderProductDetailScreen(productId){
     +       '<h4 style="margin-top:18px;">Size</h4>'
     +       '<div class="size-row">'+sizeButtons+'</div>'
     +       '<div class="qty-row"><button data-action="qty-minus">&minus;</button><span>'+sp.qty+'</span><button data-action="qty-plus">&#43;</button></div>'
-    +       '<button class="btn" data-action="add-to-cart">Add to Cart</button>'
+    +       '<div style="display:flex; gap:10px;">'
+    +         '<button class="btn" style="flex:1;" data-action="add-to-cart">Add to Cart</button>'
+    +         '<button class="pd-wish-btn '+(state.wishlist.indexOf(p.id)>=0?"active":"")+'" data-action="toggle-wishlist" data-id="'+p.id+'" aria-label="Save to wishlist">'+(state.wishlist.indexOf(p.id)>=0?"&#9829;":"&#9825;")+'</button>'
+    +       '</div>'
     +       advisorWidget
     +     '</div>'
     +   '</div>'
     +   fitSection
+    +   crossSellHtml
     + '</div>';
 }
 
 /* ---------------------------- SCREEN 8 — CART / CHECKOUT ---------------------------- */
 function removeCartLine(idx){ state.cart.splice(idx,1); render(); }
 function cartLineChangeSize(idx, sz){ state.cart[idx].size = sz; render(); }
+function renderWishlistScreen(){
+  if(!state.wishlist.length){
+    return ''
+      + '<div class="page container">'
+      +   '<h1>Wishlist</h1>'
+      +   '<div class="empty-state">'
+      +     '<div class="empty-state-icon">&#9825;</div>'
+      +     '<p>Nothing saved yet. Tap the heart on any product to save it here for later.</p>'
+      +     '<button class="btn" data-action="go-catalog">Browse Catalog</button>'
+      +   '</div>'
+      + '</div>';
+  }
+  const items = state.wishlist.map(getProduct).filter(Boolean);
+  const cards = items.map(renderProductCard).join("");
+  return ''
+    + '<div class="page container">'
+    +   '<h1>Wishlist</h1>'
+    +   '<p style="color:var(--muted); margin-bottom:20px;">'+items.length+' saved item'+(items.length===1?"":"s")+'</p>'
+    +   '<div class="product-grid">'+cards+'</div>'
+    + '</div>';
+}
 function renderCartScreen(){
   const brand = activeBrand();
   if(!state.cart.length){
-    return '<div class="page container"><h1>Cart</h1><p style="color:var(--muted);">Your cart is empty.</p><button class="btn" data-action="go-catalog">Browse Catalog</button></div>';
+    return ''
+      + '<div class="page container">'
+      +   '<h1>Cart</h1>'
+      +   '<div class="empty-state">'
+      +     '<div class="empty-state-icon">&#128722;</div>'
+      +     '<p>Your cart is empty.</p>'
+      +     '<button class="btn" data-action="go-catalog">Browse Catalog</button>'
+      +   '</div>'
+      + '</div>';
   }
   let total = 0;
   const lines = state.cart.map(function(line, idx){
@@ -2144,7 +2284,24 @@ function goCheckout(){
     const score = confidenceScore(p, activeArchetypeId());
     if(score < 60) flagged.push(idx);
   });
-  navigate("checkout-interstitial", { flaggedIdx: flagged, reviewPos: 0, resolved:{} });
+  navigate("checkout-interstitial", {
+    flaggedIdx: flagged, reviewPos: 0, resolved:{},
+    address: mockAddressFor(state.currentPersona.name), paymentMethod:"card", processing:false
+  });
+}
+function editAddressField(field, value){
+  state.screenParams.address[field] = value;
+}
+function setPaymentMethod(method){
+  state.screenParams.paymentMethod = method;
+  render();
+}
+function confirmCheckoutDetails(){
+  state.screenParams.processing = true;
+  render();
+  setTimeout(function(){
+    placeOrder();
+  }, 1000);
 }
 function resolveFlagUpdateSize(){
   const sp = state.screenParams;
@@ -2166,10 +2323,14 @@ function resolveFlagKeepAnyway(){
 }
 function placeOrder(){
   const p = state.currentPersona;
+  const sp = state.screenParams;
   const orderId = "SV-ORD-" + Math.floor(1000+Math.random()*8999);
   const deliveryDate = new Date(Date.now() + (3 + Math.floor(Math.random()*4))*86400000).toISOString().slice(0,10);
   const items = state.cart.map(function(l){ return { productId:l.productId, size:l.size, qty:l.qty }; });
-  const order = { id: orderId, channel:"d2c", date:new Date().toISOString().slice(0,10), status:"Ordered", items: items };
+  const order = {
+    id: orderId, channel:"d2c", date:new Date().toISOString().slice(0,10), status:"Ordered", items: items,
+    address: sp.address, paymentMethod: sp.paymentMethod
+  };
   p.orders.unshift(order);
   state.cart = [];
   navigate("order-confirm", { order: order, deliveryDate: deliveryDate });
@@ -2196,21 +2357,56 @@ function renderCheckoutInterstitialScreen(){
       +   '</div>'
       + '</div></div>';
   }
+  if(sp.processing){
+    return ''
+      + '<div class="page container" style="max-width:460px; text-align:center;">'
+      +   '<h2 style="margin-top:60px;">Placing your order...</h2>'
+      +   '<div class="spinner"></div>'
+      +   '<p style="color:var(--muted); font-size:13px;">Confirming payment and reserving your items.</p>'
+      + '</div>';
+  }
   let total = 0;
   const lines = state.cart.map(function(line){
     const p = getProduct(line.productId);
     total += p.priceInr * line.qty;
     return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:14px;">'+escapeHtml(p.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+line.size+' &middot; Qty '+line.qty+'</div></div><div>'+money(p.priceInr*line.qty)+'</div></div>';
   }).join("");
+  const shipping = total >= 2000 ? 0 : 99;
+  const addr = sp.address;
+  const paymentOptions = [
+    { id:"card", label:"Credit / Debit Card", note:"Visa, Mastercard, RuPay" },
+    { id:"upi", label:"UPI", note:"Google Pay, PhonePe, Paytm" },
+    { id:"cod", label:"Cash on Delivery", note:"Pay when it arrives" }
+  ];
+  const paymentHtml = paymentOptions.map(function(o){
+    return '<div class="choice-card '+(sp.paymentMethod===o.id?"selected":"")+'" style="min-width:0; flex:1; text-align:left; padding:12px 14px;" data-action="set-payment" data-val="'+o.id+'">'
+      + '<div style="font-weight:700; font-size:13px;">'+o.label+'</div><div style="font-size:11px; color:var(--muted); margin-top:2px;">'+o.note+'</div></div>';
+  }).join("");
   return ''
     + '<div class="page container" style="max-width:600px;">'
     +   '<h1>Checkout</h1>'
-    +   (totalFlagged ? '<p style="color:var(--green); font-size:13px;">All fit concerns reviewed.</p>' : '')
-    +   '<div class="card" style="padding:6px 18px;">'+lines+'</div>'
-    +   '<div class="cart-summary"><span>Total</span><span>'+money(total)+'</span></div>'
-    +   '<button class="btn" data-action="place-order">Place Order</button>'
+    +   (totalFlagged ? '<p style="color:var(--green); font-size:13px; margin-bottom:14px;">All fit concerns reviewed.</p>' : '')
+    +   '<h4 style="margin-bottom:8px;">Delivery address</h4>'
+    +   '<div class="card" style="padding:16px; margin-bottom:20px;">'
+    +     '<div class="addr-grid">'
+    +       '<div class="field"><label>Full name</label><input type="text" data-action="addr-field" data-field="name" value="'+escapeHtml(addr.name)+'"></div>'
+    +       '<div class="field"><label>Phone</label><input type="text" data-action="addr-field" data-field="phone" value="'+escapeHtml(addr.phone)+'"></div>'
+    +       '<div class="field" style="grid-column:1/-1;"><label>Address</label><input type="text" data-action="addr-field" data-field="line1" value="'+escapeHtml(addr.line1)+'"></div>'
+    +       '<div class="field"><label>City</label><input type="text" data-action="addr-field" data-field="city" value="'+escapeHtml(addr.city)+'"></div>'
+    +       '<div class="field"><label>State</label><input type="text" data-action="addr-field" data-field="state" value="'+escapeHtml(addr.state)+'"></div>'
+    +       '<div class="field"><label>Pincode</label><input type="text" data-action="addr-field" data-field="pincode" value="'+escapeHtml(addr.pincode)+'"></div>'
+    +     '</div>'
+    +   '</div>'
+    +   '<h4 style="margin-bottom:8px;">Payment method</h4>'
+    +   '<div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:20px;">'+paymentHtml+'</div>'
+    +   '<h4 style="margin-bottom:8px;">Order summary</h4>'
+    +   '<div class="card" style="padding:6px 18px; margin-bottom:14px;">'+lines+'</div>'
+    +   '<div class="cart-summary" style="font-weight:400; color:var(--muted); padding:4px 0;"><span>Shipping</span><span>'+(shipping===0?"Free":money(shipping))+'</span></div>'
+    +   '<div class="cart-summary"><span>Total</span><span>'+money(total+shipping)+'</span></div>'
+    +   '<button class="btn" style="width:100%;" data-action="confirm-checkout-details">Place Order</button>'
     + '</div>';
 }
+const PAYMENT_LABELS = { card:"Credit / Debit Card", upi:"UPI", cod:"Cash on Delivery" };
 function renderOrderConfirmScreen(){
   const sp = state.screenParams;
   const order = sp.order;
@@ -2218,12 +2414,18 @@ function renderOrderConfirmScreen(){
     const p = getProduct(it.productId);
     return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:14px;">'+escapeHtml(p.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+it.size+' &middot; Qty '+it.qty+'</div></div></div>';
   }).join("");
+  const addr = order.address;
   return ''
     + '<div class="page container" style="max-width:560px; text-align:center;">'
     +   '<div class="checkmark-anim">&#10003;</div>'
     +   '<h1>Order Placed</h1>'
-    +   '<p style="color:var(--muted);">Order <strong>'+order.id+'</strong> confirmed.</p>'
+    +   '<p style="color:var(--muted);">Order <strong>'+order.id+'</strong> confirmed. A confirmation has been sent to your registered contact.</p>'
     +   '<div class="card" style="padding:6px 18px; text-align:left; margin-top:18px;">'+items+'</div>'
+    +   (addr ? '<div class="card" style="padding:16px; text-align:left; margin-top:14px; font-size:13px;">'
+        + '<div style="font-weight:700; margin-bottom:4px;">Delivering to '+escapeHtml(addr.name)+'</div>'
+        + '<div style="color:var(--muted);">'+escapeHtml(addr.line1)+', '+escapeHtml(addr.city)+', '+escapeHtml(addr.state)+' '+escapeHtml(addr.pincode)+'</div>'
+        + '<div style="color:var(--muted); margin-top:6px;">Paying via <strong>'+(PAYMENT_LABELS[order.paymentMethod]||"Card")+'</strong></div>'
+        + '</div>' : '')
     +   '<p style="margin-top:14px; font-size:13.5px;">Estimated delivery: <strong>'+fmtDate(sp.deliveryDate)+'</strong></p>'
     +   '<button class="btn" style="margin-top:18px;" data-action="go-track">Track Your Order</button>'
     + '</div>';
@@ -2517,6 +2719,9 @@ function handleAppClick(e){
     case "go-about": navigate("about", { tab:"governance" }); break;
     case "about-tab": setAboutTab(val); break;
     case "go-cart": navigate("cart", {}); break;
+    case "go-wishlist": navigate("wishlist", {}); break;
+    case "go-catalog-category": state.catalogFilters.category = val; navigate("catalog", {}); break;
+    case "toggle-mobile-nav": toggleMobileNav(); break;
     case "open-bridge-modal": openBridgeModal(); break;
     case "dismiss-bridge-banner": dismissBridgeBanner(); break;
     case "view-outreach-details": viewOutreachDetails(); break;
@@ -2543,6 +2748,8 @@ function handleAppClick(e){
     case "resolve-update-size": resolveFlagUpdateSize(); break;
     case "resolve-keep-anyway": resolveFlagKeepAnyway(); break;
     case "place-order": placeOrder(); break;
+    case "set-payment": setPaymentMethod(val); break;
+    case "confirm-checkout-details": confirmCheckoutDetails(); break;
     case "toggle-order": toggleOrderExpand(id); break;
     case "start-return": startReturnFlow(el.getAttribute("data-order"), el.getAttribute("data-product")); break;
     case "resume-return": resumeReturnFlow(el.getAttribute("data-key")); break;
@@ -2554,8 +2761,16 @@ function handleAppClick(e){
     case "refund-pref": setRefundPref(val); break;
     case "submit-return-form": submitReturnForm(); break;
     case "send-support": sendSupportMessage(); break;
+    case "clear-catalog-search": setFilter("search",""); break;
+    case "toggle-wishlist": toggleWishlist(id); break;
     default: break;
   }
+}
+function handleAppInput(e){
+  const el = e.target.closest("[data-action]");
+  if(!el) return;
+  const action = el.getAttribute("data-action");
+  if(action === "catalog-search"){ setFilter("search", el.value); }
 }
 function handleAppChange(e){
   const el = e.target.closest("[data-action]");
@@ -2567,6 +2782,7 @@ function handleAppChange(e){
     case "filter-confidence": setFilter("confidence", el.value); break;
     case "filter-price": setFilter("price", el.value); break;
     case "cart-size": cartLineChangeSize(parseInt(el.getAttribute("data-idx"),10), el.value); break;
+    case "addr-field": editAddressField(el.getAttribute("data-field"), el.value); break;
     default: break;
   }
 }
@@ -2582,6 +2798,7 @@ function initApp(){
   app.addEventListener("click", handleAppClick);
   app.addEventListener("change", handleAppChange);
   app.addEventListener("keypress", handleAppKeypress);
+  app.addEventListener("input", handleAppInput);
   preflightImageCheck();
   render();
 }
@@ -2699,6 +2916,29 @@ const TRUST_COPY = {
 function mockEmailFor(name){
   const parts = String(name).toLowerCase().replace(/[^a-z\s]/g,"").trim().split(/\s+/);
   return (parts[0]||"member") + "." + (parts[parts.length-1]||"") + "@mailbox.example";
+}
+const MOCK_CITIES = [
+  { city:"Mumbai", state:"Maharashtra", pincode:"400050" },
+  { city:"Bengaluru", state:"Karnataka", pincode:"560034" },
+  { city:"Delhi", state:"Delhi", pincode:"110017" },
+  { city:"Pune", state:"Maharashtra", pincode:"411006" },
+  { city:"Hyderabad", state:"Telangana", pincode:"500034" },
+  { city:"Chennai", state:"Tamil Nadu", pincode:"600028" },
+  { city:"Kolkata", state:"West Bengal", pincode:"700019" },
+  { city:"Ahmedabad", state:"Gujarat", pincode:"380015" }
+];
+const MOCK_STREETS = ["Palm Residency, 12th Cross","Lakeview Apartments, Block C","Sunrise Towers, Flat 4B","Maple Enclave, Sector 9","Orchid Heights, Wing A","Silver Oak Society","Green Park Residency","Hillcrest Apartments"];
+function mockAddressFor(name){
+  const h = hashStr(name);
+  const city = MOCK_CITIES[h % MOCK_CITIES.length];
+  const street = MOCK_STREETS[h % MOCK_STREETS.length];
+  const houseNo = (h % 180) + 1;
+  return {
+    name: name,
+    phone: "+91 " + (70000 + (h % 29999)).toString().padStart(5,"0") + " " + (10000 + (h % 89999)).toString().padStart(5,"0"),
+    line1: "House No. " + houseNo + ", " + street,
+    city: city.city, state: city.state, pincode: city.pincode
+  };
 }
 function memberSinceLabel(p){
   const dates = [];
@@ -2829,6 +3069,7 @@ function selectPersona(personaId){
   state.currentPersona = cloneJSON(tmpl);
   state.browsingBrandId = null;
   state.cart = [];
+  state.wishlist = [];
   state.bridgeBannerDismissed = false;
   state.bridgeModal = null;
   state.proactiveShown = false;

@@ -1,0 +1,3152 @@
+{
+  "meta": {
+    "seed": 20260923,
+    "generated_at": "2026-09-22T19:06:37.610Z",
+    "version": "2.0-extension",
+    "based_on_checksum": "b5590e7c7e73c18794c38e4de97579182cb897a4dd09b700a44b7d62a9aa0eb8"
+  },
+  "employees": [
+    {
+      "id": "emp_001",
+      "name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_focus": "maisonluxe"
+    },
+    {
+      "id": "emp_002",
+      "name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_focus": "ecoweave"
+    },
+    {
+      "id": "emp_003",
+      "name": "Ritu Sharma",
+      "sub_team": "Digital Customer Support",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_004",
+      "name": "Devansh Kapoor",
+      "sub_team": "Digital Customer Support",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_005",
+      "name": "Sameer Khan",
+      "sub_team": "Digital Customer Support",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_006",
+      "name": "Priyanka Rao",
+      "sub_team": "Digital Customer Support",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_007",
+      "name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_008",
+      "name": "Nikita Verma",
+      "sub_team": "Marketplace Operations",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_009",
+      "name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_010",
+      "name": "Simran Kaur",
+      "sub_team": "Marketplace Operations",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_011",
+      "name": "Vikram Desai",
+      "sub_team": "CRM & Loyalty",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_012",
+      "name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_013",
+      "name": "Arjun Reddy",
+      "sub_team": "CRM & Loyalty",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_014",
+      "name": "Kavita Pillai",
+      "sub_team": "Customer Analytics",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_015",
+      "name": "Manish Gupta",
+      "sub_team": "Customer Analytics",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_016",
+      "name": "Shalini Bose",
+      "sub_team": "Customer Analytics",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_017",
+      "name": "Yusuf Ahmed",
+      "sub_team": "Customer Analytics",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_018",
+      "name": "Aadhya Verma",
+      "sub_team": "Customer Journey & Experience Design",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_019",
+      "name": "Kavya Choudhary",
+      "sub_team": "Customer Journey & Experience Design",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_020",
+      "name": "Vivek Pandey",
+      "sub_team": "Customer Journey & Experience Design",
+      "brand_focus": null
+    },
+    {
+      "id": "emp_021",
+      "name": "Sana Reddy",
+      "sub_team": "Customer Journey & Experience Design",
+      "brand_focus": null
+    }
+  ],
+  "capacityTasks": [
+    {
+      "id": "task_001",
+      "task": "Return label generation",
+      "gate": "Automate",
+      "sub_team": "Digital Customer Support",
+      "activity": "Query resolution & grievance",
+      "hrs_per_task": 0.3,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 172,
+          "hrs_freed": 51.6
+        },
+        {
+          "month": "2026-06",
+          "volume": 402,
+          "hrs_freed": 120.6
+        },
+        {
+          "month": "2026-07",
+          "volume": 631,
+          "hrs_freed": 189.3
+        },
+        {
+          "month": "2026-08",
+          "volume": 895,
+          "hrs_freed": 268.5
+        },
+        {
+          "month": "2026-09",
+          "volume": 838,
+          "hrs_freed": 251.4
+        }
+      ]
+    },
+    {
+      "id": "task_002",
+      "task": "Tier-1 chat triage",
+      "gate": "Automate",
+      "sub_team": "Digital Customer Support",
+      "activity": "Query resolution & grievance",
+      "hrs_per_task": 0.25,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 238,
+          "hrs_freed": 59.5
+        },
+        {
+          "month": "2026-06",
+          "volume": 556,
+          "hrs_freed": 139
+        },
+        {
+          "month": "2026-07",
+          "volume": 873,
+          "hrs_freed": 218.3
+        },
+        {
+          "month": "2026-08",
+          "volume": 1239,
+          "hrs_freed": 309.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 1579,
+          "hrs_freed": 394.8
+        }
+      ]
+    },
+    {
+      "id": "task_003",
+      "task": "Delivery status lookups",
+      "gate": "Automate",
+      "sub_team": "Digital Customer Support",
+      "activity": "Query resolution & grievance",
+      "hrs_per_task": 0.2,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 185,
+          "hrs_freed": 37
+        },
+        {
+          "month": "2026-06",
+          "volume": 431,
+          "hrs_freed": 86.2
+        },
+        {
+          "month": "2026-07",
+          "volume": 677,
+          "hrs_freed": 135.4
+        },
+        {
+          "month": "2026-08",
+          "volume": 960,
+          "hrs_freed": 192
+        },
+        {
+          "month": "2026-09",
+          "volume": 689,
+          "hrs_freed": 137.8
+        }
+      ]
+    },
+    {
+      "id": "task_004",
+      "task": "Refund status updates",
+      "gate": "Automate",
+      "sub_team": "Digital Customer Support",
+      "activity": "Query resolution & grievance",
+      "hrs_per_task": 0.25,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 266,
+          "hrs_freed": 66.5
+        },
+        {
+          "month": "2026-06",
+          "volume": 620,
+          "hrs_freed": 155
+        },
+        {
+          "month": "2026-07",
+          "volume": 974,
+          "hrs_freed": 243.5
+        },
+        {
+          "month": "2026-08",
+          "volume": 1381,
+          "hrs_freed": 345.3
+        },
+        {
+          "month": "2026-09",
+          "volume": 1629,
+          "hrs_freed": 407.3
+        }
+      ]
+    },
+    {
+      "id": "task_005",
+      "task": "Case brief drafting",
+      "gate": "Augment",
+      "sub_team": "Digital Customer Support",
+      "activity": "Query resolution & grievance",
+      "hrs_per_task": 0.4,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 219,
+          "hrs_freed": 87.6
+        },
+        {
+          "month": "2026-06",
+          "volume": 510,
+          "hrs_freed": 204
+        },
+        {
+          "month": "2026-07",
+          "volume": 801,
+          "hrs_freed": 320.4
+        },
+        {
+          "month": "2026-08",
+          "volume": 1136,
+          "hrs_freed": 454.4
+        },
+        {
+          "month": "2026-09",
+          "volume": 1402,
+          "hrs_freed": 560.8
+        }
+      ]
+    },
+    {
+      "id": "task_006",
+      "task": "Listing monitoring",
+      "gate": "Automate",
+      "sub_team": "Marketplace Operations",
+      "activity": "Marketplace ops & monitoring",
+      "hrs_per_task": 0.3,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 279,
+          "hrs_freed": 83.7
+        },
+        {
+          "month": "2026-06",
+          "volume": 650,
+          "hrs_freed": 195
+        },
+        {
+          "month": "2026-07",
+          "volume": 1022,
+          "hrs_freed": 306.6
+        },
+        {
+          "month": "2026-08",
+          "volume": 1449,
+          "hrs_freed": 434.7
+        },
+        {
+          "month": "2026-09",
+          "volume": 1553,
+          "hrs_freed": 465.9
+        }
+      ]
+    },
+    {
+      "id": "task_007",
+      "task": "Marketplace review triage",
+      "gate": "Augment",
+      "sub_team": "Marketplace Operations",
+      "activity": "Marketplace ops & monitoring",
+      "hrs_per_task": 0.35,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 188,
+          "hrs_freed": 65.8
+        },
+        {
+          "month": "2026-06",
+          "volume": 439,
+          "hrs_freed": 153.6
+        },
+        {
+          "month": "2026-07",
+          "volume": 690,
+          "hrs_freed": 241.5
+        },
+        {
+          "month": "2026-08",
+          "volume": 979,
+          "hrs_freed": 342.7
+        },
+        {
+          "month": "2026-09",
+          "volume": 1098,
+          "hrs_freed": 384.3
+        }
+      ]
+    },
+    {
+      "id": "task_008",
+      "task": "Size-guide badge generation",
+      "gate": "Automate",
+      "sub_team": "Marketplace Operations",
+      "activity": "Marketplace ops & monitoring",
+      "hrs_per_task": 0.2,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 129,
+          "hrs_freed": 25.8
+        },
+        {
+          "month": "2026-06",
+          "volume": 301,
+          "hrs_freed": 60.2
+        },
+        {
+          "month": "2026-07",
+          "volume": 474,
+          "hrs_freed": 94.8
+        },
+        {
+          "month": "2026-08",
+          "volume": 672,
+          "hrs_freed": 134.4
+        },
+        {
+          "month": "2026-09",
+          "volume": 575,
+          "hrs_freed": 115
+        }
+      ]
+    },
+    {
+      "id": "task_009",
+      "task": "Marketplace return-code aggregation",
+      "gate": "Automate",
+      "sub_team": "Marketplace Operations",
+      "activity": "Marketplace ops & monitoring",
+      "hrs_per_task": 0.25,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 177,
+          "hrs_freed": 44.3
+        },
+        {
+          "month": "2026-06",
+          "volume": 413,
+          "hrs_freed": 103.3
+        },
+        {
+          "month": "2026-07",
+          "volume": 650,
+          "hrs_freed": 162.5
+        },
+        {
+          "month": "2026-08",
+          "volume": 921,
+          "hrs_freed": 230.3
+        },
+        {
+          "month": "2026-09",
+          "volume": 862,
+          "hrs_freed": 215.5
+        }
+      ]
+    },
+    {
+      "id": "task_010",
+      "task": "Loyalty tier maintenance",
+      "gate": "Automate",
+      "sub_team": "CRM & Loyalty",
+      "activity": "Segmentation & personalisation",
+      "hrs_per_task": 0.2,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 256,
+          "hrs_freed": 51.2
+        },
+        {
+          "month": "2026-06",
+          "volume": 598,
+          "hrs_freed": 119.6
+        },
+        {
+          "month": "2026-07",
+          "volume": 939,
+          "hrs_freed": 187.8
+        },
+        {
+          "month": "2026-08",
+          "volume": 1332,
+          "hrs_freed": 266.4
+        },
+        {
+          "month": "2026-09",
+          "volume": 1500,
+          "hrs_freed": 300
+        }
+      ]
+    },
+    {
+      "id": "task_011",
+      "task": "Fit Passport onboarding nudges",
+      "gate": "Augment",
+      "sub_team": "CRM & Loyalty",
+      "activity": "Segmentation & personalisation",
+      "hrs_per_task": 0.3,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 94,
+          "hrs_freed": 28.2
+        },
+        {
+          "month": "2026-06",
+          "volume": 220,
+          "hrs_freed": 66
+        },
+        {
+          "month": "2026-07",
+          "volume": 345,
+          "hrs_freed": 103.5
+        },
+        {
+          "month": "2026-08",
+          "volume": 490,
+          "hrs_freed": 147
+        },
+        {
+          "month": "2026-09",
+          "volume": 485,
+          "hrs_freed": 145.5
+        }
+      ]
+    },
+    {
+      "id": "task_012",
+      "task": "Personal styling consultations",
+      "gate": "Amplify",
+      "sub_team": "CRM & Loyalty",
+      "activity": "CRM & experience design",
+      "hrs_per_task": 0.6,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 161,
+          "hrs_freed": 96.6
+        },
+        {
+          "month": "2026-06",
+          "volume": 376,
+          "hrs_freed": 225.6
+        },
+        {
+          "month": "2026-07",
+          "volume": 591,
+          "hrs_freed": 354.6
+        },
+        {
+          "month": "2026-08",
+          "volume": 838,
+          "hrs_freed": 502.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 862,
+          "hrs_freed": 517.2
+        }
+      ]
+    },
+    {
+      "id": "task_013",
+      "task": "Marketplace claim-batch processing",
+      "gate": "Automate",
+      "sub_team": "CRM & Loyalty",
+      "activity": "Segmentation & personalisation",
+      "hrs_per_task": 0.25,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 84,
+          "hrs_freed": 21
+        },
+        {
+          "month": "2026-06",
+          "volume": 196,
+          "hrs_freed": 49
+        },
+        {
+          "month": "2026-07",
+          "volume": 307,
+          "hrs_freed": 76.8
+        },
+        {
+          "month": "2026-08",
+          "volume": 436,
+          "hrs_freed": 109
+        },
+        {
+          "month": "2026-09",
+          "volume": 504,
+          "hrs_freed": 126
+        }
+      ]
+    },
+    {
+      "id": "task_014",
+      "task": "Confidence-score calibration review",
+      "gate": "Augment",
+      "sub_team": "Customer Analytics",
+      "activity": "Journey analytics & reporting",
+      "hrs_per_task": 0.5,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 137,
+          "hrs_freed": 68.5
+        },
+        {
+          "month": "2026-06",
+          "volume": 321,
+          "hrs_freed": 160.5
+        },
+        {
+          "month": "2026-07",
+          "volume": 504,
+          "hrs_freed": 252
+        },
+        {
+          "month": "2026-08",
+          "volume": 714,
+          "hrs_freed": 357
+        },
+        {
+          "month": "2026-09",
+          "volume": 459,
+          "hrs_freed": 229.5
+        }
+      ]
+    },
+    {
+      "id": "task_015",
+      "task": "Fit-matrix adjustment approval",
+      "gate": "Augment",
+      "sub_team": "Customer Analytics",
+      "activity": "Journey analytics & reporting",
+      "hrs_per_task": 0.4,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 207,
+          "hrs_freed": 82.8
+        },
+        {
+          "month": "2026-06",
+          "volume": 483,
+          "hrs_freed": 193.2
+        },
+        {
+          "month": "2026-07",
+          "volume": 760,
+          "hrs_freed": 304
+        },
+        {
+          "month": "2026-08",
+          "volume": 1077,
+          "hrs_freed": 430.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 1196,
+          "hrs_freed": 478.4
+        }
+      ]
+    },
+    {
+      "id": "task_016",
+      "task": "Weekly KPI reporting",
+      "gate": "Automate",
+      "sub_team": "Customer Analytics",
+      "activity": "Journey analytics & reporting",
+      "hrs_per_task": 0.3,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 228,
+          "hrs_freed": 68.4
+        },
+        {
+          "month": "2026-06",
+          "volume": 532,
+          "hrs_freed": 159.6
+        },
+        {
+          "month": "2026-07",
+          "volume": 836,
+          "hrs_freed": 250.8
+        },
+        {
+          "month": "2026-08",
+          "volume": 1186,
+          "hrs_freed": 355.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 1140,
+          "hrs_freed": 342
+        }
+      ]
+    },
+    {
+      "id": "task_017",
+      "task": "Model registry upkeep",
+      "gate": "Augment",
+      "sub_team": "Customer Analytics",
+      "activity": "Journey analytics & reporting",
+      "hrs_per_task": 0.35,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 275,
+          "hrs_freed": 96.3
+        },
+        {
+          "month": "2026-06",
+          "volume": 642,
+          "hrs_freed": 224.7
+        },
+        {
+          "month": "2026-07",
+          "volume": 1009,
+          "hrs_freed": 353.2
+        },
+        {
+          "month": "2026-08",
+          "volume": 1431,
+          "hrs_freed": 500.9
+        },
+        {
+          "month": "2026-09",
+          "volume": 1538,
+          "hrs_freed": 538.3
+        }
+      ]
+    },
+    {
+      "id": "task_018",
+      "task": "AI Involvement Dial tuning",
+      "gate": "Amplify",
+      "sub_team": "Customer Journey & Experience Design",
+      "activity": "CRM & experience design",
+      "hrs_per_task": 0.5,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 114,
+          "hrs_freed": 57
+        },
+        {
+          "month": "2026-06",
+          "volume": 267,
+          "hrs_freed": 133.5
+        },
+        {
+          "month": "2026-07",
+          "volume": 420,
+          "hrs_freed": 210
+        },
+        {
+          "month": "2026-08",
+          "volume": 595,
+          "hrs_freed": 297.5
+        },
+        {
+          "month": "2026-09",
+          "volume": 698,
+          "hrs_freed": 349
+        }
+      ]
+    },
+    {
+      "id": "task_019",
+      "task": "Brand voice rubric maintenance",
+      "gate": "Augment",
+      "sub_team": "Customer Journey & Experience Design",
+      "activity": "CRM & experience design",
+      "hrs_per_task": 0.4,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 95,
+          "hrs_freed": 38
+        },
+        {
+          "month": "2026-06",
+          "volume": 221,
+          "hrs_freed": 88.4
+        },
+        {
+          "month": "2026-07",
+          "volume": 347,
+          "hrs_freed": 138.8
+        },
+        {
+          "month": "2026-08",
+          "volume": 492,
+          "hrs_freed": 196.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 434,
+          "hrs_freed": 173.6
+        }
+      ]
+    },
+    {
+      "id": "task_020",
+      "task": "Fit-preview A/B test analysis",
+      "gate": "Amplify",
+      "sub_team": "Customer Journey & Experience Design",
+      "activity": "CRM & experience design",
+      "hrs_per_task": 0.45,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 268,
+          "hrs_freed": 120.6
+        },
+        {
+          "month": "2026-06",
+          "volume": 626,
+          "hrs_freed": 281.7
+        },
+        {
+          "month": "2026-07",
+          "volume": 983,
+          "hrs_freed": 442.4
+        },
+        {
+          "month": "2026-08",
+          "volume": 1395,
+          "hrs_freed": 627.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 1344,
+          "hrs_freed": 604.8
+        }
+      ]
+    },
+    {
+      "id": "task_021",
+      "task": "Campaign brief coordination",
+      "gate": "Automate",
+      "sub_team": "Customer Journey & Experience Design",
+      "activity": "Campaign coordination & comms",
+      "hrs_per_task": 0.3,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 136,
+          "hrs_freed": 40.8
+        },
+        {
+          "month": "2026-06",
+          "volume": 316,
+          "hrs_freed": 94.8
+        },
+        {
+          "month": "2026-07",
+          "volume": 497,
+          "hrs_freed": 149.1
+        },
+        {
+          "month": "2026-08",
+          "volume": 705,
+          "hrs_freed": 211.5
+        },
+        {
+          "month": "2026-09",
+          "volume": 732,
+          "hrs_freed": 219.6
+        }
+      ]
+    },
+    {
+      "id": "task_022",
+      "task": "Journey touchpoint mapping",
+      "gate": "Amplify",
+      "sub_team": "Customer Journey & Experience Design",
+      "activity": "Journey analytics & reporting",
+      "hrs_per_task": 0.4,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 251,
+          "hrs_freed": 100.4
+        },
+        {
+          "month": "2026-06",
+          "volume": 587,
+          "hrs_freed": 234.8
+        },
+        {
+          "month": "2026-07",
+          "volume": 922,
+          "hrs_freed": 368.8
+        },
+        {
+          "month": "2026-08",
+          "volume": 1307,
+          "hrs_freed": 522.8
+        },
+        {
+          "month": "2026-09",
+          "volume": 1136,
+          "hrs_freed": 454.4
+        }
+      ]
+    },
+    {
+      "id": "task_023",
+      "task": "Grievance Radar outreach drafting",
+      "gate": "Augment",
+      "sub_team": "Digital Customer Support",
+      "activity": "Query resolution & grievance",
+      "hrs_per_task": 0.35,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 272,
+          "hrs_freed": 95.2
+        },
+        {
+          "month": "2026-06",
+          "volume": 636,
+          "hrs_freed": 222.6
+        },
+        {
+          "month": "2026-07",
+          "volume": 999,
+          "hrs_freed": 349.7
+        },
+        {
+          "month": "2026-08",
+          "volume": 1416,
+          "hrs_freed": 495.6
+        },
+        {
+          "month": "2026-09",
+          "volume": 1752,
+          "hrs_freed": 613.2
+        }
+      ]
+    },
+    {
+      "id": "task_024",
+      "task": "Advisor brief generation (Maison Luxe / EcoWeave)",
+      "gate": "Augment",
+      "sub_team": "CRM & Loyalty",
+      "activity": "CRM & experience design",
+      "hrs_per_task": 0.5,
+      "monthly": [
+        {
+          "month": "2026-03",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-04",
+          "volume": 0,
+          "hrs_freed": 0
+        },
+        {
+          "month": "2026-05",
+          "volume": 93,
+          "hrs_freed": 46.5
+        },
+        {
+          "month": "2026-06",
+          "volume": 217,
+          "hrs_freed": 108.5
+        },
+        {
+          "month": "2026-07",
+          "volume": 342,
+          "hrs_freed": 171
+        },
+        {
+          "month": "2026-08",
+          "volume": 484,
+          "hrs_freed": 242
+        },
+        {
+          "month": "2026-09",
+          "volume": 597,
+          "hrs_freed": 298.5
+        }
+      ]
+    }
+  ],
+  "capacitySummary": {
+    "months": [
+      "2026-03",
+      "2026-04",
+      "2026-05",
+      "2026-06",
+      "2026-07",
+      "2026-08",
+      "2026-09"
+    ],
+    "current_month_index": 6,
+    "total_hrs_freed_to_date": 8322.8,
+    "current_month_hrs": 8322.8,
+    "fte_released_to_date": 52,
+    "fte_target": 119,
+    "hours_target": 19040
+  },
+  "registryComponents": [
+    {
+      "id": "reg_speedstyle_auto_approve_exchange_to_one_size_up",
+      "brand_id": "speedstyle",
+      "component": "Auto-approve exchange to one size up",
+      "ai_suggestions": 67,
+      "overrides": 19,
+      "override_rate": 28.4,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_auto_close_case_as_resolved",
+      "brand_id": "speedstyle",
+      "component": "Auto-close case as resolved",
+      "ai_suggestions": 75,
+      "overrides": 7,
+      "override_rate": 9.3,
+      "automation_bias_watch": true
+    },
+    {
+      "id": "reg_speedstyle_send_automated_size_chart_reply",
+      "brand_id": "speedstyle",
+      "component": "Send automated size-chart reply",
+      "ai_suggestions": 30,
+      "overrides": 7,
+      "override_rate": 23.3,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_auto_refund_without_return_pickup",
+      "brand_id": "speedstyle",
+      "component": "Auto-refund without return pickup",
+      "ai_suggestions": 54,
+      "overrides": 11,
+      "override_rate": 20.4,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_flag_customer_as_high_churn_risk",
+      "brand_id": "speedstyle",
+      "component": "Flag customer as high churn-risk",
+      "ai_suggestions": 40,
+      "overrides": 6,
+      "override_rate": 15,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_route_case_to_tier_1_queue",
+      "brand_id": "speedstyle",
+      "component": "Route case to Tier 1 queue",
+      "ai_suggestions": 49,
+      "overrides": 9,
+      "override_rate": 18.4,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_suggest_generative_styling_reply",
+      "brand_id": "speedstyle",
+      "component": "Suggest generative styling reply",
+      "ai_suggestions": 66,
+      "overrides": 16,
+      "override_rate": 24.2,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_auto_intercept_return_with_exchange_offer",
+      "brand_id": "speedstyle",
+      "component": "Auto-intercept return with exchange offer",
+      "ai_suggestions": 62,
+      "overrides": 15,
+      "override_rate": 24.2,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_speedstyle_draft_internal_advisor_brief",
+      "brand_id": "speedstyle",
+      "component": "Draft internal advisor brief",
+      "ai_suggestions": 87,
+      "overrides": 24,
+      "override_rate": 27.6,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_auto_approve_exchange_to_one_size_up",
+      "brand_id": "urbanedge",
+      "component": "Auto-approve exchange to one size up",
+      "ai_suggestions": 59,
+      "overrides": 10,
+      "override_rate": 16.9,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_auto_close_case_as_resolved",
+      "brand_id": "urbanedge",
+      "component": "Auto-close case as resolved",
+      "ai_suggestions": 77,
+      "overrides": 18,
+      "override_rate": 23.4,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_send_automated_size_chart_reply",
+      "brand_id": "urbanedge",
+      "component": "Send automated size-chart reply",
+      "ai_suggestions": 85,
+      "overrides": 16,
+      "override_rate": 18.8,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_auto_refund_without_return_pickup",
+      "brand_id": "urbanedge",
+      "component": "Auto-refund without return pickup",
+      "ai_suggestions": 63,
+      "overrides": 17,
+      "override_rate": 27,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_flag_customer_as_high_churn_risk",
+      "brand_id": "urbanedge",
+      "component": "Flag customer as high churn-risk",
+      "ai_suggestions": 42,
+      "overrides": 12,
+      "override_rate": 28.6,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_route_case_to_tier_1_queue",
+      "brand_id": "urbanedge",
+      "component": "Route case to Tier 1 queue",
+      "ai_suggestions": 64,
+      "overrides": 14,
+      "override_rate": 21.9,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_suggest_generative_styling_reply",
+      "brand_id": "urbanedge",
+      "component": "Suggest generative styling reply",
+      "ai_suggestions": 32,
+      "overrides": 6,
+      "override_rate": 18.8,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_auto_intercept_return_with_exchange_offer",
+      "brand_id": "urbanedge",
+      "component": "Auto-intercept return with exchange offer",
+      "ai_suggestions": 65,
+      "overrides": 12,
+      "override_rate": 18.5,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_urbanedge_draft_internal_advisor_brief",
+      "brand_id": "urbanedge",
+      "component": "Draft internal advisor brief",
+      "ai_suggestions": 48,
+      "overrides": 14,
+      "override_rate": 29.2,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_auto_approve_exchange_to_one_size_up",
+      "brand_id": "maisonluxe",
+      "component": "Auto-approve exchange to one size up",
+      "ai_suggestions": 41,
+      "overrides": 8,
+      "override_rate": 19.5,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_auto_close_case_as_resolved",
+      "brand_id": "maisonluxe",
+      "component": "Auto-close case as resolved",
+      "ai_suggestions": 56,
+      "overrides": 15,
+      "override_rate": 26.8,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_send_automated_size_chart_reply",
+      "brand_id": "maisonluxe",
+      "component": "Send automated size-chart reply",
+      "ai_suggestions": 46,
+      "overrides": 13,
+      "override_rate": 28.3,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_auto_refund_without_return_pickup",
+      "brand_id": "maisonluxe",
+      "component": "Auto-refund without return pickup",
+      "ai_suggestions": 48,
+      "overrides": 10,
+      "override_rate": 20.8,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_flag_customer_as_high_churn_risk",
+      "brand_id": "maisonluxe",
+      "component": "Flag customer as high churn-risk",
+      "ai_suggestions": 60,
+      "overrides": 11,
+      "override_rate": 18.3,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_route_case_to_tier_1_queue",
+      "brand_id": "maisonluxe",
+      "component": "Route case to Tier 1 queue",
+      "ai_suggestions": 60,
+      "overrides": 14,
+      "override_rate": 23.3,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_auto_intercept_return_with_exchange_offer",
+      "brand_id": "maisonluxe",
+      "component": "Auto-intercept return with exchange offer",
+      "ai_suggestions": 41,
+      "overrides": 8,
+      "override_rate": 19.5,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_maisonluxe_draft_internal_advisor_brief",
+      "brand_id": "maisonluxe",
+      "component": "Draft internal advisor brief",
+      "ai_suggestions": 79,
+      "overrides": 16,
+      "override_rate": 20.3,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_auto_approve_exchange_to_one_size_up",
+      "brand_id": "ecoweave",
+      "component": "Auto-approve exchange to one size up",
+      "ai_suggestions": 77,
+      "overrides": 18,
+      "override_rate": 23.4,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_auto_close_case_as_resolved",
+      "brand_id": "ecoweave",
+      "component": "Auto-close case as resolved",
+      "ai_suggestions": 64,
+      "overrides": 11,
+      "override_rate": 17.2,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_send_automated_size_chart_reply",
+      "brand_id": "ecoweave",
+      "component": "Send automated size-chart reply",
+      "ai_suggestions": 50,
+      "overrides": 8,
+      "override_rate": 16,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_auto_refund_without_return_pickup",
+      "brand_id": "ecoweave",
+      "component": "Auto-refund without return pickup",
+      "ai_suggestions": 80,
+      "overrides": 18,
+      "override_rate": 22.5,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_flag_customer_as_high_churn_risk",
+      "brand_id": "ecoweave",
+      "component": "Flag customer as high churn-risk",
+      "ai_suggestions": 48,
+      "overrides": 13,
+      "override_rate": 27.1,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_route_case_to_tier_1_queue",
+      "brand_id": "ecoweave",
+      "component": "Route case to Tier 1 queue",
+      "ai_suggestions": 32,
+      "overrides": 6,
+      "override_rate": 18.8,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_ecoweave_auto_intercept_return_with_exchange_offer",
+      "brand_id": "ecoweave",
+      "component": "Auto-intercept return with exchange offer",
+      "ai_suggestions": 36,
+      "overrides": 10,
+      "override_rate": 27.8,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_threadbasics_auto_approve_exchange_to_one_size_up",
+      "brand_id": "threadbasics",
+      "component": "Auto-approve exchange to one size up",
+      "ai_suggestions": 75,
+      "overrides": 20,
+      "override_rate": 26.7,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_threadbasics_auto_close_case_as_resolved",
+      "brand_id": "threadbasics",
+      "component": "Auto-close case as resolved",
+      "ai_suggestions": 48,
+      "overrides": 14,
+      "override_rate": 29.2,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_threadbasics_auto_refund_without_return_pickup",
+      "brand_id": "threadbasics",
+      "component": "Auto-refund without return pickup",
+      "ai_suggestions": 47,
+      "overrides": 8,
+      "override_rate": 17,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_threadbasics_flag_customer_as_high_churn_risk",
+      "brand_id": "threadbasics",
+      "component": "Flag customer as high churn-risk",
+      "ai_suggestions": 62,
+      "overrides": 18,
+      "override_rate": 29,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_threadbasics_route_case_to_tier_1_queue",
+      "brand_id": "threadbasics",
+      "component": "Route case to Tier 1 queue",
+      "ai_suggestions": 65,
+      "overrides": 13,
+      "override_rate": 20,
+      "automation_bias_watch": false
+    },
+    {
+      "id": "reg_threadbasics_auto_intercept_return_with_exchange_offer",
+      "brand_id": "threadbasics",
+      "component": "Auto-intercept return with exchange offer",
+      "ai_suggestions": 50,
+      "overrides": 15,
+      "override_rate": 30,
+      "automation_bias_watch": false
+    }
+  ],
+  "overrideWins": [
+    {
+      "id": "ovr_001",
+      "employee_name": "Ritu Sharma",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-07-08"
+    },
+    {
+      "id": "ovr_002",
+      "employee_name": "Shalini Bose",
+      "sub_team": "Customer Analytics",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-09-03"
+    },
+    {
+      "id": "ovr_003",
+      "employee_name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-09-22"
+    },
+    {
+      "id": "ovr_004",
+      "employee_name": "Sameer Khan",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-07-16"
+    },
+    {
+      "id": "ovr_005",
+      "employee_name": "Nikita Verma",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-07-19"
+    },
+    {
+      "id": "ovr_006",
+      "employee_name": "Arjun Reddy",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-06-18"
+    },
+    {
+      "id": "ovr_007",
+      "employee_name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Send automated size-chart reply",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-06-25"
+    },
+    {
+      "id": "ovr_008",
+      "employee_name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Send automated size-chart reply",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-05-03"
+    },
+    {
+      "id": "ovr_009",
+      "employee_name": "Shalini Bose",
+      "sub_team": "Customer Analytics",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-06-23"
+    },
+    {
+      "id": "ovr_010",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-06-10"
+    },
+    {
+      "id": "ovr_011",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-06-19"
+    },
+    {
+      "id": "ovr_012",
+      "employee_name": "Manish Gupta",
+      "sub_team": "Customer Analytics",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-05-25"
+    },
+    {
+      "id": "ovr_013",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-09-08"
+    },
+    {
+      "id": "ovr_014",
+      "employee_name": "Sameer Khan",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Suggest generative styling reply",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-09-03"
+    },
+    {
+      "id": "ovr_015",
+      "employee_name": "Priyanka Rao",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Suggest generative styling reply",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-08-08"
+    },
+    {
+      "id": "ovr_016",
+      "employee_name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-08-28"
+    },
+    {
+      "id": "ovr_017",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-07-07"
+    },
+    {
+      "id": "ovr_018",
+      "employee_name": "Shalini Bose",
+      "sub_team": "Customer Analytics",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-06-26"
+    },
+    {
+      "id": "ovr_019",
+      "employee_name": "Yusuf Ahmed",
+      "sub_team": "Customer Analytics",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-05-02"
+    },
+    {
+      "id": "ovr_020",
+      "employee_name": "Manish Gupta",
+      "sub_team": "Customer Analytics",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-08-08"
+    },
+    {
+      "id": "ovr_021",
+      "employee_name": "Priyanka Rao",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "speedstyle",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-08-26"
+    },
+    {
+      "id": "ovr_022",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-09-02"
+    },
+    {
+      "id": "ovr_023",
+      "employee_name": "Devansh Kapoor",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-05-09"
+    },
+    {
+      "id": "ovr_024",
+      "employee_name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-08-23"
+    },
+    {
+      "id": "ovr_025",
+      "employee_name": "Shalini Bose",
+      "sub_team": "Customer Analytics",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Send automated size-chart reply",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-05-30"
+    },
+    {
+      "id": "ovr_026",
+      "employee_name": "Devansh Kapoor",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-07-19"
+    },
+    {
+      "id": "ovr_027",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-07-03"
+    },
+    {
+      "id": "ovr_028",
+      "employee_name": "Arjun Reddy",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-08-23"
+    },
+    {
+      "id": "ovr_029",
+      "employee_name": "Ritu Sharma",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-06-29"
+    },
+    {
+      "id": "ovr_030",
+      "employee_name": "Arjun Reddy",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-08-28"
+    },
+    {
+      "id": "ovr_031",
+      "employee_name": "Arjun Reddy",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-09-19"
+    },
+    {
+      "id": "ovr_032",
+      "employee_name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-06-26"
+    },
+    {
+      "id": "ovr_033",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Suggest generative styling reply",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-06-20"
+    },
+    {
+      "id": "ovr_034",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Suggest generative styling reply",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-06-04"
+    },
+    {
+      "id": "ovr_035",
+      "employee_name": "Devansh Kapoor",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-07-21"
+    },
+    {
+      "id": "ovr_036",
+      "employee_name": "Sameer Khan",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-08-03"
+    },
+    {
+      "id": "ovr_037",
+      "employee_name": "Ritu Sharma",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-08-30"
+    },
+    {
+      "id": "ovr_038",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-05-10"
+    },
+    {
+      "id": "ovr_039",
+      "employee_name": "Ritu Sharma",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "urbanedge",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-05-14"
+    },
+    {
+      "id": "ovr_040",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-05-24"
+    },
+    {
+      "id": "ovr_041",
+      "employee_name": "Simran Kaur",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-07-17"
+    },
+    {
+      "id": "ovr_042",
+      "employee_name": "Yusuf Ahmed",
+      "sub_team": "Customer Analytics",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-09-19"
+    },
+    {
+      "id": "ovr_043",
+      "employee_name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Send automated size-chart reply",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-08-15"
+    },
+    {
+      "id": "ovr_044",
+      "employee_name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Send automated size-chart reply",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-07-23"
+    },
+    {
+      "id": "ovr_045",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-09-02"
+    },
+    {
+      "id": "ovr_046",
+      "employee_name": "Simran Kaur",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-07-12"
+    },
+    {
+      "id": "ovr_047",
+      "employee_name": "Priyanka Rao",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-09-12"
+    },
+    {
+      "id": "ovr_048",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-06-23"
+    },
+    {
+      "id": "ovr_049",
+      "employee_name": "Simran Kaur",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-06-05"
+    },
+    {
+      "id": "ovr_050",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-07-13"
+    },
+    {
+      "id": "ovr_051",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-09-03"
+    },
+    {
+      "id": "ovr_052",
+      "employee_name": "Manish Gupta",
+      "sub_team": "Customer Analytics",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-09-21"
+    },
+    {
+      "id": "ovr_053",
+      "employee_name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-05-25"
+    },
+    {
+      "id": "ovr_054",
+      "employee_name": "Yusuf Ahmed",
+      "sub_team": "Customer Analytics",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-08-14"
+    },
+    {
+      "id": "ovr_055",
+      "employee_name": "Kavita Pillai",
+      "sub_team": "Customer Analytics",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-07-10"
+    },
+    {
+      "id": "ovr_056",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "maisonluxe",
+      "ai_suggestion": "Draft internal advisor brief",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-08-07"
+    },
+    {
+      "id": "ovr_057",
+      "employee_name": "Kavita Pillai",
+      "sub_team": "Customer Analytics",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-09-03"
+    },
+    {
+      "id": "ovr_058",
+      "employee_name": "Ritu Sharma",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-07-10"
+    },
+    {
+      "id": "ovr_059",
+      "employee_name": "Devansh Kapoor",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-09-07"
+    },
+    {
+      "id": "ovr_060",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-05-15"
+    },
+    {
+      "id": "ovr_061",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-05-12"
+    },
+    {
+      "id": "ovr_062",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Send automated size-chart reply",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-07-24"
+    },
+    {
+      "id": "ovr_063",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-07-10"
+    },
+    {
+      "id": "ovr_064",
+      "employee_name": "Sameer Khan",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-08-01"
+    },
+    {
+      "id": "ovr_065",
+      "employee_name": "Arjun Reddy",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-04-28"
+    },
+    {
+      "id": "ovr_066",
+      "employee_name": "Vikram Desai",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-08-28"
+    },
+    {
+      "id": "ovr_067",
+      "employee_name": "Manish Gupta",
+      "sub_team": "Customer Analytics",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-08-30"
+    },
+    {
+      "id": "ovr_068",
+      "employee_name": "Rohit Nair",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-07-21"
+    },
+    {
+      "id": "ovr_069",
+      "employee_name": "Yusuf Ahmed",
+      "sub_team": "Customer Analytics",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-06-07"
+    },
+    {
+      "id": "ovr_070",
+      "employee_name": "Devansh Kapoor",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "ecoweave",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-05-29"
+    },
+    {
+      "id": "ovr_071",
+      "employee_name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-09-01"
+    },
+    {
+      "id": "ovr_072",
+      "employee_name": "Nikita Verma",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Recent size-chart update wasn't yet reflected in the model's training data.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-08-25"
+    },
+    {
+      "id": "ovr_073",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-approve exchange to one size up",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-08-11"
+    },
+    {
+      "id": "ovr_074",
+      "employee_name": "Sameer Khan",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Customer retained, repeat purchase within 30 days",
+      "date": "2026-06-16"
+    },
+    {
+      "id": "ovr_075",
+      "employee_name": "Shalini Bose",
+      "sub_team": "Customer Analytics",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-06-09"
+    },
+    {
+      "id": "ovr_076",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-close case as resolved",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-07-16"
+    },
+    {
+      "id": "ovr_077",
+      "employee_name": "Aarav",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-06-06"
+    },
+    {
+      "id": "ovr_078",
+      "employee_name": "Nikita Verma",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-refund without return pickup",
+      "override_reason": "Customer had already tried the suggested fix per the channel log.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-05-09"
+    },
+    {
+      "id": "ovr_079",
+      "employee_name": "Priyanka Rao",
+      "sub_team": "Digital Customer Support",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-09-01"
+    },
+    {
+      "id": "ovr_080",
+      "employee_name": "Kavita Pillai",
+      "sub_team": "Customer Analytics",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Customer's order history showed a pattern the model didn't weigh heavily enough.",
+      "outcome": "Case resolved in one touch instead of three",
+      "date": "2026-07-23"
+    },
+    {
+      "id": "ovr_081",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Flag customer as high churn-risk",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "Return avoided, exchange accepted",
+      "date": "2026-07-03"
+    },
+    {
+      "id": "ovr_082",
+      "employee_name": "Meher",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Route case to Tier 1 queue",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "Customer upgraded to loyalty tier",
+      "date": "2026-08-03"
+    },
+    {
+      "id": "ovr_083",
+      "employee_name": "Yusuf Ahmed",
+      "sub_team": "Customer Analytics",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Brand hard limit required human sign-off before this action could go out.",
+      "outcome": "Escalation avoided entirely",
+      "date": "2026-09-23"
+    },
+    {
+      "id": "ovr_084",
+      "employee_name": "Aakash Mehta",
+      "sub_team": "Marketplace Operations",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Model suggestion conflicted with a currently active promotional exception.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-07-20"
+    },
+    {
+      "id": "ovr_085",
+      "employee_name": "Tanvi Joshi",
+      "sub_team": "CRM & Loyalty",
+      "brand_id": "threadbasics",
+      "ai_suggestion": "Auto-intercept return with exchange offer",
+      "override_reason": "Case context (VIP customer) warranted a more personal resolution than the suggestion.",
+      "outcome": "NPS follow-up score of 9/10",
+      "date": "2026-08-08"
+    }
+  ],
+  "certificationHistory": [
+    {
+      "id": "cert_043",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "yo whats up with ur order lol",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Does not match one of ThreadBasics' approved rules-engine reply templates (no bespoke LLM copy permitted).",
+      "date": "2026-09-17"
+    },
+    {
+      "id": "cert_009",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-09-15"
+    },
+    {
+      "id": "cert_050",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-09-04"
+    },
+    {
+      "id": "cert_006",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-08-20"
+    },
+    {
+      "id": "cert_027",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "Thank you for your patience while we reviewed your fit notes — the alteration has been arranged. — Meher, Your Styling Advisor",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-08-19"
+    },
+    {
+      "id": "cert_033",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "Here is the sourcing detail on file: organic cotton content verified against DOC-4821.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-08-03"
+    },
+    {
+      "id": "cert_049",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-08-01"
+    },
+    {
+      "id": "cert_025",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "Thank you for your patience while we reviewed your fit notes — the alteration has been arranged. — Meher, Your Styling Advisor",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-07-27"
+    },
+    {
+      "id": "cert_030",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "hey! sorted it for u 😊 hurry before it sells out!",
+      "verdict": "Fail",
+      "reason": "Maison Luxe voice guide prohibits emoji in any client-facing message. Urgency language is inconsistent with Maison Luxe's advisor-mediated, unhurried tone. Missing the named advisor sign-off (e.g. \"— Meher\" or \"Your Styling Advisor\") required for Advisor-Mediated brands.",
+      "date": "2026-07-21"
+    },
+    {
+      "id": "cert_052",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-07-20"
+    },
+    {
+      "id": "cert_051",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-07-18"
+    },
+    {
+      "id": "cert_029",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "Thank you for your patience while we reviewed your fit notes — the alteration has been arranged. — Meher, Your Styling Advisor",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-07-06"
+    },
+    {
+      "id": "cert_048",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-07-05"
+    },
+    {
+      "id": "cert_001",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-06-23"
+    },
+    {
+      "id": "cert_020",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-06-17"
+    },
+    {
+      "id": "cert_003",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-06-07"
+    },
+    {
+      "id": "cert_007",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-05-27"
+    },
+    {
+      "id": "cert_018",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-05-21"
+    },
+    {
+      "id": "cert_002",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-05-13"
+    },
+    {
+      "id": "cert_031",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "Here is the sourcing detail on file: organic cotton content verified against DOC-4821.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-05-05"
+    },
+    {
+      "id": "cert_010",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-23"
+    },
+    {
+      "id": "cert_047",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "yo whats up with ur order lol",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Does not match one of ThreadBasics' approved rules-engine reply templates (no bespoke LLM copy permitted).",
+      "date": "2026-04-21"
+    },
+    {
+      "id": "cert_024",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "hey! sorted it for u 😊 hurry before it sells out!",
+      "verdict": "Fail",
+      "reason": "Maison Luxe voice guide prohibits emoji in any client-facing message. Urgency language is inconsistent with Maison Luxe's advisor-mediated, unhurried tone. Missing the named advisor sign-off (e.g. \"— Meher\" or \"Your Styling Advisor\") required for Advisor-Mediated brands.",
+      "date": "2026-04-19"
+    },
+    {
+      "id": "cert_022",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "Thank you for your patience while we reviewed your fit notes — the alteration has been arranged. — Meher, Your Styling Advisor",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-17"
+    },
+    {
+      "id": "cert_036",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "yeah its sustainable trust me",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Sustainability claim is not traceable to a verified_claims source ID (e.g. DOC-1234) — EcoWeave requires every claim to cite its source.",
+      "date": "2026-04-13"
+    },
+    {
+      "id": "cert_019",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "omg limited time offer, act now!! 🎉🎉🎉",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice.",
+      "date": "2026-04-13"
+    },
+    {
+      "id": "cert_045",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-11"
+    },
+    {
+      "id": "cert_035",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "Here is the sourcing detail on file: organic cotton content verified against DOC-4821.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-11"
+    },
+    {
+      "id": "cert_039",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "Here is the sourcing detail on file: organic cotton content verified against DOC-4821.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-07"
+    },
+    {
+      "id": "cert_038",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "Here is the sourcing detail on file: organic cotton content verified against DOC-4821.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-04"
+    },
+    {
+      "id": "cert_008",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-04-04"
+    },
+    {
+      "id": "cert_017",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "omg limited time offer, act now!! 🎉🎉🎉",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice.",
+      "date": "2026-03-12"
+    },
+    {
+      "id": "cert_028",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "hey! sorted it for u 😊 hurry before it sells out!",
+      "verdict": "Fail",
+      "reason": "Maison Luxe voice guide prohibits emoji in any client-facing message. Urgency language is inconsistent with Maison Luxe's advisor-mediated, unhurried tone. Missing the named advisor sign-off (e.g. \"— Meher\" or \"Your Styling Advisor\") required for Advisor-Mediated brands.",
+      "date": "2026-03-10"
+    },
+    {
+      "id": "cert_012",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-03-08"
+    },
+    {
+      "id": "cert_013",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "omg limited time offer, act now!! 🎉🎉🎉",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice.",
+      "date": "2026-03-04"
+    },
+    {
+      "id": "cert_005",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "Thanks for the heads up — I've got your exchange started for the next size up, no need to send anything back first.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-24"
+    },
+    {
+      "id": "cert_046",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-22"
+    },
+    {
+      "id": "cert_011",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-22"
+    },
+    {
+      "id": "cert_023",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "hey! sorted it for u 😊 hurry before it sells out!",
+      "verdict": "Fail",
+      "reason": "Maison Luxe voice guide prohibits emoji in any client-facing message. Urgency language is inconsistent with Maison Luxe's advisor-mediated, unhurried tone. Missing the named advisor sign-off (e.g. \"— Meher\" or \"Your Styling Advisor\") required for Advisor-Mediated brands.",
+      "date": "2026-02-18"
+    },
+    {
+      "id": "cert_016",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "Appreciate you flagging this. I've escalated the delivery delay and you'll get a status update within 24 hours.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-15"
+    },
+    {
+      "id": "cert_042",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-14"
+    },
+    {
+      "id": "cert_032",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "Here is the sourcing detail on file: organic cotton content verified against DOC-4821.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-10"
+    },
+    {
+      "id": "cert_037",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "yeah its sustainable trust me",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Sustainability claim is not traceable to a verified_claims source ID (e.g. DOC-1234) — EcoWeave requires every claim to cite its source.",
+      "date": "2026-02-05"
+    },
+    {
+      "id": "cert_021",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "Thank you for your patience while we reviewed your fit notes — the alteration has been arranged. — Meher, Your Styling Advisor",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-02-03"
+    },
+    {
+      "id": "cert_044",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "yo whats up with ur order lol",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Does not match one of ThreadBasics' approved rules-engine reply templates (no bespoke LLM copy permitted).",
+      "date": "2026-01-26"
+    },
+    {
+      "id": "cert_034",
+      "brand_id": "ecoweave",
+      "draft_excerpt": "yeah its sustainable trust me",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Sustainability claim is not traceable to a verified_claims source ID (e.g. DOC-1234) — EcoWeave requires every claim to cite its source.",
+      "date": "2026-01-22"
+    },
+    {
+      "id": "cert_026",
+      "brand_id": "maisonluxe",
+      "draft_excerpt": "Thank you for your patience while we reviewed your fit notes — the alteration has been arranged. — Meher, Your Styling Advisor",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2026-01-17"
+    },
+    {
+      "id": "cert_015",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "omg limited time offer, act now!! 🎉🎉🎉",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice.",
+      "date": "2026-01-16"
+    },
+    {
+      "id": "cert_004",
+      "brand_id": "speedstyle",
+      "draft_excerpt": "lol yeah that sizing chart is kind of a mess 😅 sorry sorry sorry",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Over-apologizes — more than 2 apology phrases reads as uncertain rather than helpful.",
+      "date": "2026-01-05"
+    },
+    {
+      "id": "cert_014",
+      "brand_id": "urbanedge",
+      "draft_excerpt": "omg limited time offer, act now!! 🎉🎉🎉",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice.",
+      "date": "2026-01-03"
+    },
+    {
+      "id": "cert_040",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "yo whats up with ur order lol",
+      "verdict": "Fail",
+      "reason": "Contains casual/slang markers not aligned with a professional support voice. Does not match one of ThreadBasics' approved rules-engine reply templates (no bespoke LLM copy permitted).",
+      "date": "2025-12-24"
+    },
+    {
+      "id": "cert_041",
+      "brand_id": "threadbasics",
+      "draft_excerpt": "Thanks for reaching out. Your refund has been processed and will reflect within 5-7 business days.",
+      "verdict": "Pass",
+      "reason": "Tone is warm and on-brand, no policy concerns.",
+      "date": "2025-12-10"
+    }
+  ],
+  "modelRegistry": [
+    {
+      "id": "model_confidence",
+      "name": "Confidence Score Model",
+      "version": "v2.3",
+      "status": "Production",
+      "owner": "Customer Analytics",
+      "last_validated": "2026-09-07",
+      "override_rate": null,
+      "notes": "Deterministic formula (§6), not a trained model — validation = formula unit tests + calibration chart (D6)."
+    },
+    {
+      "id": "model_archetype",
+      "name": "Archetype Assignment (nearest-centroid)",
+      "version": "v1.4-prototype",
+      "status": "Prototype",
+      "owner": "Customer Analytics",
+      "last_validated": "2026-09-07",
+      "override_rate": null,
+      "notes": "Nearest-centroid over (height, bust, waist, hip, usual size) in the prototype; production = K-means/GMM (solution doc §7.3)."
+    },
+    {
+      "id": "model_interception",
+      "name": "Return Interception Decision Engine",
+      "version": "v1.1",
+      "status": "Production",
+      "owner": "Customer Analytics",
+      "last_validated": "2026-08-26",
+      "override_rate": 23.6,
+      "notes": "Rules engine on top of the confidence score + stock check (§ Module 4 decision logic)."
+    },
+    {
+      "id": "model_case_triage",
+      "name": "Case Auto-Close Classifier",
+      "version": "v1.0",
+      "status": "Production",
+      "owner": "Digital Customer Support",
+      "last_validated": "2026-08-31",
+      "override_rate": 20.3,
+      "notes": "Flags automation-bias watch on SpeedStyle — see Override Wins."
+    },
+    {
+      "id": "model_voice_rubric",
+      "name": "Brand Voice Certification Rubric",
+      "version": "v2.0",
+      "status": "Production",
+      "owner": "Customer Journey & Experience Design",
+      "last_validated": "2026-09-20",
+      "override_rate": null,
+      "notes": "Deterministic rubric (banned markers, emoji policy, apology count, length bounds, brand-specific rules) — guards every live Gemini call too."
+    },
+    {
+      "id": "model_grievance",
+      "name": "Grievance Radar Risk Score",
+      "version": "v1.0-prototype",
+      "status": "Prototype",
+      "owner": "Digital Customer Support",
+      "last_validated": "2026-09-13",
+      "override_rate": null,
+      "notes": "Rule + z-score on delivery delay; sensitivity bound to the AI Involvement Dial proactivity threshold."
+    },
+    {
+      "id": "model_signal",
+      "name": "Marketplace Signal Miner",
+      "version": "v1.2",
+      "status": "Production",
+      "owner": "Marketplace Operations",
+      "last_validated": "2026-08-16",
+      "override_rate": null,
+      "notes": "SKU-level aggregate only — no individual marketplace buyer identity (data boundary, D5)."
+    }
+  ],
+  "dialAuditLog": [
+    {
+      "id": "dial_log_003",
+      "brand_id": "speedstyle",
+      "parameter": "automation_frequency",
+      "before": 89,
+      "after": 37,
+      "reason": "NPS dip traced to over-eager proactive outreach; threshold raised.",
+      "changed_by": "Sana Reddy",
+      "date": "2026-09-11"
+    },
+    {
+      "id": "dial_log_017",
+      "brand_id": "ecoweave",
+      "parameter": "tone",
+      "before": "Professional",
+      "after": "Professional",
+      "reason": "Customer Journey & Experience Design requested a tone refresh.",
+      "changed_by": "Kavya Choudhary",
+      "date": "2026-08-31"
+    },
+    {
+      "id": "dial_log_021",
+      "brand_id": "threadbasics",
+      "parameter": "automation_frequency",
+      "before": 31,
+      "after": 47,
+      "reason": "Quarterly Risk & Ethics Board review — adjusted per Q3 findings.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-07-26"
+    },
+    {
+      "id": "dial_log_007",
+      "brand_id": "urbanedge",
+      "parameter": "tone",
+      "before": "Professional",
+      "after": "Energetic",
+      "reason": "Brand hard-limit compliance check ahead of the marketplace expansion.",
+      "changed_by": "Vivek Pandey",
+      "date": "2026-07-24"
+    },
+    {
+      "id": "dial_log_005",
+      "brand_id": "urbanedge",
+      "parameter": "escalation_threshold",
+      "before": 73,
+      "after": 69,
+      "reason": "Customer Journey & Experience Design requested a tone refresh.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-07-09"
+    },
+    {
+      "id": "dial_log_004",
+      "brand_id": "speedstyle",
+      "parameter": "proactivity_threshold",
+      "before": 84,
+      "after": 43,
+      "reason": "NPS dip traced to over-eager proactive outreach; threshold raised.",
+      "changed_by": "Vivek Pandey",
+      "date": "2026-07-08"
+    },
+    {
+      "id": "dial_log_013",
+      "brand_id": "ecoweave",
+      "parameter": "automation_frequency",
+      "before": 56,
+      "after": 41,
+      "reason": "Customer Journey & Experience Design requested a tone refresh.",
+      "changed_by": "Sana Reddy",
+      "date": "2026-07-05"
+    },
+    {
+      "id": "dial_log_011",
+      "brand_id": "maisonluxe",
+      "parameter": "disclosure_mode",
+      "before": "Advisor-Mediated",
+      "after": "Advisor-Mediated",
+      "reason": "NPS dip traced to over-eager proactive outreach; threshold raised.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-06-19"
+    },
+    {
+      "id": "dial_log_020",
+      "brand_id": "threadbasics",
+      "parameter": "escalation_threshold",
+      "before": 41,
+      "after": 33,
+      "reason": "Post-launch calibration after the first two weeks of live traffic.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-06-15"
+    },
+    {
+      "id": "dial_log_014",
+      "brand_id": "ecoweave",
+      "parameter": "escalation_threshold",
+      "before": 33,
+      "after": 77,
+      "reason": "Post-launch calibration after the first two weeks of live traffic.",
+      "changed_by": "Sana Reddy",
+      "date": "2026-06-07"
+    },
+    {
+      "id": "dial_log_015",
+      "brand_id": "ecoweave",
+      "parameter": "tone",
+      "before": "Professional",
+      "after": "Warm & Honest",
+      "reason": "Post-launch calibration after the first two weeks of live traffic.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-05-30"
+    },
+    {
+      "id": "dial_log_012",
+      "brand_id": "maisonluxe",
+      "parameter": "proactivity_threshold",
+      "before": 42,
+      "after": 48,
+      "reason": "NPS dip traced to over-eager proactive outreach; threshold raised.",
+      "changed_by": "Vivek Pandey",
+      "date": "2026-05-24"
+    },
+    {
+      "id": "dial_log_010",
+      "brand_id": "maisonluxe",
+      "parameter": "automation_frequency",
+      "before": 36,
+      "after": 89,
+      "reason": "Post-launch calibration after the first two weeks of live traffic.",
+      "changed_by": "Kavya Choudhary",
+      "date": "2026-05-24"
+    },
+    {
+      "id": "dial_log_009",
+      "brand_id": "urbanedge",
+      "parameter": "tone",
+      "before": "Professional",
+      "after": "Professional",
+      "reason": "Brand hard-limit compliance check ahead of the marketplace expansion.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-05-09"
+    },
+    {
+      "id": "dial_log_008",
+      "brand_id": "urbanedge",
+      "parameter": "escalation_threshold",
+      "before": 40,
+      "after": 63,
+      "reason": "Post-launch calibration after the first two weeks of live traffic.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-04-20"
+    },
+    {
+      "id": "dial_log_001",
+      "brand_id": "speedstyle",
+      "parameter": "tone",
+      "before": "Professional",
+      "after": "Professional",
+      "reason": "Customer Journey & Experience Design requested a tone refresh.",
+      "changed_by": "Aadhya Verma",
+      "date": "2026-03-27"
+    },
+    {
+      "id": "dial_log_022",
+      "brand_id": "threadbasics",
+      "parameter": "escalation_threshold",
+      "before": 63,
+      "after": 83,
+      "reason": "Brand hard-limit compliance check ahead of the marketplace expansion.",
+      "changed_by": "Sana Reddy",
+      "date": "2026-03-12"
+    },
+    {
+      "id": "dial_log_018",
+      "brand_id": "ecoweave",
+      "parameter": "proactivity_threshold",
+      "before": 83,
+      "after": 30,
+      "reason": "Customer Journey & Experience Design requested a tone refresh.",
+      "changed_by": "Vivek Pandey",
+      "date": "2026-02-23"
+    },
+    {
+      "id": "dial_log_006",
+      "brand_id": "urbanedge",
+      "parameter": "tone",
+      "before": "Professional",
+      "after": "Warm & Honest",
+      "reason": "Post-launch calibration after the first two weeks of live traffic.",
+      "changed_by": "Vivek Pandey",
+      "date": "2026-02-14"
+    },
+    {
+      "id": "dial_log_016",
+      "brand_id": "ecoweave",
+      "parameter": "escalation_threshold",
+      "before": 83,
+      "after": 48,
+      "reason": "Brand hard-limit compliance check ahead of the marketplace expansion.",
+      "changed_by": "Sana Reddy",
+      "date": "2026-02-13"
+    },
+    {
+      "id": "dial_log_019",
+      "brand_id": "threadbasics",
+      "parameter": "proactivity_threshold",
+      "before": 57,
+      "after": 38,
+      "reason": "NPS dip traced to over-eager proactive outreach; threshold raised.",
+      "changed_by": "Sana Reddy",
+      "date": "2026-02-07"
+    },
+    {
+      "id": "dial_log_002",
+      "brand_id": "speedstyle",
+      "parameter": "proactivity_threshold",
+      "before": 83,
+      "after": 77,
+      "reason": "NPS dip traced to over-eager proactive outreach; threshold raised.",
+      "changed_by": "Kavya Choudhary",
+      "date": "2026-01-31"
+    }
+  ]
+}

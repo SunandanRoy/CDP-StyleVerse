@@ -49,7 +49,7 @@ export default function Dashboard() {
 
           <div className="mt-6">
             <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
-              Case Benchmark — real seeded case data
+              Round 1 Exhibit 2 Benchmark (reference)
             </h2>
             <div className="card grid grid-cols-2 gap-4 sm:grid-cols-4">
               <div>

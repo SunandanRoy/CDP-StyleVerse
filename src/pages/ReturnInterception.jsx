@@ -62,33 +62,47 @@ export default function ReturnInterception() {
             {returns && <span className="text-xs" style={{ color: 'var(--ink-mute)' }}>{returns.length} returns</span>}
           </div>
           <div className="overflow-x-auto rounded-lg border scrollbar-thin" style={{ borderColor: 'var(--edge)' }}>
-            <table className="w-full min-w-[640px] text-sm">
+            <table className="w-full min-w-[760px] text-sm">
               <thead style={{ background: 'var(--surface-alt)' }}>
                 <tr className="text-left text-xs uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
-                  <th className="px-3 py-2">Customer</th>
+                  <th className="px-3 py-2">Customer / Buyer</th>
                   <th className="px-3 py-2">Product</th>
                   <th className="px-3 py-2">Reason</th>
-                  <th className="px-3 py-2">Intercepted</th>
-                  <th className="px-3 py-2">Exchange</th>
+                  <th className="px-3 py-2">Eligible</th>
+                  <th className="px-3 py-2">Outcome</th>
+                  <th className="px-3 py-2">Why not intercepted</th>
                 </tr>
               </thead>
               <tbody>
-                {loading && <tr><td colSpan={5} className="px-3 py-6 text-center" style={{ color: 'var(--ink-mute)' }}>Loading…</td></tr>}
-                {returns?.map((r) => (
-                  <tr key={r.id} className="border-t" style={{ borderColor: 'var(--edge)' }}>
-                    <td className="px-3 py-2">{r.customer_name}</td>
-                    <td className="px-3 py-2">{r.product_name}</td>
-                    <td className="px-3 py-2 text-xs">{r.reason_code.replaceAll('_', ' ')}</td>
-                    <td className="px-3 py-2">
-                      <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: r.intercepted ? 'var(--good-soft)' : 'var(--neutral-soft)', color: r.intercepted ? 'var(--good)' : 'var(--neutral)' }}>
-                        {r.intercepted ? 'Yes' : 'No'}
-                      </span>
-                    </td>
-                    <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>
-                      {r.exchange_offered ? (r.exchange_accepted ? 'Offered · Accepted' : 'Offered · Declined') : 'Not offered'}
-                    </td>
-                  </tr>
-                ))}
+                {loading && <tr><td colSpan={6} className="px-3 py-6 text-center" style={{ color: 'var(--ink-mute)' }}>Loading…</td></tr>}
+                {/* C7 — interception applies to fit-driven D2C returns only; every
+                    non-intercepted fit return states why. */}
+                {returns?.map((r) => {
+                  const eligible = r.channel === 'D2C' && r.fit_driven
+                  const reasonLabel = r.decoded
+                    ? `${r.decoded.zone} — ${r.decoded.direction}`
+                    : REASON_CODES.includes(r.reason_code)
+                    ? r.reason_code.replaceAll('_', ' ')
+                    : r.reason_code
+                  return (
+                    <tr key={r.id} className="border-t" style={{ borderColor: 'var(--edge)' }}>
+                      <td className="px-3 py-2">{r.customer_name || r.buyer_alias}</td>
+                      <td className="px-3 py-2">{r.product_name}</td>
+                      <td className="px-3 py-2 text-xs capitalize">{reasonLabel}</td>
+                      <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>
+                        {eligible ? 'Fit-driven D2C' : r.channel === 'Marketplace' ? 'N/A — marketplace' : 'N/A — not fit-driven'}
+                      </td>
+                      <td className="px-3 py-2">
+                        <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: r.intercepted ? 'var(--good-soft)' : 'var(--neutral-soft)', color: r.intercepted ? 'var(--good)' : 'var(--neutral)' }}>
+                          {r.intercepted ? 'Intercepted' : 'Not intercepted'}
+                        </span>
+                      </td>
+                      <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>
+                        {r.non_intercept_reason ? r.non_intercept_reason.replaceAll('_', ' ') : '—'}
+                      </td>
+                    </tr>
+                  )
+                })}
               </tbody>
             </table>
           </div>

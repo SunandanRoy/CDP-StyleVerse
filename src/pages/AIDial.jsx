@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useBrand } from '../context/BrandContext'
+import { useFetch } from '../lib/useFetch'
+import { toast } from '../lib/toast'
 import { AI_TOOLING_MODE_LABELS } from '../../shared/confidence.js'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const TONE_OPTIONS = ['Energetic', 'Professional', 'Warm & Refined', 'Warm & Honest', 'Straightforward', 'Formal', 'Playful']
 
@@ -65,16 +68,45 @@ function BoolToggle({ label, value, onChange, hint, locked = false, lockedReason
 }
 
 export default function AIDial() {
-  const { brand, dial, updateDial } = useBrand()
+  const { brand, brandId, dial, updateDial } = useBrand()
+  const [reason, setReason] = useState('')
+  const { data: auditLog, loading: auditLoading } = useFetch(brandId ? `/dial-audit-log?brand_id=${brandId}` : null)
 
   if (!brand || !dial) return <div className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading…</div>
 
   const clientFacingLocked = brand.ai_tooling_mode === 'internal_llm_only'
 
+  // C13 — every Dial change requires a reason and writes an audit entry.
+  // A blank reason blocks the commit rather than silently defaulting.
+  const commit = (patch) => {
+    if (!reason.trim()) {
+      toast.error('Add a reason before changing a Dial setting — every change is audit-logged.')
+      return
+    }
+    updateDial({ ...patch, reason: reason.trim(), changed_by: 'Console user' })
+    setReason('')
+  }
+
   return (
     <div className="max-w-3xl">
       <h1 className="font-heading text-2xl font-bold">AI Involvement Dial</h1>
       <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>Governance settings for <strong>{brand.name}</strong>. Changes apply live across the console.</p>
+
+      <div className="mt-4 card" style={{ borderColor: 'var(--brand-accent)' }}>
+        <label className="mb-1 block text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+          Reason for the next change (required)
+        </label>
+        <input
+          value={reason}
+          onChange={(e) => setReason(e.target.value)}
+          placeholder="e.g. Quarterly Risk & Ethics Board review — adjusted per Q3 findings"
+          className="w-full rounded-md border px-3 py-2 text-sm"
+          style={{ borderColor: 'var(--edge)' }}
+        />
+        <p className="mt-1 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+          Every slider, toggle, tone or disclosure-mode change below writes an entry to the audit log with this reason, who made it, and the before → after values.
+        </p>
+      </div>
 
       <div className="mt-5 card">
         <div className="mb-4 flex items-center justify-between rounded-md border p-3" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
@@ -88,9 +120,9 @@ export default function AIDial() {
         </div>
         <p className="-mt-2 mb-4 text-[11px]" style={{ color: 'var(--ink-mute)' }}>{brand.hard_limit}</p>
 
-        <Slider label="Automation Frequency" field="automation_frequency" value={dial.automation_frequency} onCommit={(f, v) => updateDial({ [f]: v })} hint="How often the AI acts without a human trigger." />
-        <Slider label="Proactivity Threshold" field="proactivity_threshold" value={dial.proactivity_threshold} onCommit={(f, v) => updateDial({ [f]: v })} hint="Lower = the system reaches out proactively sooner." />
-        <Slider label="Escalation Threshold" field="escalation_threshold" value={dial.escalation_threshold} onCommit={(f, v) => updateDial({ [f]: v })} hint="Higher = more is handled before escalating to a human." />
+        <Slider label="Automation Frequency" field="automation_frequency" value={dial.automation_frequency} onCommit={(f, v) => commit({ [f]: v })} hint="How often the AI acts without a human trigger." />
+        <Slider label="Proactivity Threshold" field="proactivity_threshold" value={dial.proactivity_threshold} onCommit={(f, v) => commit({ [f]: v })} hint="Lower = the system reaches out proactively sooner." />
+        <Slider label="Escalation Threshold" field="escalation_threshold" value={dial.escalation_threshold} onCommit={(f, v) => commit({ [f]: v })} hint="Higher = more is handled before escalating to a human." />
 
         {dial.escalation_visible === null ? (
           <div className="mb-4 rounded-md border p-3" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
@@ -103,7 +135,7 @@ export default function AIDial() {
           <BoolToggle
             label="Escalation Path Visible to Customer"
             value={dial.escalation_visible}
-            onChange={(v) => updateDial({ escalation_visible: v })}
+            onChange={(v) => commit({ escalation_visible: v })}
             hint="Shows a one-tap 'talk to a human' option at every AI touchpoint."
           />
         )}
@@ -111,7 +143,7 @@ export default function AIDial() {
         <BoolToggle
           label="Generative Content — Client-Facing"
           value={dial.generative_content_allowed_clientfacing}
-          onChange={(v) => updateDial({ generative_content_allowed_clientfacing: v })}
+          onChange={(v) => commit({ generative_content_allowed_clientfacing: v })}
           hint="Whether AI-generated text may reach a customer directly, vs. staying internal-only (draft/QA tools)."
           locked={clientFacingLocked}
           lockedReason={
@@ -125,7 +157,7 @@ export default function AIDial() {
           <label className="mb-1 block text-xs font-medium" style={{ color: 'var(--ink-mute)' }}>Tone</label>
           <select
             value={dial.tone}
-            onChange={(e) => updateDial({ tone: e.target.value })}
+            onChange={(e) => commit({ tone: e.target.value })}
             className="w-full rounded-md border px-3 py-2 text-sm"
             style={{ borderColor: 'var(--edge)' }}
           >
@@ -139,7 +171,7 @@ export default function AIDial() {
             {['Self-Directed', 'Advisor-Mediated'].map((mode) => (
               <button
                 key={mode}
-                onClick={() => updateDial({ disclosure_mode: mode })}
+                onClick={() => commit({ disclosure_mode: mode })}
                 className="flex-1 px-3 py-2 text-sm font-medium"
                 style={dial.disclosure_mode === mode ? { background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' } : { background: 'var(--surface)', color: 'var(--ink-mute)' }}
               >
@@ -155,6 +187,31 @@ export default function AIDial() {
           <p className="mt-2 text-[11px] font-medium" style={{ color: 'var(--brand-accent)' }}>
             Toggle this, then revisit Unified Case Thread or Confidence Layer — the customer-facing wording updates live.
           </p>
+        </div>
+      </div>
+
+      <div className="mt-6">
+        <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+          Dial Audit Log — {brand.name}
+        </h2>
+        <p className="mb-3 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+          Every historical change, reviewed at Risk &amp; Ethics Board cadence (C13). Most recent first.
+        </p>
+        <div className="space-y-2">
+          {auditLoading && <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading…</p>}
+          {auditLog?.map((entry) => (
+            <div key={entry.id} className="card !p-3 text-xs">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="font-semibold">{entry.parameter.replaceAll('_', ' ')}</span>
+                <span style={{ color: 'var(--ink-mute)' }}>{formatDateIN(entry.date)} · {entry.changed_by}</span>
+              </div>
+              <div className="mt-1" style={{ color: 'var(--ink-mute)' }}>
+                {String(entry.before)} → <strong style={{ color: 'var(--ink)' }}>{String(entry.after)}</strong>
+              </div>
+              <div className="mt-1">{entry.reason}</div>
+            </div>
+          ))}
+          {auditLog?.length === 0 && <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>No changes logged yet for this brand.</p>}
         </div>
       </div>
     </div>

@@ -1,7 +1,17 @@
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useBrand } from '../context/BrandContext'
 import { ALL_NAV_ITEMS } from '../lib/navRegistry'
+import SettingsDrawer from './SettingsDrawer'
+
+function GearIcon() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+      <circle cx="12" cy="12" r="3" />
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+    </svg>
+  )
+}
 
 function SunIcon() {
   return (
@@ -43,8 +53,10 @@ function useCurrentNavItem() {
 export default function TopBar() {
   const { brands, brandId, setBrandId, brand, effectiveTheme, toggleTheme } = useBrand()
   const currentItem = useCurrentNavItem()
+  const [settingsOpen, setSettingsOpen] = useState(false)
 
   return (
+    <>
     <header
       className="glass sticky top-0 z-30 flex shrink-0 items-center justify-between px-6"
       style={{ height: 'var(--topbar-h)' }}
@@ -116,6 +128,17 @@ export default function TopBar() {
 
         <button
           type="button"
+          onClick={() => setSettingsOpen(true)}
+          aria-label="Settings"
+          title="Settings — live Gemini key"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border"
+          style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}
+        >
+          <GearIcon />
+        </button>
+
+        <button
+          type="button"
           onClick={toggleTheme}
           aria-label={effectiveTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
           title={effectiveTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -126,5 +149,12 @@ export default function TopBar() {
         </button>
       </div>
     </header>
+    {/* Rendered as a sibling, not a header child: the header's .glass class
+        uses backdrop-filter, which creates a new containing block for
+        position:fixed descendants — nesting the drawer inside it would trap
+        the "fixed inset-0" overlay inside the topbar's own box instead of
+        covering the viewport. */}
+    <SettingsDrawer open={settingsOpen} onClose={() => setSettingsOpen(false)} />
+    </>
   )
 }

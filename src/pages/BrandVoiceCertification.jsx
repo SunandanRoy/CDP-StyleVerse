@@ -4,6 +4,7 @@ import { useFetch } from '../lib/useFetch'
 import { api } from '../lib/api'
 import { toast } from '../lib/toast'
 import Skeleton from '../components/Skeleton'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 function parseVerdict(text) {
   const verdictMatch = text.match(/VERDICT:\s*(Pass|Fail)/i)
@@ -129,7 +130,7 @@ export default function BrandVoiceCertification() {
                     <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={h.verdict === 'Pass' ? { background: 'var(--good-soft)', color: 'var(--good)' } : { background: 'var(--bad-soft)', color: 'var(--bad)' }}>{h.verdict}</span>
                   </td>
                   <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{h.reason}</td>
-                  <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{h.date}</td>
+                  <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{formatDateIN(h.date)}</td>
                 </tr>
               ))}
             </tbody>

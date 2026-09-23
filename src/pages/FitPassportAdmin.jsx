@@ -4,6 +4,7 @@ import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import FitModel from '../components/FitModel/FitModel.jsx'
 import { CATEGORIES } from '../../shared/confidence.js'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 export default function FitPassportAdmin() {
   const { archetypeId: routeArchetypeId } = useParams()
@@ -114,7 +115,7 @@ export default function FitPassportAdmin() {
                     <li key={entry.id} className="border-b pb-2" style={{ borderColor: 'var(--edge)' }}>
                       <div className="font-semibold">{entry.category} · {entry.zone}</div>
                       <div style={{ color: 'var(--ink-mute)' }}>
-                        {entry.old_value.replaceAll('_', ' ')} → <strong>{entry.new_value.replaceAll('_', ' ')}</strong> · {entry.date}
+                        {entry.old_value.replaceAll('_', ' ')} → <strong>{entry.new_value.replaceAll('_', ' ')}</strong> · {formatDateIN(entry.date)}
                       </div>
                       <div className="mt-0.5" style={{ color: 'var(--ink-mute)' }}>{entry.reason}</div>
                     </li>

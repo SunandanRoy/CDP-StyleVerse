@@ -133,7 +133,7 @@ router.post('/draft-outreach', async (req, res) => {
   const { caseId } = req.body
   const kase = db.cases.find((c) => c.id === caseId)
   const customer = db.customersById.get(kase?.customer_id)
-  const brand = db.brandsById.get(customer?.brand_id)
+  const brand = db.brandsById.get(kase?.brand_id) // C2 — brand of record, not header selection
   if (!kase || !customer || !brand) return res.status(404).json({ success: false, reason: 'error' })
 
   const recentOrder = db.orders.filter((o) => o.customer_id === customer.id).sort((a, b) => (a.order_date < b.order_date ? 1 : -1))[0]

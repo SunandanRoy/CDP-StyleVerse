@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import Skeleton from '../components/Skeleton'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const COLUMNS = [
   { key: 'employee_name', label: 'Employee' },
@@ -96,7 +97,7 @@ export default function OverrideWins() {
                   <div>{r.override_reason}</div>
                 </td>
                 <td className="px-3 py-2 text-xs">{r.outcome}</td>
-                <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{r.date}</td>
+                <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{formatDateIN(r.date)}</td>
               </tr>
             ))}
           </tbody>

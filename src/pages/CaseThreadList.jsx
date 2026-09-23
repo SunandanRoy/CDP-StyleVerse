@@ -16,7 +16,7 @@ const CSV_COLUMNS = [
 ]
 
 export default function CaseThreadList() {
-  const { brandId } = useBrand()
+  const { brandId, brand } = useBrand()
   const [status, setStatus] = useState('')
   const params = new URLSearchParams({ brand_id: brandId })
   if (status) params.set('status', status)
@@ -25,7 +25,9 @@ export default function CaseThreadList() {
   return (
     <div className="max-w-4xl">
       <h1 className="font-heading text-2xl font-bold">Unified Case Thread</h1>
-      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>28 seeded cases merging every channel touchpoint per customer.</p>
+      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
+        {cases ? `${cases.length} cases (${brand?.name})` : 'Cases'} merging every channel touchpoint per customer.
+      </p>
 
       <div className="mt-4 flex items-center gap-3">
         <select value={status} onChange={(e) => setStatus(e.target.value)} className="rounded-md border px-2.5 py-1.5 text-sm" style={{ borderColor: 'var(--edge)' }}>

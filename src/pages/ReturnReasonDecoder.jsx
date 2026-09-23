@@ -40,7 +40,9 @@ export default function ReturnReasonDecoder() {
   return (
     <div className="max-w-5xl">
       <h1 className="font-heading text-2xl font-bold">Return Reason Decoder</h1>
-      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>Aggregated view of the 42 seeded returns, filterable by category.</p>
+      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
+        {returns ? `Aggregated view of ${returns.length} returns` : 'Aggregated view of returns'}{category ? ` in ${category}` : ''} for the selected brand, filterable by category.
+      </p>
 
       <div className="mt-4 flex items-center gap-3">
         <select value={category} onChange={(e) => setCategory(e.target.value)} className="rounded-md border px-2.5 py-1.5 text-sm" style={{ borderColor: 'var(--edge)' }}>

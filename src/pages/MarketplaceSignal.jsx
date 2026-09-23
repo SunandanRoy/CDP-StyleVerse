@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import { api } from '../lib/api'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 export default function MarketplaceSignal() {
   const { brandId } = useBrand()
@@ -34,7 +35,9 @@ export default function MarketplaceSignal() {
   return (
     <div className="max-w-5xl">
       <h1 className="font-heading text-2xl font-bold">Marketplace Signal Engine</h1>
-      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>70 seeded reviews, mined for fit/sizing patterns to feed Merchandising & Design.</p>
+      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
+        {reviews ? `${reviews.length} reviews for this brand` : 'Reviews'}, mined for fit/sizing patterns to feed Merchandising &amp; Design.
+      </p>
 
       <div className="mt-4 flex flex-wrap items-center gap-3">
         <select value={productId} onChange={(e) => setProductId(e.target.value)} className="rounded-md border px-2.5 py-1.5 text-sm" style={{ borderColor: 'var(--edge)' }}>
@@ -89,7 +92,7 @@ export default function MarketplaceSignal() {
               {insights?.map((i) => (
                 <div key={i.id} className="border-b pb-2" style={{ borderColor: 'var(--edge)' }}>
                   <p>{i.insight_text}</p>
-                  <p style={{ color: 'var(--ink-mute)' }}>→ {i.sent_to} · {i.date}</p>
+                  <p style={{ color: 'var(--ink-mute)' }}>→ {i.sent_to} · {formatDateIN(i.date)}</p>
                 </div>
               ))}
               {insights?.length === 0 && <p style={{ color: 'var(--ink-mute)' }}>No insights yet for this brand.</p>}

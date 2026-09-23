@@ -4,6 +4,7 @@ import { useFetch } from '../lib/useFetch'
 import { useBrand } from '../context/BrandContext'
 import Badge from '../components/Badge'
 import ScoreFormulaNote from '../components/ScoreFormulaNote'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const MODE_BADGE = {
   full_llm: 'escalation',
@@ -20,7 +21,7 @@ function TimelineRow({ entry }) {
         <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: 'var(--info-soft)', color: 'var(--info)' }}>ORDER</span>
         <div className="text-sm">
           <span className="font-medium">{o.product_name}</span> · size {o.size} · <span style={{ color: 'var(--ink-mute)' }}>{o.status} via {o.channel}</span>
-          <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{o.order_date} · {o.id}</div>
+          <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{formatDateIN(o.order_date)} · {o.id}</div>
         </div>
       </div>
     )

@@ -1,7 +1,22 @@
+import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import NavIcon from './NavIcon'
 import { NAV_GROUPS } from '../lib/navRegistry'
 import { useBrand } from '../context/BrandContext'
+
+// C12 — below 900px the sidebar auto-collapses to the icon rail so content
+// isn't crushed; this doesn't touch the user's own persisted preference, it
+// just overrides it while the viewport is narrow.
+function useNarrowViewport() {
+  const [narrow, setNarrow] = useState(() => typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches)
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 900px)')
+    const handler = (e) => setNarrow(e.matches)
+    mq.addEventListener('change', handler)
+    return () => mq.removeEventListener('change', handler)
+  }, [])
+  return narrow
+}
 
 function ChevronIcon({ collapsed }) {
   return (
@@ -22,7 +37,9 @@ function ChevronIcon({ collapsed }) {
 }
 
 export default function Sidebar() {
-  const { sidebarCollapsed, toggleSidebar } = useBrand()
+  const { sidebarCollapsed: userCollapsed, toggleSidebar } = useBrand()
+  const narrow = useNarrowViewport()
+  const sidebarCollapsed = userCollapsed || narrow
 
   return (
     <aside

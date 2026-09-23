@@ -1,6 +1,8 @@
 import { Fragment, useState } from 'react'
 import { useFetch } from '../lib/useFetch'
+import { useBrand } from '../context/BrandContext'
 import Badge from '../components/Badge'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const BADGES_BY_MODEL = {
   model_confidence: ['pii', 'escalation'],
@@ -13,13 +15,32 @@ const BADGES_BY_MODEL = {
 }
 
 export default function ModelRegistry() {
+  const { brandId, brand } = useBrand()
   const { data: registry, loading } = useFetch('/model-registry')
+  const { data: registryComponents } = useFetch(brandId ? `/registry-components?brand_id=${brandId}` : null)
+  const { data: dialAuditLog } = useFetch(brandId ? `/dial-audit-log?brand_id=${brandId}` : null)
   const [expanded, setExpanded] = useState(null)
+
+  const watchList = registryComponents?.filter((c) => c.automation_bias_watch) || []
 
   return (
     <div className="max-w-5xl">
       <h1 className="font-heading text-2xl font-bold">Model Registry</h1>
-      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>The {registry?.length ?? 7} governed AI/decision components behind the console. Click a row for details.</p>
+      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
+        The {registry?.length ?? 7} governed AI/decision components behind the console. Click a row for details.
+        {dialAuditLog && <> · <span title="Every historical AI Involvement Dial change for this brand, each with a required reason (C13).">{dialAuditLog.length} Dial changes logged for {brand?.name}</span></>}
+      </p>
+
+      {watchList.length > 0 && (
+        <div className="mt-4 rounded-md border p-3 text-sm" style={{ borderColor: 'var(--warn-border)', background: 'var(--warn-soft)', color: 'var(--warn-strong)' }}>
+          <p className="font-semibold">⚠ Automation-bias watch — {brand?.name}</p>
+          {watchList.map((c) => (
+            <p key={c.id} className="mt-1 text-xs">
+              <strong>{c.component}</strong>: override rate {c.override_rate}% sits below the 15–30% healthy band ({c.overrides} overrides of {c.ai_suggestions} AI suggestions) — this reads as automation bias (staff rubber-stamping the suggestion without scrutiny), the exact failure mode Override Wins is designed to surface. Remediation: spot-audit a sample of unreviewed suggestions from this component with the owning sub-team.
+            </p>
+          ))}
+        </div>
+      )}
 
       <div className="mt-5 overflow-x-auto rounded-lg border scrollbar-thin" style={{ borderColor: 'var(--edge)' }}>
         <table className="w-full min-w-[760px] text-sm">
@@ -46,7 +67,7 @@ export default function ModelRegistry() {
                   <td className="px-3 py-2 text-xs">
                     <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={m.status === 'Production' ? { background: 'var(--good-soft)', color: 'var(--good)' } : { background: 'var(--neutral-soft)', color: 'var(--neutral)' }}>{m.status}</span>
                   </td>
-                  <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{m.last_validated}</td>
+                  <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{formatDateIN(m.last_validated)}</td>
                   <td className="px-3 py-2 text-xs">{m.override_rate != null ? `${m.override_rate}%` : '—'}</td>
                 </tr>
                 {expanded === m.id && (

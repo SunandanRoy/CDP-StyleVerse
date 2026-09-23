@@ -37,13 +37,20 @@ function buildCaseBrief(kase, customerDetail) {
 export default function CaseThreadDetail() {
   const { id } = useParams()
   const { data: kase, loading } = useFetch(`/cases/${id}`)
-  const { brand, dial } = useBrand()
+  const { brand: headerBrand, brands } = useBrand()
   const { data: customerDetail } = useFetch(kase ? `/customers/${kase.customer.id}` : null)
+  // C2 — disclosure wording follows the BRAND OF RECORD (the case's own
+  // brand), never the header's currently-selected brand. Opening a
+  // Maison Luxe case while the header sits on SpeedStyle must still show
+  // the Maison Luxe advisor framing.
+  const caseBrand = kase ? brands.find((b) => b.id === kase.brand_id) : null
+  const { data: caseDial } = useFetch(kase ? `/dial/${kase.brand_id}` : null)
 
   if (loading || !kase) return <div className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading case…</div>
 
-  const isAdvisorMediated = dial?.disclosure_mode === 'Advisor-Mediated'
-  const previewName = isAdvisorMediated ? `${brand?.name} Styling Advisor` : 'StyleVerse AI Assistant'
+  const isAdvisorMediated = caseDial?.disclosure_mode === 'Advisor-Mediated'
+  const previewName = isAdvisorMediated ? `${caseBrand?.name} Styling Advisor` : 'StyleVerse AI Assistant'
+  const viewingOtherBrand = headerBrand && caseBrand && headerBrand.id !== caseBrand.id
   const brief = buildCaseBrief(kase, customerDetail)
 
   return (
@@ -56,9 +63,14 @@ export default function CaseThreadDetail() {
           <Link to={`/customers/${kase.customer.id}`} className="text-sm hover:underline" style={{ color: 'var(--brand-accent)' }}>{kase.customer.name}</Link>
           <span className="ml-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{kase.status}</span>
         </div>
-        <div className="flex gap-1.5">
+        <div className="flex flex-wrap items-center gap-1.5">
+          {viewingOtherBrand && (
+            <span className="rounded-full border px-2.5 py-1 text-[11px] font-semibold" style={{ borderColor: 'var(--warn-border)', background: 'var(--warn-soft)', color: 'var(--warn-strong)' }}>
+              Viewing a {caseBrand.name} record
+            </span>
+          )}
           <Badge variant="pii" />
-          {brand && <Badge variant={MODE_BADGE[brand.ai_tooling_mode]} />}
+          {caseBrand && <Badge variant={MODE_BADGE[caseBrand.ai_tooling_mode]} />}
         </div>
       </div>
 

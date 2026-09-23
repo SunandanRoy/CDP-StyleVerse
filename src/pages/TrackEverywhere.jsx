@@ -3,6 +3,7 @@ import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import BarChart from '../components/BarChart'
 import FitModel from '../components/FitModel/FitModel.jsx'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const STATUS_COLORS = {
   Delivered: 'var(--good)', 'In Transit': 'var(--info)', Processing: 'var(--warn)', Returned: 'var(--bad)', Cancelled: 'var(--neutral)'
@@ -41,7 +42,9 @@ export default function TrackEverywhere() {
   return (
     <div className="max-w-6xl">
       <h1 className="font-heading text-2xl font-bold">Track Everywhere</h1>
-      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>Aggregated order tracking across all 160 seeded orders, with a unified per-customer preview.</p>
+      <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
+        {orders ? `Aggregated order tracking across ${orders.length} orders for this brand` : 'Aggregated order tracking'}, with a unified per-customer preview.
+      </p>
 
       <div className="mt-5 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_340px]">
         <div>
@@ -83,7 +86,7 @@ export default function TrackEverywhere() {
                     <td className="px-3 py-2">
                       <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: `${STATUS_COLORS[o.status]}22`, color: STATUS_COLORS[o.status] }}>{o.status}</span>
                     </td>
-                    <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{o.order_date}</td>
+                    <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{formatDateIN(o.order_date)}</td>
                   </tr>
                 ))}
               </tbody>

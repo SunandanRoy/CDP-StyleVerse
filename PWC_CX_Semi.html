@@ -884,6 +884,10 @@ function recSizeFor(product, archetypeId){
 }
 function clamp(n,min,max){ return Math.max(min, Math.min(max, n)); }
 function confidenceTier(score){ return score>=80 ? "high" : score>=60 ? "medium" : "low"; }
+// B5 fix: "advisor-fronted" brands (currently only Maison Luxe, via ai_tooling_mode rather
+// than a brand.id check — see hard constraint 0.5 in the v2 prompt) never show a client a
+// score, a ring, an AI badge or generated text. AI powers Meher; Meher delivers.
+function isAdvisorFronted(brand){ return brand.ai_tooling_mode === "internal_llm_only"; }
 const TIER_COLOR_VAR = { high:"var(--green)", medium:"var(--amber)", low:"var(--red)" };
 const TIER_COPY = {
   high:"Strong match — shoppers with your build overwhelmingly kept this.",
@@ -1393,11 +1397,37 @@ function destroyAllFitModels(){
 }
 
 /* ---------------------------- AI INTEGRATION (Gemini) ---------------------------- */
-const GEMINI_ENDPOINT_BASE = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+// B14 fix: model id is now a named constant (verify the current id in Google AI Studio
+// before a live demo — Gemini model names are periodically retired).
+const GEMINI_MODEL = "gemini-2.5-flash";
+const GEMINI_ENDPOINT_BASE = "https://generativelanguage.googleapis.com/v1beta/models/" + GEMINI_MODEL + ":generateContent";
 const FALLBACKS = {
   explainFit: "This is a strong fit match based on your profile and what similar shoppers with your build kept rather than returned.",
   askStyleAdvisor: "Based on fit data from shoppers with a similar profile, this tends to run true to size — we'd recommend your usual size here."
 };
+// B14 fix: prompts now carry the actual fit signals (zone directions, recommended size,
+// size-level kept rate + n) instead of just fit-match/kept-rate, and outputs are validated
+// before being shown: <=30 words, and no digit the model wasn't given.
+function buildFitPromptContext(product, archetypeId){
+  const breakdown = confidenceBreakdown(product, archetypeId);
+  if(!breakdown) return null;
+  const recSize = recSizeFor(product, archetypeId);
+  const zones = ZONES_BY_CATEGORY[product.category] || [];
+  const cell = (archetypeId && fitMatrix[product.category]) ? fitMatrix[product.category][archetypeId] : null;
+  const zoneNotes = cell && zones.length
+    ? zones.map(function(z){ return z + " " + cell[z].replace(/_/g, " "); }).join(", ")
+    : "no Fit Passport on file for this shopper";
+  return { breakdown: breakdown, recSize: recSize, zoneNotes: zoneNotes };
+}
+function validateAiOutput(text, allowedNumbers){
+  if(!text) return false;
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if(words.length === 0 || words.length > 30) return false;
+  const allowed = allowedNumbers.filter(function(n){ return n !== null && n !== undefined; }).map(String);
+  const found = text.match(/\d+/g) || [];
+  for(let i=0;i<found.length;i++){ if(allowed.indexOf(found[i]) === -1) return false; }
+  return true;
+}
 
 function withinRateLimit(){
   const now = Date.now();
@@ -1439,23 +1469,33 @@ async function callGemini(prompt){
 }
 
 async function explainFit(product, archetypeId){
-  const social = socialProofKeptItRate(product, archetypeId);
-  const conf = confidenceScore(product, archetypeId);
-  const prompt = "Given fit-match: " + product.baseFitMatchPct + "%, social-proof kept-it rate: " + social
-    + "%, in the voice of a friendly shopping assistant, write ONE short sentence (under 20 words) telling a shopper why this item is a "
-    + conf + "% fit confidence match for them. No technical terms.";
+  const brand = getBrand(product.brandId);
+  const ctx = buildFitPromptContext(product, archetypeId);
+  if(!ctx) return { text: FALLBACKS.explainFit, isFallback:true };
+  const social = ctx.breakdown.social;
+  const prompt = "Brand tone: " + brand.tagline + ". Zone fit notes for this shopper's build: " + ctx.zoneNotes
+    + ". Recommended size: " + (ctx.recSize || "n/a") + ". Social proof: " + social.rate + "% of similar shoppers kept it (n="
+    + social.n + ", " + social.level + "-level data). Fit confidence score: " + ctx.breakdown.confidence
+    + "%. In the voice of a friendly shopping assistant matching that brand tone, write ONE short sentence (under 20 words) telling "
+    + "the shopper why this is a good fit signal for them. Use only the numbers given above — do not invent any new ones.";
   const result = await callGemini(prompt);
-  if(result.ok) return { text: result.text, isFallback:false };
+  const allowedNums = [social.rate, social.n, ctx.breakdown.confidence, ctx.breakdown.fitMatchPct];
+  if(result.ok && validateAiOutput(result.text, allowedNums)) return { text: result.text, isFallback:false };
   return { text: FALLBACKS.explainFit, isFallback:true };
 }
 
 async function askStyleAdvisor(question, product, archetypeId){
-  const social = socialProofKeptItRate(product, archetypeId);
-  const prompt = "A shopper asks: '" + question + "' about a product with these fit signals: fit-match "
-    + product.baseFitMatchPct + "%, kept-it rate " + social
-    + "%. Answer in ONE short, helpful, conversational sentence (under 30 words), as a friendly style advisor would, using the fit data to inform the answer.";
+  const brand = getBrand(product.brandId);
+  const ctx = buildFitPromptContext(product, archetypeId);
+  if(!ctx) return { text: FALLBACKS.askStyleAdvisor, isFallback:true };
+  const social = ctx.breakdown.social;
+  const prompt = "Brand tone: " + brand.tagline + ". A shopper asks: '" + question + "' about a product with these fit signals: "
+    + ctx.zoneNotes + "; recommended size " + (ctx.recSize || "n/a") + "; " + social.rate + "% kept-it rate (n=" + social.n
+    + ", " + social.level + "-level data). Answer in ONE short, helpful, conversational sentence (under 30 words), matching the "
+    + "brand's tone, using only the fit data given above — do not invent any new numbers.";
   const result = await callGemini(prompt);
-  if(result.ok) return { text: result.text, isFallback:false };
+  const allowedNums = [social.rate, social.n, ctx.breakdown.confidence, ctx.breakdown.fitMatchPct];
+  if(result.ok && validateAiOutput(result.text, allowedNums)) return { text: result.text, isFallback:false };
   return { text: FALLBACKS.askStyleAdvisor, isFallback:true };
 }
 
@@ -1479,7 +1519,7 @@ function renderNav(){
     +       '<button class="navlink" data-action="go-support">Support</button>'
     +       '<button class="navlink" data-action="go-wishlist">Wishlist<span class="cart-count">'+wishCount+'</span></button>'
     +       '<button class="navlink" data-action="go-cart">Cart<span class="cart-count">'+cartCount+'</span></button>'
-    +       (brand.escalationVisible ? '<span class="escalation-pill" data-action="go-support">Talk to a human</span>' : '')
+    +       (brand.escalation_visible ? '<span class="escalation-pill" data-action="go-support">Talk to a human</span>' : '')
     +     '</nav>'
     +   '</div>'
     + '</div>';
@@ -1637,14 +1677,17 @@ function animateCountUps(){
 function renderProductCard(p){
   const brand = getBrand(p.brandId);
   const archId = activeArchetypeId();
-  const score = confidenceScore(p, archId);
-  const tier = confidenceTier(score);
+  // B4: accessories are fit_applicable:false — no score, no ring, no size run beyond "One Size".
+  // B5: advisor-fronted brands (Maison Luxe) never show a client-facing score badge at all.
+  const showScore = p.fit_applicable && !isAdvisorFronted(brand);
+  const score = showScore ? confidenceScore(p, archId) : null;
+  const tier = showScore ? confidenceTier(score) : null;
   const saved = state.wishlist.indexOf(p.id) >= 0;
   return ''
     + '<div class="card product-card" data-action="open-product" data-id="'+p.id+'">'
     +   '<div class="thumb-wrap">'
     +     '<img class="thumb img-loading" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onload="this.classList.remove(\'img-loading\')" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
-    +     '<span class="badge '+tier+'">'+score+'%</span>'
+    +     (showScore ? '<span class="badge '+tier+'">'+score+'%</span>' : '')
     +     '<button class="wish-btn '+(saved?"active":"")+'" data-action="toggle-wishlist" data-id="'+p.id+'" aria-label="Save to wishlist">'+(saved?"&#9829;":"&#9825;")+'</button>'
     +   '</div>'
     +   '<div class="pc-body">'
@@ -1674,8 +1717,9 @@ function renderCatalogScreen(){
     list = list.filter(function(p){ return p.name.toLowerCase().indexOf(q) >= 0 || p.category.toLowerCase().indexOf(q) >= 0; });
   }
   if(f.category !== "all") list = list.filter(function(p){ return p.category === f.category; });
-  if(f.confidence !== "all"){
-    list = list.filter(function(p){ return confidenceTier(confidenceScore(p, activeArchetypeId())) === f.confidence; });
+  // B4: accessories (fit_applicable:false) are excluded from the confidence filter entirely.
+  if(f.confidence !== "all" && !isAdvisorFronted(brand)){
+    list = list.filter(function(p){ return p.fit_applicable && confidenceTier(confidenceScore(p, activeArchetypeId())) === f.confidence; });
   }
   if(f.price && f.price !== "all"){
     const bounds = f.price.split("-");
@@ -1701,12 +1745,13 @@ function renderCatalogScreen(){
     +     '<select data-action="browse-brand-select">'+brandOptions+'</select>'
     +     '<select data-action="filter-category"><option value="all">All categories</option>'+catOptions+'</select>'
     +     '<select data-action="filter-price">'+priceOptions+'</select>'
+    +     (isAdvisorFronted(brand) ? '' : ''
     +     '<select data-action="filter-confidence">'
     +       '<option value="all">All fit confidence</option>'
     +       '<option value="high" '+(f.confidence==="high"?"selected":"")+'>High (&ge;80%)</option>'
     +       '<option value="medium" '+(f.confidence==="medium"?"selected":"")+'>Medium (60–79%)</option>'
     +       '<option value="low" '+(f.confidence==="low"?"selected":"")+'>Low (&lt;60%)</option>'
-    +     '</select>'
+    +     '</select>')
     +     '<span class="result-count">'+list.length+' item'+(list.length===1?"":"s")+'</span>'
     +   '</div>'
     +   '<div class="product-grid">'+cards+'</div>'
@@ -1732,10 +1777,30 @@ const STATIC_EXPLAIN_TEMPLATES = {
   ]
 };
 function staticExplainText(product, archetypeId){
+  if(!product.fit_applicable) return "";
   const score = confidenceScore(product, archetypeId);
   const tier = confidenceTier(score);
   const options = STATIC_EXPLAIN_TEMPLATES[tier];
   return options[hashStr(product.id) % options.length];
+}
+// B5: Maison Luxe never shows a score — Meher's fit note is built from the same fit-matrix
+// data as everyone else's score, just delivered as a sentence instead of a number.
+function advisorFitNote(product, archetypeId, advisorName){
+  if(!product.fit_applicable) return "This piece is one size — happy to confirm any adjustable details for you on a call.";
+  if(!archetypeId) return "Complete your Fit Passport, or book a virtual fitting, and " + advisorName + " will confirm the right size before you order.";
+  const recSize = recSizeFor(product, archetypeId);
+  const dom = DOMINANT_ZONE_BY_CATEGORY[product.category];
+  const cell = fitMatrix[product.category] ? fitMatrix[product.category][archetypeId] : null;
+  const dir = (cell && dom) ? cell[dom] : "true_to_size";
+  const phrase = dir === "runs_tight" ? ("sits close through the " + dom + " on your frame")
+    : dir === "runs_loose" ? ("runs with a little extra room through the " + dom + " on your frame")
+    : ("sits true to size through the " + dom + " for you");
+  return "In the " + product.name + ", I'd suggest size " + (recSize || "your usual") + " — it " + phrase + ".";
+}
+const VIRTUAL_FITTING_SLOTS = ["Tomorrow, 11:00 AM", "Thursday, 3:00 PM", "Saturday, 10:30 AM"];
+function bookVirtualFitting(slot){
+  state.screenParams.virtualFitting = { step:"confirmed", slot: slot };
+  render();
 }
 
 /* ---------------------------- SCREEN 7 — PRODUCT DETAIL ---------------------------- */
@@ -1744,14 +1809,47 @@ function openProduct(productId){
   const archId = activeArchetypeId();
   navigate("product", {
     productId: productId,
-    selectedSize: archId ? recSizeFor(p, archId) : p.sizes[0],
+    selectedSize: p.fit_applicable ? (archId ? recSizeFor(p, archId) : p.sizes[0]) : "One Size",
     qty: 1,
     explain: { loading:false, text:null, isFallback:false, shown:false },
     advisor: { loading:false, question:"", answer:null, isFallback:false },
-    advisorCallRequested: false
+    advisorCallRequested: false,
+    virtualFitting: { step:"idle", slot:null },
+    pdpSession: { sizeToggles:0, sizeGuideOpened:false, viewStart: Date.now() }
   });
 }
-function selectSize(sz){ state.screenParams.selectedSize = sz; render(); }
+function selectSize(sz){
+  const sp = state.screenParams;
+  sp.selectedSize = sz;
+  if(sp.pdpSession) sp.pdpSession.sizeToggles++;
+  render();
+}
+const SIZE_GUIDE_CHARTS = {
+  Tops: [["S","36–38"],["M","38–40"],["L","40–42"],["XL","42–44"]],
+  Outerwear: [["S","37–39"],["M","39–41"],["L","41–43"],["XL","43–45"]],
+  Bottoms: [["S","28–30"],["M","30–32"],["L","32–34"],["XL","34–36"]],
+  Dresses: [["S","33–35"],["M","35–37"],["L","37–39"],["XL","39–41"]],
+  Footwear: [["6","UK 6 · 24.4cm"],["7","UK 7 · 25.1cm"],["8","UK 8 · 25.8cm"],["9","UK 9 · 26.5cm"]]
+};
+function toggleSizeGuide(){
+  const sp = state.screenParams;
+  sp.sizeGuideOpen = !sp.sizeGuideOpen;
+  if(sp.sizeGuideOpen && sp.pdpSession) sp.pdpSession.sizeGuideOpened = true;
+  render();
+}
+function renderSizeGuideDrawer(p, brand){
+  const chart = SIZE_GUIDE_CHARTS[p.category];
+  if(!chart) return "";
+  return '<div class="card" style="padding:12px; margin:8px 0; font-size:12.5px;">'
+    + '<strong>'+escapeHtml(brand.name)+' size chart — '+escapeHtml(p.category)+'</strong>'
+    + '<table style="width:100%; margin-top:8px; border-collapse:collapse;">'
+    + chart.map(function(row){ return '<tr><td style="padding:3px 0; color:var(--muted);">'+row[0]+'</td><td style="padding:3px 0;">'+row[1]+'</td></tr>'; }).join("")
+    + '</table></div>';
+}
+function openFittingPicker(){
+  state.screenParams.virtualFitting = { step:"picker", slot:null };
+  render();
+}
 function changeQty(delta){
   state.screenParams.qty = Math.max(1, (state.screenParams.qty||1) + delta);
   render();
@@ -1817,20 +1915,23 @@ function requestAdvisorCall(){
 function renderProductDetailScreen(productId){
   const p = getProduct(productId);
   const brand = getBrand(p.brandId);
+  const advisorFronted = isAdvisorFronted(brand);
   const sp = state.screenParams;
   const archId = activeArchetypeId();
-  const score = confidenceScore(p, archId);
-  const tier = confidenceTier(score);
+  const showScore = p.fit_applicable && !advisorFronted;
+  const score = showScore ? confidenceScore(p, archId) : null;
+  const tier = showScore ? confidenceTier(score) : null;
 
-  const sizeButtons = p.sizes.map(function(sz){
+  // B4: accessories are "One Size" only — no size grid, no "recommended" logic.
+  const sizeButtons = !p.fit_applicable ? '<span class="badge" style="background:var(--surface); border:1px solid var(--border);">One Size</span>' : p.sizes.map(function(sz){
     const isRec = archId && sz === recSizeFor(p, archId);
     return '<button class="size-btn '+(sp.selectedSize===sz?"active":"")+' '+(isRec?"recommended":"")+'" data-action="select-size" data-val="'+sz+'">'+sz+'</button>';
   }).join("");
 
   let fitSection = "";
-  if(p.category && archId){
-    fitSection = '<h3 style="margin-top:24px;">Your Fit Preview</h3><div id="pd-fm">' + renderFitModel({ archetypeId: archId, category: p.category }) + '</div>';
-  } else {
+  if(p.fit_applicable && archId){
+    fitSection = '<h3 style="margin-top:24px;">Your Fit Preview</h3><div id="pd-fm">' + renderFitModel({ archetypeId: archId, category: p.category, suppressAiBadge: advisorFronted }) + '</div>';
+  } else if(p.fit_applicable){
     fitSection = ''
       + '<div class="card" style="padding:16px; margin-top:22px;">'
       +   '<p style="font-size:13.5px; margin-bottom:10px;">Complete your Fit Passport to see your personalized fit preview.</p>'
@@ -1838,8 +1939,28 @@ function renderProductDetailScreen(productId){
       + '</div>';
   }
 
+  // B6: EcoWeave carries a Verified Claims panel — every claim traces to supplier data, never a generated fallback.
+  let verifiedClaimsHtml = "";
+  if(brand.id === "ecoweave" && p.verified_claims && p.verified_claims.length){
+    verifiedClaimsHtml = ''
+      + '<div class="card" style="padding:14px; margin-top:14px;">'
+      +   '<strong style="font-size:13px;">Verified claims</strong>'
+      +   p.verified_claims.map(function(c){
+            return '<div style="margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-size:12.5px;">'
+              + '<div style="font-weight:600;">'+escapeHtml(c.claim)+': '+escapeHtml(c.value)+'</div>'
+              + '<div style="color:var(--muted);">Certified by '+escapeHtml(c.certifier)+' &middot; verified '+formatDateIN(c.verified_on)+' &middot; source '+escapeHtml(c.source_doc_id)+' &middot; illustrative</div>'
+              + '</div>';
+          }).join("")
+      + '</div>';
+  }
+
+  // B5: Maison Luxe never shows "why this score?" — Meher's note (below) replaces it.
   let whySection = "";
-  if(brand.clientFacingAI){
+  if(!p.fit_applicable){
+    whySection = "";
+  } else if(advisorFronted){
+    whySection = "";
+  } else if(brand.client_facing_generative){
     if(!sp.explain.shown){
       whySection = '<button class="btn ghost small" data-action="explain-fit">Why this confidence score?</button>';
     } else if(sp.explain.loading){
@@ -1856,7 +1977,28 @@ function renderProductDetailScreen(productId){
   }
 
   let advisorWidget = "";
-  if(brand.clientFacingAI){
+  if(advisorFronted){
+    const advisorName = ADVISOR_NAMES[brand.id] || "your Style Advisor";
+    const vf = sp.virtualFitting || { step:"idle" };
+    let vfHtml = "";
+    if(vf.step === "confirmed"){
+      vfHtml = '<div class="card" style="padding:10px; margin-top:10px; font-size:13px;">Booked — '+advisorName+' will meet you virtually '+escapeHtml(vf.slot)+'.</div>';
+    } else if(vf.step === "picker"){
+      vfHtml = '<div class="card" style="padding:10px; margin-top:10px;">'
+        + '<strong style="font-size:12.5px;">Pick a time</strong>'
+        + '<div style="display:flex; flex-direction:column; gap:6px; margin-top:8px;">'
+        + VIRTUAL_FITTING_SLOTS.map(function(s){ return '<button class="btn ghost small" data-action="book-fitting" data-val="'+escapeHtml(s)+'">'+escapeHtml(s)+'</button>'; }).join("")
+        + '</div></div>';
+    }
+    advisorWidget = ''
+      + '<div class="advisor-widget">'
+      +   '<strong style="font-size:13.5px;">Advisor fit note</strong>'
+      +   '<p style="font-size:13px; margin:8px 0;">'+escapeHtml(advisorFitNote(p, archId, advisorName))+' &mdash; '+advisorName+'</p>'
+      + verifiedClaimsHtml
+      +   (vf.step === "idle" ? '<button class="btn small" data-action="open-fitting-picker">Book a virtual fitting</button>' : "")
+      + vfHtml
+      + '</div>';
+  } else if(brand.client_facing_generative){
     const adv = sp.advisor;
     advisorWidget = ''
       + '<div class="advisor-widget">'
@@ -1865,22 +2007,36 @@ function renderProductDetailScreen(productId){
       +   '<button class="btn small" style="margin-top:8px;" data-action="advisor-submit">Ask</button>'
       +   (adv.loading ? '<div style="margin-top:10px; font-size:13px;">Thinking<span class="typing-dots"><span></span><span></span><span></span></span></div>' : "")
       +   (adv.answer && !adv.loading ? '<div class="card" style="padding:10px; margin-top:10px; font-size:13px;"><span class="ai-badge">AI</span> '+escapeHtml(adv.answer)+(adv.isFallback?' <span style="color:var(--muted); font-size:11px;">(example response)</span>':'')+'</div>' : "")
-      +   (brand.escalationVisible ? '<div style="margin-top:10px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
+      +   (brand.escalation_visible ? '<div style="margin-top:10px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
       + '</div>';
   } else {
     advisorWidget = ''
       + '<div class="advisor-widget">'
       +   '<strong style="font-size:13.5px;">Style guidance, from a person</strong>'
       +   '<p style="font-size:12.5px; color:var(--muted); margin:6px 0 10px 0;">'+escapeHtml(brand.name)+' pairs every shopper with a Style Advisor — no bots involved.</p>'
+      + verifiedClaimsHtml
       +   (state.screenParams.advisorCallRequested
-            ? '<div class="card" style="padding:10px; font-size:13px;">A Style Advisor will reach out within 24 hours.</div>'
+            ? '<div class="card" style="padding:10px; font-size:13px; margin-top:10px;">A Style Advisor will reach out within 24 hours.</div>'
             : '<button class="btn small" data-action="request-advisor-call">Request a call with your Style Advisor</button>')
       + '</div>';
   }
 
-  const crossSell = products.filter(function(o){ return o.brandId===p.brandId && o.id!==p.id; }).slice(0,4);
+  // B11 fix: "You may also like" ranks by confidence for the active profile (excluding
+  // owned items and accessories), not just the first four SKUs; Maison Luxe shows a
+  // curated, score-free rail instead.
+  const crossSellPool = products.filter(function(o){ return o.brandId===p.brandId && o.id!==p.id; });
+  let crossSell;
+  if(advisorFronted){
+    crossSell = crossSellPool.slice(0, 4);
+  } else {
+    crossSell = crossSellPool.filter(function(o){ return o.fit_applicable; })
+      .map(function(o){ return { o: o, score: confidenceScore(o, archId) || 0 }; })
+      .sort(function(a,b){ return b.score - a.score; })
+      .slice(0,4).map(function(x){ return x.o; });
+    if(crossSell.length < 4){ crossSell = crossSellPool.slice(0,4); }
+  }
   const crossSellHtml = crossSell.length ? ''
-    + '<h2 class="section-title" style="margin-top:40px;">More from '+escapeHtml(brand.name)+'</h2>'
+    + '<h2 class="section-title" style="margin-top:40px;">'+(advisorFronted ? 'Curated by '+(ADVISOR_NAMES[brand.id]||'your Advisor') : 'Picked for you')+' &middot; More from '+escapeHtml(brand.name)+'</h2>'
     + '<div class="product-grid">' + crossSell.map(renderProductCard).join("") + '</div>' : "";
 
   return ''
@@ -1900,14 +2056,17 @@ function renderProductDetailScreen(productId){
     +       '<h1>'+escapeHtml(p.name)+'</h1>'
     +       '<p style="color:var(--muted); font-size:13px;">'+escapeHtml(brand.name)+' &middot; '+escapeHtml(p.category)+'</p>'
     +       '<h2 style="margin-top:10px;">'+money(p.priceInr)+'</h2>'
+    +       (showScore ? ''
     +       '<div class="confidence-row">'
     +         '<div class="confidence-ring-wrap">'+renderConfidenceRing(score,104)+'</div>'
     +         '<div class="confidence-copy"><span class="badge '+tier+'">'+tier.toUpperCase()+' FIT CONFIDENCE</span><p>'+escapeHtml(TIER_COPY[tier])+'</p></div>'
-    +       '</div>'
-    +       '<p style="font-size:13.5px; margin-top:6px; line-height:1.5;">'+escapeHtml(brand.name)+' presents the '+escapeHtml(p.name)+', a '+p.category.toLowerCase()+' piece designed for everyday wear. '+escapeHtml(brand.tagline)+'</p>'
+    +       '</div>' : '')
+    // B12 fix: category x brand copy from the shared seed, not one template with the tagline appended.
+    +       '<p style="font-size:13.5px; margin-top:6px; line-height:1.5;">'+escapeHtml(p.description||"")+'</p>'
     +       whySection
-    +       '<h4 style="margin-top:18px;">Size</h4>'
+    +       '<h4 style="margin-top:18px;">Size'+(p.fit_applicable ? ' <button class="btn ghost small" style="margin-left:8px; padding:2px 8px; font-size:11px;" data-action="open-size-guide">Size guide</button>' : '')+'</h4>'
     +       '<div class="size-row">'+sizeButtons+'</div>'
+    +       (sp.sizeGuideOpen ? renderSizeGuideDrawer(p, brand) : '')
     +       '<div class="qty-row"><button data-action="qty-minus">&minus;</button><span>'+sp.qty+'</span><button data-action="qty-plus">&#43;</button></div>'
     +       '<div style="display:flex; gap:10px;">'
     +         '<button class="btn" style="flex:1;" data-action="add-to-cart">Add to Cart</button>'
@@ -2381,7 +2540,7 @@ function renderSupportScreen(){
     const time = new Date(m.ts).toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit" });
     let whoHtml = "";
     if(!isCustomer){
-      if(brand.clientFacingAI){
+      if(brand.client_facing_generative){
         whoHtml = '<div class="who"><span class="ai-badge">AI</span> StyleVerse AI Assistant</div>';
       } else {
         whoHtml = '<div class="who"><span class="avatar-circle">'+initials+'</span> Your Style Advisor, '+advisorName+'</div>';
@@ -2392,7 +2551,7 @@ function renderSupportScreen(){
       +   whoHtml
       +   escapeHtml(m.text)
       +   '<div class="msg-meta">'+CHANNEL_ICON[m.channel||"chat"]+' '+time+'</div>'
-      +   (!isCustomer && brand.escalationVisible ? '<div style="margin-top:8px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
+      +   (!isCustomer && brand.escalation_visible ? '<div style="margin-top:8px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
       + '</div>';
   }).join("");
   const typingHtml = state.screenParams.typing
@@ -2400,7 +2559,7 @@ function renderSupportScreen(){
   return ''
     + '<div class="page container" style="max-width:640px;">'
     +   '<h1>Support</h1>'
-    +   '<p style="color:var(--muted); font-size:12.5px; margin-bottom:6px;">'+(brand.clientFacingAI ? "AI-assisted, human-escalation always available." : "Human advisor-routed — no bots in this thread.")+'</p>'
+    +   '<p style="color:var(--muted); font-size:12.5px; margin-bottom:6px;">'+(brand.client_facing_generative ? "AI-assisted, human-escalation always available." : "Human advisor-routed — no bots in this thread.")+'</p>'
     +   '<div class="card" style="padding:14px 18px;">'
     +     '<div class="chat-thread">' + (msgs || '<p style="color:var(--muted); font-size:13px;">No messages yet — say hello!</p>') + typingHtml + '</div>'
     +     '<div class="chat-input-row"><input type="text" id="support-input" placeholder="Type a message..."><button class="btn small" data-action="send-support">Send</button></div>'
@@ -2450,6 +2609,9 @@ function handleAppClick(e){
     case "qty-plus": changeQty(1); break;
     case "add-to-cart": addToCart(); break;
     case "explain-fit": triggerExplainFit(); break;
+    case "open-size-guide": toggleSizeGuide(); break;
+    case "open-fitting-picker": openFittingPicker(); break;
+    case "book-fitting": bookVirtualFitting(el.getAttribute("data-val")); break;
     case "advisor-submit": submitAdvisorQuestion(); break;
     case "request-advisor-call": requestAdvisorCall(); break;
     case "set-profile": setShoppingProfile(val); break;

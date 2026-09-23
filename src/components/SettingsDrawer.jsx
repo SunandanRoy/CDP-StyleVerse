@@ -1,14 +1,30 @@
 import { useEffect, useState } from 'react'
 import { getGeminiKeyGlobal, setGeminiKeyGlobal, GEMINI_KEY_APPLIES } from '../lib/geminiKeyStore'
+import { isLiveSyncEnabled, setLiveSyncEnabled, subscribeLiveSync } from '../lib/liveSync'
 import { toast } from '../lib/toast'
 
 export default function SettingsDrawer({ open, onClose }) {
   const [keyInput, setKeyInput] = useState('')
   const [hasKey, setHasKey] = useState(Boolean(getGeminiKeyGlobal()))
+  const [liveSync, setLiveSync] = useState(isLiveSyncEnabled())
+  const [eventCount, setEventCount] = useState(0)
 
   useEffect(() => {
     if (open) setKeyInput('')
   }, [open])
+
+  useEffect(() => {
+    if (!liveSync) return
+    return subscribeLiveSync(() => setEventCount((n) => n + 1))
+  }, [liveSync])
+
+  const toggleLiveSync = () => {
+    const next = !liveSync
+    setLiveSyncEnabled(next)
+    setLiveSync(next)
+    setEventCount(0)
+    toast.info(next ? 'Live Sync on — listening for a Storefront event bus (none is running in this workspace).' : 'Live Sync off.')
+  }
 
   if (!open) return null
 
@@ -75,6 +91,28 @@ export default function SettingsDrawer({ open, onClose }) {
           <p className="mt-3 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
             Model: <code>gemini-2.5-flash</code> · 8s timeout · max 8 calls/minute · every AI action always degrades to a labelled example response rather than a blank box or error, and Brand Voice Certification's deterministic rubric can override a live model's verdict (never the other way around).
           </p>
+        </div>
+
+        <div className="card mt-4">
+          <div className="mb-1 flex items-center justify-between">
+            <h3 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>Live Sync (experimental)</h3>
+            <label className="relative inline-flex cursor-pointer items-center">
+              <input type="checkbox" checked={liveSync} onChange={toggleLiveSync} className="peer sr-only" />
+              <div className="pointer-events-none h-5 w-9 rounded-full transition-colors" style={{ background: liveSync ? 'var(--brand-accent)' : 'var(--edge)' }} />
+              <div className="pointer-events-none absolute left-0.5 top-0.5 h-4 w-4 rounded-full bg-white transition-transform" style={{ transform: liveSync ? 'translateX(1rem)' : 'none' }} />
+            </label>
+          </div>
+          <p className="text-xs" style={{ color: 'var(--ink-mute)' }}>
+            Default off. When on, this Console listens across browser tabs for <code>localStorage["sce_event_bus_v1"]</code> writes — the shared event bus a sibling Storefront tool would use to publish live shopper activity.
+          </p>
+          <p className="mt-2 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+            No Storefront project exists in this Console-only build (see SCE_DATA_CONTRACT.md's Console-only note), so there is no producer writing that key here — this is a real, working listener with nothing to listen to, not a simulated indicator.
+          </p>
+          {liveSync && (
+            <p className="mt-2 text-[11px] font-medium" style={{ color: eventCount > 0 ? 'var(--good)' : 'var(--brand-accent)' }}>
+              {eventCount > 0 ? `✓ ${eventCount} event(s) received from another tab.` : '● Listening — no events yet (would show live Storefront updates here).'}
+            </p>
+          )}
         </div>
       </div>
     </div>

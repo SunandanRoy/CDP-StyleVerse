@@ -2629,7 +2629,7 @@ function startReturnFlow(orderId, productId){
     const order = state.currentPersona.orders.find(function(o){ return o.id===orderId; });
     const item = order.items.find(function(it){ return it.productId===productId; });
     rec = { id:"SV-RET-"+Math.floor(100+Math.random()*899), orderId:orderId, productId:productId, size:item.size,
-      status:"in_progress", reason:null, fitIssue:null, step:"reason", resolvedType:null, exchangeSize:null, trackingRef:null, date:new Date().toISOString().slice(0,10) };
+      status:"in_progress", reason:null, fitDecoded:null, step:"reason", resolvedType:null, exchangeSize:null, trackingRef:null, date:new Date().toISOString().slice(0,10) };
     state.currentPersona.returns.push(rec);
   }
   navigate("return-flow", { returnKey: key });
@@ -2678,32 +2678,67 @@ function renderMarketplaceReturnHandoffScreen(){
     +   '<button class="btn ghost" style="margin-top:16px;" data-action="go-track">Back to Track Everywhere</button>'
     + '</div>';
 }
+// A5 — Return Reason Decoder. "Doesn't fit" walks a zone + direction picker (not a generic
+// running-small/large question) producing a decoded {fit_driven, zone, direction} chip that
+// feeds the closed-loop fit_signal log. "Changed my mind" / "Quality issue" / "Other" skip
+// interception entirely (contract: interception is fit-driven only).
 function selectReturnReason(reason){
   const rec = findReturnByKey(state.screenParams.returnKey);
   rec.reason = reason;
-  rec.step = reason === "doesnt_fit" ? "fitq" : "return-form";
+  rec.step = reason === "doesnt_fit" ? "zone" : "return-form";
   render();
 }
-function selectFitIssue(issue){
+function selectFitZone(zone){
   const rec = findReturnByKey(state.screenParams.returnKey);
-  rec.fitIssue = issue;
+  rec._pendingZone = zone;
+  rec.step = "direction";
+  render();
+}
+function selectFitDirection(direction){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  const p = getProduct(rec.productId);
+  const brand = getBrand(p.brandId);
+  const archId = activeArchetypeId();
+  rec.fitDecoded = { fit_driven:true, zone: rec._pendingZone, direction: direction };
+  // Closed loop: every decoded fit return counts toward size guidance, intercepted or not.
+  state.fitSignalLog.push({ productId: p.id, archetypeId: archId, zone: rec._pendingZone, direction: direction, source:"d2c", ts: new Date().toISOString() });
+  emitEvent("fit_signal", { productId: p.id, zone: rec._pendingZone, direction: direction });
+  // Value threshold: Maison Luxe, or any line over Rs 10,000, routes to human confirmation.
+  if(isAdvisorFronted(brand) || p.priceInr > 10000){
+    rec.step = "human-confirm";
+    rec.interceptionSkippedReason = "above_value_threshold_routed_to_human";
+    render();
+    return;
+  }
+  if(!archId){
+    rec.step = "return-form";
+    rec.interceptionSkippedReason = "below_confidence_threshold";
+    render();
+    return;
+  }
   rec.step = "checking";
   render();
   setTimeout(function(){
-    const p = getProduct(rec.productId);
     const sizes = p.sizes;
-    const curIdx = sizes.indexOf(rec.size);
-    const dir = issue === "running_small" ? 1 : -1;
-    const targetIdx = clamp(curIdx + dir, 0, sizes.length-1);
-    const available = targetIdx !== curIdx && (hashStr(rec.id+p.id) % 10) < 7;
+    const suggested = recSizeFor(p, archId);
+    const available = suggested && suggested !== rec.size && (hashStr(rec.id+p.id) % 10) < 7;
     if(available){
-      rec._suggestedSize = sizes[targetIdx];
+      rec._suggestedSize = suggested;
       rec.step = "exchange-offer";
     } else {
       rec.step = "return-form";
+      rec.interceptionSkippedReason = "out_of_stock";
     }
     render();
   }, 800);
+}
+function acknowledgeHumanConfirm(){
+  const rec = findReturnByKey(state.screenParams.returnKey);
+  rec.status = "requested";
+  rec.resolvedType = "return";
+  rec.trackingRef = "Pending advisor confirmation";
+  rec.step = "return-confirm";
+  render();
 }
 function confirmExchange(){
   const rec = findReturnByKey(state.screenParams.returnKey);
@@ -2744,6 +2779,7 @@ function renderReturnFlowScreen(key){
   if(!rec) return '<div class="page container"><p>Return not found.</p></div>';
   const p = getProduct(rec.productId);
   const brand = getBrand(p.brandId);
+  const advisorName = ADVISOR_NAMES[brand.id] || "your Style Advisor";
   let body = "";
   if(rec.step === "reason"){
     body = ''
@@ -2751,20 +2787,36 @@ function renderReturnFlowScreen(key){
       + '<div class="reason-grid">' + RETURN_REASONS.map(function(r){
           return '<div class="reason-card" data-action="return-reason" data-val="'+r.id+'"><div class="ic">'+r.icon+'</div>'+r.label+'</div>';
         }).join("") + '</div>';
-  } else if(rec.step === "fitq"){
+  } else if(rec.step === "zone"){
+    const zones = ZONES_BY_CATEGORY[p.category] || [];
     body = ''
-      + '<h2>Running small or running large?</h2>'
+      + '<h2>Where doesn\'t it fit?</h2>'
+      + '<div class="reason-grid">' + zones.map(function(z){
+          return '<div class="reason-card" data-action="return-zone" data-val="'+z+'" style="text-transform:capitalize;">'+z+'</div>';
+        }).join("") + '</div>';
+  } else if(rec.step === "direction"){
+    body = ''
+      + '<h2>Too tight, or too loose?</h2>'
       + '<div class="fitq-row">'
-      +   '<div class="fitq-opt" data-action="fit-issue" data-val="running_small">Running Small</div>'
-      +   '<div class="fitq-opt" data-action="fit-issue" data-val="running_large">Running Large</div>'
+      +   '<div class="fitq-opt" data-action="return-direction" data-val="runs_tight">Too tight</div>'
+      +   '<div class="fitq-opt" data-action="return-direction" data-val="runs_loose">Too loose</div>'
       + '</div>';
   } else if(rec.step === "checking"){
     body = '<h2 style="text-align:center;">Checking availability...</h2><div class="spinner"></div>';
+  } else if(rec.step === "human-confirm"){
+    body = ''
+      + '<div class="card" style="padding:20px;">'
+      +   (rec.fitDecoded ? '<div style="margin-bottom:10px; font-size:12px; color:var(--muted);">Decoded: <strong style="text-transform:capitalize;">'+rec.fitDecoded.zone+'</strong>, '+rec.fitDecoded.direction.replace(/_/g," ")+'</div>' : '')
+      +   '<h3>'+escapeHtml(advisorName)+' will confirm your exchange within 2 hours</h3>'
+      +   '<p style="font-size:13.5px; color:var(--muted);">This item is above our self-serve exchange threshold, so a Style Advisor reviews it personally before anything ships.</p>'
+      +   '<button class="btn" style="margin-top:14px;" data-action="ack-human-confirm">Got it</button>'
+      + '</div>';
   } else if(rec.step === "exchange-offer"){
     body = ''
       + '<div class="card" style="padding:20px;">'
       +   '<img class="img-loading" src="'+p.imageUrl+'" style="width:110px; height:135px; object-fit:cover; border-radius:8px; margin-bottom:12px;" onload="this.classList.remove(\'img-loading\')" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
       +   '<h3>We noticed you might need a different size — want to exchange instead of returning?</h3>'
+      +   (rec.fitDecoded ? '<p style="font-size:12px; color:var(--muted);">Decoded: <strong style="text-transform:capitalize;">'+rec.fitDecoded.zone+'</strong>, '+rec.fitDecoded.direction.replace(/_/g," ")+'</p>' : '')
       +   '<p style="font-size:13.5px;">'+escapeHtml(p.name)+' in size <strong>'+rec._suggestedSize+'</strong> (currently '+rec.size+')</p>'
       +   '<div style="display:flex; flex-direction:column; gap:10px; margin-top:16px;">'
       +     '<button class="btn" data-action="confirm-exchange">Exchange for size '+rec._suggestedSize+'</button>'
@@ -2774,6 +2826,7 @@ function renderReturnFlowScreen(key){
   } else if(rec.step === "return-form"){
     body = ''
       + '<h2>A few last details</h2>'
+      + (rec.fitDecoded ? '<div class="card" style="padding:10px; margin-bottom:14px; font-size:12px;">Decoded: <strong style="text-transform:capitalize;">'+rec.fitDecoded.zone+'</strong>, '+rec.fitDecoded.direction.replace(/_/g," ")+(rec.interceptionSkippedReason ? ' — no exchange offer ('+rec.interceptionSkippedReason.replace(/_/g," ")+')' : '')+'</div>' : '')
       + '<div class="field"><label>Pickup or drop-off?</label>'
       +   '<div class="choice-row"><div class="choice-card '+(rec.pickupPref==="pickup"?"selected":"")+'" data-action="pickup-pref" data-val="pickup">Schedule Pickup</div><div class="choice-card '+(rec.pickupPref==="dropoff"?"selected":"")+'" data-action="pickup-pref" data-val="dropoff">Drop-off at Store</div></div></div>'
       + '<div class="field"><label>Refund method</label>'
@@ -2952,7 +3005,9 @@ function handleAppClick(e){
     case "mkt-feedback-direction": setMarketplaceFeedbackDirection(val); break;
     case "resume-return": resumeReturnFlow(el.getAttribute("data-key")); break;
     case "return-reason": selectReturnReason(val); break;
-    case "fit-issue": selectFitIssue(val); break;
+    case "return-zone": selectFitZone(val); break;
+    case "return-direction": selectFitDirection(val); break;
+    case "ack-human-confirm": acknowledgeHumanConfirm(); break;
     case "confirm-exchange": confirmExchange(); break;
     case "decline-exchange": declineExchange(); break;
     case "pickup-pref": setPickupPref(val); break;
@@ -3235,6 +3290,10 @@ function renderAccountScreen(){
     const phrase = ZONE_PHRASE[e.newValue][e.zone] || ZONE_PHRASE[e.newValue].default;
     return '<div class="log-entry">We fine-tuned our <b>'+escapeHtml(e.category)+'</b> size guidance for your build — it now <b>'+phrase+'</b> through the '+escapeHtml(e.zone)+'. '+escapeHtml(e.reason)+' <span style="opacity:.7">('+fmtDate(e.date)+')</span></div>';
   }).join("") : '<div class="log-entry">No size-guidance updates for your build yet — we\'ll let you know here if that changes.</div>';
+  // A5 closed loop: acknowledge the shopper's own decoded fit-return feedback was counted.
+  const myFitSignals = state.fitSignalLog.filter(function(s){ return arch && s.archetypeId === arch.id; });
+  const feedbackCountedHtml = myFitSignals.length
+    ? '<div class="log-entry" style="color:var(--green);">Your feedback was counted — '+myFitSignals.length+' fit note'+(myFitSignals.length===1?"":"s")+' from you '+(myFitSignals.length===1?"has":"have")+' been factored into size guidance for your build.</div>' : '';
 
   const initials = p.name.split(" ").map(function(w){ return w[0]; }).join("").slice(0,2).toUpperCase();
   return ''
@@ -3257,7 +3316,7 @@ function renderAccountScreen(){
     +       bridgedBadge
     +       claimCta
     +       '<p style="margin-top:14px;"><button class="btn ghost small" data-action="go-track">View full order history &rarr;</button></p>'
-    +       '<details class="log-panel" style="margin-top:16px;"><summary>Why your size guidance changes</summary>' + logHtml + '</details>'
+    +       '<details class="log-panel" style="margin-top:16px;"><summary>Why your size guidance changes</summary>' + feedbackCountedHtml + logHtml + '</details>'
     +     '</div>'
     +     '<div class="card acct-section">'
     +       '<h3>Privacy &amp; AI</h3>'

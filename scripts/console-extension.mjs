@@ -295,7 +295,10 @@ const extension = {
 
 const json = JSON.stringify(extension, null, 2)
 writeFileSync(path.join(__dirname, '..', 'shared', 'console-extension.json'), json)
-const checksum = createHash('sha256').update(JSON.stringify(extension)).digest('hex')
+// Excludes generated_at (wall-clock time) from the hash, same fix as
+// generate-seed.mjs — see that file's comment for why.
+const { generated_at, ...extMetaForHash } = extension.meta
+const checksum = createHash('sha256').update(JSON.stringify({ ...extension, meta: extMetaForHash })).digest('hex')
 console.log(`shared/console-extension.json written — ${(json.length / 1024).toFixed(1)} KB`)
 console.log(`checksum8: ${checksum.slice(0, 8)}`)
 console.log(`employees: ${employees.length}, capacityTasks: ${capacityTasks.length}, overrideWins: ${overrideWins.length}, certHistory: ${certificationHistory.length}, dialAuditLog: ${dialAuditLog.length}`)

@@ -598,7 +598,16 @@ const seed = {
   taskLibrary: TASK_LIBRARY
 }
 
-const json = JSON.stringify(seed)
+// Hash everything EXCEPT generated_at (real wall-clock time, kept in the
+// output for provenance but deliberately excluded here) so the checksum
+// reflects only the deterministic data content — two runs from the same
+// SEED must produce the same checksum, which is the whole point of using
+// a seeded PRNG in the first place. Stage 6's test suite catches a
+// regression on this directly (tests/console.spec.mjs's "Seed determinism"
+// check), which is exactly how this bug — generated_at was previously
+// included in the hash, making every run's checksum different — was found.
+const { generated_at, ...metaForHash } = seed.meta
+const json = JSON.stringify({ ...seed, meta: metaForHash })
 const checksum = createHash('sha256').update(json).digest('hex')
 seed.meta.checksum = checksum
 

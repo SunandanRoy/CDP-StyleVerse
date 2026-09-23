@@ -2693,8 +2693,16 @@ function handleAppClick(e){
     case "dismiss-bridge-banner": dismissBridgeBanner(); break;
     case "view-outreach-details": viewOutreachDetails(); break;
     case "start-onboarding": startFitOnboarding(); break;
+    case "consent-continue": onboardConsentContinue(); break;
+    case "shopfor-continue": onboardShopforContinue(); break;
+    case "onboard-tier": onboardSelectTier(val); break;
     case "onboard-height": onboardingSelectHeight(val); break;
     case "onboard-fit": onboardingSelectFit(val); break;
+    case "onboard-usual-size": onboardSelectUsualSize(val); break;
+    case "onboard-trouble-zone": onboardSelectTroubleZone(val); break;
+    case "onboard-known-brand": onboardSelectKnownBrand(val); break;
+    case "download-passport": downloadPassport(); break;
+    case "delete-passport": deletePassport(); break;
     case "onboard-shopfor": onboardingSelectShoppingFor(val); break;
     case "onboard-continue": onboardingContinueToFinish(); break;
     case "open-product": openProduct(id); break;
@@ -2743,6 +2751,8 @@ function handleAppInput(e){
   if(!el) return;
   const action = el.getAttribute("data-action");
   if(action === "catalog-search"){ setFilter("search", el.value); }
+  if(action === "secondary-name"){ state.screenParams.secondaryName = el.value; render(); }
+  if(action === "measure-field"){ onboardSetMeasurement(el.getAttribute("data-field"), el.value); }
 }
 function handleAppChange(e){
   const el = e.target.closest("[data-action]");
@@ -2755,6 +2765,7 @@ function handleAppChange(e){
     case "filter-price": setFilter("price", el.value); break;
     case "cart-size": cartLineChangeSize(parseInt(el.getAttribute("data-idx"),10), el.value); break;
     case "addr-field": editAddressField(el.getAttribute("data-field"), el.value); break;
+    case "consent-toggle": onboardSetConsent(el.getAttribute("data-val"), el.checked); break;
     default: break;
   }
 }
@@ -2933,13 +2944,20 @@ function renderAccountScreen(){
   const arch = p.fitPassport ? getArchetype(p.fitPassport.archetypeId) : null;
   const activeArch = activeArchetypeId();
 
+  // A3: Fit Passport v2 self-service — edit (redo the flow), download the raw JSON, delete.
   let passportSection = "";
   if(arch){
     passportSection = ''
       + '<h3>Fit Passport</h3>'
       + '<p style="font-size:13.5px;">Archetype: <strong>'+escapeHtml(arch.label)+'</strong></p>'
       + '<p style="font-size:12px; color:var(--muted);">'+escapeHtml(arch.measurementRange)+'</p>'
-      + '<div id="acct-fm">' + renderFitModel({ archetypeId: activeArch, category:"Tops", compact:true }) + '</div>';
+      + (p.fitPassport.passportConfidence ? '<p style="font-size:12px; color:var(--muted);">Passport confidence: '+p.fitPassport.passportConfidence+'% ('+p.fitPassport.tier+' tier)</p>' : '')
+      + '<div id="acct-fm">' + renderFitModel({ archetypeId: activeArch, category:"Tops", compact:true }) + '</div>'
+      + '<div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">'
+      +   '<button class="btn ghost small" data-action="start-onboarding">Edit</button>'
+      +   '<button class="btn ghost small" data-action="download-passport">Download my passport (JSON)</button>'
+      +   '<button class="btn ghost small" data-action="delete-passport">Delete my passport</button>'
+      + '</div>';
   } else {
     passportSection = ''
       + '<h3>Fit Passport</h3>'
@@ -3146,96 +3164,214 @@ function viewOutreachDetails(){
 }
 
 /* ---------------------------- SCREEN 3 — FIT PASSPORT ONBOARDING ---------------------------- */
-const ARCHETYPE_LOOKUP = {
-  petite: { fitted:"petite-slim", regular:"petite-slim", relaxed:"petite-curvy" },
-  regular: { fitted:"regular-athletic", regular:"regular-broad", relaxed:"curvy-regular" },
-  tall: { fitted:"tall-slim", regular:"tall-broad", relaxed:"plus-relaxed" }
-};
+/* ---------------------------- A3 — FIT PASSPORT v2 (consent-first, basic/full tiers) ---------------------------- */
+// B8 fix: this never creates a passport the user didn't complete. "Someone else" is chosen
+// FIRST and only ever writes to a secondary profile; state.currentPersona.fitPassport is
+// touched only when the flow is explicitly completed for "myself".
+const TROUBLE_ZONES = ["shoulders","chest/bust","waist","hip","length"];
+const ONBOARD_STEPS = ["consent","shopfor","tier","basic","full","loading","done"];
+function estimateHeightCm(range){ return range === "petite" ? 152 : range === "tall" ? 178 : 165; }
+// Nearest-centroid assignment over (height, bust, waist, hip) bands — contract §3, replacing
+// the old rule-based height x fit-preference lookup table (whose Tall+Relaxed cell mapped to
+// Plus/Relaxed, a 5'4"-5'9" band that contradicts "Tall").
+function nearestCentroidArchetype(heightCm, bustIn, waistIn, hipIn){
+  function mid(r){ return (r[0]+r[1])/2; }
+  let best = ARCHETYPES[0], bestDist = Infinity;
+  ARCHETYPES.forEach(function(a){
+    const dh = (heightCm - mid(a.height_cm)) / 20;
+    const db = (bustIn - mid(a.bust_in)) / 6;
+    const dw = (waistIn - mid(a.waist_in)) / 6;
+    const dhp = (hipIn - mid(a.hip_in)) / 6;
+    const dist = dh*dh + db*db + dw*dw + dhp*dhp;
+    if(dist < bestDist){ bestDist = dist; best = a; }
+  });
+  return best.id;
+}
+function archetypeFromBasicAnswers(sp){
+  const candidates = ARCHETYPES.filter(function(a){ return a.base_apparel_size === sp.usualSize; });
+  const pool = candidates.length ? candidates : ARCHETYPES;
+  const targetH = estimateHeightCm(sp.heightRange);
+  let best = pool[0], bestDist = Infinity;
+  pool.forEach(function(a){
+    const mid = (a.height_cm[0]+a.height_cm[1])/2;
+    const d = Math.abs(mid - targetH);
+    if(d < bestDist){ bestDist = d; best = a; }
+  });
+  return best.id;
+}
 function startFitOnboarding(){
-  navigate("fit-onboarding", { step:1, heightRange:null, fitPref:null, shoppingFor:"myself" });
+  navigate("fit-onboarding", {
+    step:"consent",
+    consent:{ use_for_sizing:false, share_with_advisors:false, include_claimed_marketplace:false },
+    shoppingFor:"myself", secondaryName:"",
+    heightRange:null, usualSize:null, knownBrandId:null, fitPref:null, troubleZone:null,
+    heightCm:"", bustIn:"", waistIn:"", hipIn:""
+  });
 }
-function onboardingSelectHeight(range){
-  state.screenParams.heightRange = range;
-  state.screenParams.step = 2;
-  render();
-}
-function onboardingSelectFit(pref){
-  state.screenParams.fitPref = pref;
-  state.screenParams.step = 3;
+function onboardSetConsent(field, val){ state.screenParams.consent[field] = val; render(); }
+function onboardConsentContinue(){
+  if(!state.screenParams.consent.use_for_sizing) return; // required field
+  state.screenParams.step = "shopfor";
   render();
 }
 function onboardingSelectShoppingFor(val){
   state.screenParams.shoppingFor = val;
   render();
 }
+function onboardShopforContinue(){
+  const sp = state.screenParams;
+  if(sp.shoppingFor === "other" && !sp.secondaryName.trim()) return;
+  sp.step = "tier";
+  render();
+}
+function onboardSelectTier(tier){ state.screenParams.tier = tier; state.screenParams.step = tier; render(); }
+function onboardingSelectHeight(range){ state.screenParams.heightRange = range; render(); }
+function onboardingSelectFit(pref){ state.screenParams.fitPref = pref; render(); }
+function onboardSelectUsualSize(sz){ state.screenParams.usualSize = sz; render(); }
+function onboardSelectTroubleZone(z){ state.screenParams.troubleZone = z; render(); }
+function onboardSelectKnownBrand(id){ state.screenParams.knownBrandId = id; render(); }
+function downloadPassport(){
+  const p = state.currentPersona;
+  if(!p.fitPassport) return;
+  const payload = Object.assign({ personaId: p.id, archetype: getArchetype(p.fitPassport.archetypeId).label }, p.fitPassport);
+  const blob = "data:application/json;charset=utf-8," + encodeURIComponent(JSON.stringify(payload, null, 2));
+  const a = document.createElement("a");
+  a.href = blob;
+  a.download = "styleverse-fit-passport-" + p.id + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  showToast("Fit Passport downloaded");
+}
+function deletePassport(){
+  state.currentPersona.fitPassport = null;
+  render();
+  showToast("Fit Passport deleted");
+}
+function onboardSetMeasurement(field, val){ state.screenParams[field] = val; render(); }
 function onboardingContinueToFinish(){
   state.screenParams.step = "loading";
   render();
   setTimeout(function(){
     const sp = state.screenParams;
-    const archId = (ARCHETYPE_LOOKUP[sp.heightRange] && ARCHETYPE_LOOKUP[sp.heightRange][sp.fitPref]) || "regular-athletic";
+    let archId, confidence;
+    if(sp.tier === "full" && sp.heightCm && sp.bustIn && sp.waistIn && sp.hipIn){
+      archId = nearestCentroidArchetype(Number(sp.heightCm), Number(sp.bustIn), Number(sp.waistIn), Number(sp.hipIn));
+      confidence = 88;
+    } else {
+      archId = archetypeFromBasicAnswers(sp);
+      confidence = 55;
+    }
+    const passport = {
+      archetypeId: archId, tier: sp.tier === "full" ? "full" : "basic", passportConfidence: confidence,
+      completedAt: SCE_SEED.demoToday, consent: Object.assign({}, sp.consent), troubleZone: sp.troubleZone || null
+    };
     const p = state.currentPersona;
     if(sp.shoppingFor === "other"){
-      p.secondaryProfile = { name:"New profile", archetypeId: archId };
-      p.shoppingFor = "other";
-      if(!p.fitPassport) p.fitPassport = { archetypeId:"regular-athletic", completedAt:new Date().toISOString().slice(0,10) };
+      p.secondaryProfile = { name: sp.secondaryName.trim() || "Gift recipient", archetypeId: archId };
     } else {
-      p.fitPassport = { archetypeId: archId, completedAt:new Date().toISOString().slice(0,10) };
+      p.fitPassport = passport;
       p.shoppingFor = "myself";
     }
-    sp.step = 4;
+    sp.step = "done";
     sp.previewArchetypeId = archId;
     render();
   }, 1100);
 }
 function renderFitOnboardingScreen(){
   const sp = state.screenParams;
-  const stepNum = typeof sp.step === "number" ? sp.step : (sp.step === "loading" ? 3.5 : 4);
-  const doneSteps = Math.min(4, Math.floor(stepNum));
-  const progress = [1,2,3,4].map(function(i){ return '<div class="'+(i<=doneSteps?"done":"")+'"></div>'; }).join("");
+  const stepIdx = ONBOARD_STEPS.indexOf(sp.step === "full" ? "tier" : sp.step);
+  const progress = ["consent","shopfor","tier","done"].map(function(s,i){
+    const order = { consent:0, shopfor:1, tier:2, basic:2, full:2, loading:2.5, done:3 };
+    return '<div class="'+(order[sp.step] >= i ? "done":"")+'"></div>';
+  }).join("");
   let body = "";
-  if(sp.step === 1){
+  if(sp.step === "consent"){
     body = ''
-      + '<h2>Step 1 of 4 — What\'s your height range?</h2>'
-      + '<div class="choice-row">'
-      +   ["petite","regular","tall"].map(function(r){
-            const labels = { petite:"4'10\"–5'2\" (Petite)", regular:"5'3\"–5'7\" (Regular)", tall:"5'8\"+ (Tall)" };
-            return '<div class="choice-card" data-action="onboard-height" data-val="'+r+'">'+labels[r]+'</div>';
-          }).join("")
-      + '</div>';
-  } else if(sp.step === 2){
-    body = ''
-      + '<h2>Step 2 of 4 — How do you like your tops to fit?</h2>'
-      + '<div class="choice-row">'
-      +   ["fitted","regular","relaxed"].map(function(f){
-            return '<div class="choice-card" data-action="onboard-fit" data-val="'+f+'" style="text-transform:capitalize;">'+f+'</div>';
-          }).join("")
-      + '</div>';
-  } else if(sp.step === 3){
+      + '<h2>Before we start — how we\'ll use this</h2>'
+      + '<p style="color:var(--muted); font-size:13px;">Your Fit Passport is optional and stays on this account. Here\'s exactly what each choice does.</p>'
+      + '<label class="consent-row" style="display:flex; gap:10px; align-items:flex-start; margin-top:16px;">'
+      +   '<input type="checkbox" data-action="consent-toggle" data-val="use_for_sizing" '+(sp.consent.use_for_sizing?"checked":"")+' style="margin-top:3px;">'
+      +   '<span><strong>Use my answers to recommend sizes</strong> (required) — powers your confidence scores and size suggestions.</span>'
+      + '</label>'
+      + '<label class="consent-row" style="display:flex; gap:10px; align-items:flex-start; margin-top:10px;">'
+      +   '<input type="checkbox" data-action="consent-toggle" data-val="share_with_advisors" '+(sp.consent.share_with_advisors?"checked":"")+' style="margin-top:3px;">'
+      +   '<span><strong>Share my fit profile with human advisors</strong> (optional) — lets Style Advisors see your archetype during a call.</span>'
+      + '</label>'
+      + '<label class="consent-row" style="display:flex; gap:10px; align-items:flex-start; margin-top:10px;">'
+      +   '<input type="checkbox" data-action="consent-toggle" data-val="include_claimed_marketplace" '+(sp.consent.include_claimed_marketplace?"checked":"")+' style="margin-top:3px;">'
+      +   '<span><strong>Include marketplace orders I claim</strong> (optional) — factors claimed marketplace purchases into your fit data.</span>'
+      + '</label>'
+      + '<button class="btn" style="margin-top:20px;" data-action="consent-continue" '+(sp.consent.use_for_sizing?"":"disabled")+'>Continue</button>';
+  } else if(sp.step === "shopfor"){
     const sf = sp.shoppingFor;
     body = ''
-      + '<h2>Step 3 of 4 — Who are you shopping for?</h2>'
+      + '<h2>Who are you setting this up for?</h2>'
       + '<div class="choice-row">'
       +   '<div class="choice-card '+(sf==="myself"?"selected":"")+'" data-action="onboard-shopfor" data-val="myself">Myself</div>'
       +   '<div class="choice-card '+(sf==="other"?"selected":"")+'" data-action="onboard-shopfor" data-val="other">Someone else</div>'
       + '</div>'
-      + '<p style="color:var(--muted); font-size:12.5px;">Choosing "someone else" creates a separate saved fit profile you can switch to any time.</p>'
-      + '<button class="btn" data-action="onboard-continue">Continue</button>';
+      + (sf === "other" ? '<div class="field" style="margin-top:12px;"><label>Their name</label><input type="text" data-action="secondary-name" value="'+escapeHtml(sp.secondaryName||"")+'" placeholder="e.g. Rahul"></div><p style="color:var(--muted); font-size:12.5px;">This creates a separate saved profile — it never changes your own Fit Passport.</p>' : '')
+      + '<button class="btn" style="margin-top:16px;" data-action="shopfor-continue">Continue</button>';
+  } else if(sp.step === "tier"){
+    body = ''
+      + '<h2>Quick estimate, or a precise fit?</h2>'
+      + '<div class="choice-row">'
+      +   '<div class="choice-card" data-action="onboard-tier" data-val="basic"><strong>Quick estimate</strong><br><span style="font-size:11.5px; color:var(--muted);">Height range + usual size — 30 seconds</span></div>'
+      +   '<div class="choice-card" data-action="onboard-tier" data-val="full"><strong>Precise fit</strong><br><span style="font-size:11.5px; color:var(--muted);">Add bust/waist/hip measurements for a higher-confidence match</span></div>'
+      + '</div>';
+  } else if(sp.step === "basic" || sp.step === "full"){
+    body = ''
+      + '<h2>Height range</h2>'
+      + '<div class="choice-row">'
+      +   ["petite","regular","tall"].map(function(r){
+            const labels = { petite:"4'10\"–5'3\" (Petite)", regular:"5'3\"–5'9\" (Regular)", tall:"5'8\"+ (Tall)" };
+            return '<div class="choice-card '+(sp.heightRange===r?"selected":"")+'" data-action="onboard-height" data-val="'+r+'">'+labels[r]+'</div>';
+          }).join("")
+      + '</div>'
+      + '<h2 style="margin-top:18px;">Usual size</h2>'
+      + '<div class="size-row">' + APPAREL_SIZE_RUN.map(function(sz){
+          return '<button class="size-btn '+(sp.usualSize===sz?"active":"")+'" data-action="onboard-usual-size" data-val="'+sz+'">'+sz+'</button>';
+        }).join("") + '</div>'
+      + '<h2 style="margin-top:18px;">How do your tops usually fit?</h2>'
+      + '<div class="choice-row">'
+      +   ["fitted","regular","relaxed"].map(function(f){
+            return '<div class="choice-card '+(sp.fitPref===f?"selected":"")+'" data-action="onboard-fit" data-val="'+f+'" style="text-transform:capitalize;">'+f+'</div>';
+          }).join("")
+      + '</div>'
+      + '<h2 style="margin-top:18px;">A brand whose sizing you know</h2>'
+      + '<div class="choice-row">' + BRANDS.map(function(b){
+          return '<div class="choice-card '+(sp.knownBrandId===b.id?"selected":"")+'" data-action="onboard-known-brand" data-val="'+b.id+'">'+escapeHtml(b.name)+'</div>';
+        }).join("") + '</div>'
+      + '<h2 style="margin-top:18px;">Which zone usually doesn\'t fit?</h2>'
+      + '<div class="choice-row">' + TROUBLE_ZONES.map(function(z){
+          return '<div class="choice-card '+(sp.troubleZone===z?"selected":"")+'" data-action="onboard-trouble-zone" data-val="'+z+'" style="text-transform:capitalize;">'+z+'</div>';
+        }).join("") + '</div>'
+      + (sp.step === "full" ? ''
+          + '<h2 style="margin-top:18px;">Measurements (inches) — raises your passport confidence</h2>'
+          + '<div class="addr-grid">'
+          +   '<div class="field"><label>Height (cm)</label><input type="number" data-action="measure-field" data-field="heightCm" value="'+escapeHtml(sp.heightCm||"")+'"></div>'
+          +   '<div class="field"><label>Bust</label><input type="number" data-action="measure-field" data-field="bustIn" value="'+escapeHtml(sp.bustIn||"")+'"></div>'
+          +   '<div class="field"><label>Waist</label><input type="number" data-action="measure-field" data-field="waistIn" value="'+escapeHtml(sp.waistIn||"")+'"></div>'
+          +   '<div class="field"><label>Hip</label><input type="number" data-action="measure-field" data-field="hipIn" value="'+escapeHtml(sp.hipIn||"")+'"></div>'
+          + '</div>' : '')
+      + '<button class="btn" style="margin-top:18px;" data-action="onboard-continue" '+(sp.heightRange && sp.usualSize && sp.fitPref && sp.knownBrandId && sp.troubleZone ? "" : "disabled")+'>See my fit</button>';
   } else if(sp.step === "loading"){
     body = '<h2 style="text-align:center;">Finding your fit...</h2><div class="spinner"></div>';
-  } else if(sp.step === 4){
+  } else if(sp.step === "done"){
     const arch = getArchetype(sp.previewArchetypeId);
     if(sp.shoppingFor === "other"){
-      const profileName = state.currentPersona.secondaryProfile ? state.currentPersona.secondaryProfile.name : "New profile";
+      const profileName = state.currentPersona.secondaryProfile ? state.currentPersona.secondaryProfile.name : "this profile";
       body = ''
         + '<h2>Profile saved!</h2>'
-        + '<div class="card" style="padding:16px; margin-bottom:18px;">We\'ve matched this to the <strong>'+escapeHtml(arch.label)+'</strong> archetype — '+escapeHtml(arch.measurementRange)+'. Since this profile is for someone else, we won\'t render a fit preview against your own body.</div>'
+        + '<div class="card" style="padding:16px; margin-bottom:18px;">We\'ve matched '+escapeHtml(profileName)+' to the <strong>'+escapeHtml(arch.label)+'</strong> archetype — '+escapeHtml(arch.measurementRange)+'. Since this profile is for someone else, we won\'t render a fit preview against your own body.</div>'
         + renderShareLinkBox(profileName)
         + '<button class="btn" style="margin-top:18px;" data-action="go-home">Continue Shopping</button>';
     } else {
+      const passport = state.currentPersona.fitPassport;
       body = ''
         + '<h2>You\'re all set!</h2>'
-        + '<div class="card" style="padding:16px; margin-bottom:18px;">Based on your answers, your fit archetype is <strong>'+escapeHtml(arch.label)+'</strong> — '+escapeHtml(arch.measurementRange)+'.</div>'
+        + '<div class="card" style="padding:16px; margin-bottom:18px;">Based on your answers, your fit archetype is <strong>'+escapeHtml(arch.label)+'</strong> — '+escapeHtml(arch.measurementRange)+'. Passport confidence: <strong>'+passport.passportConfidence+'%</strong> ('+passport.tier+' tier).</div>'
         + '<h3>Your Fit Model</h3>'
         + '<div id="onboard-fm">' + renderFitModel({ archetypeId: sp.previewArchetypeId, category:"Tops" }) + '</div>'
         + '<button class="btn" style="margin-top:18px;" data-action="go-home">Continue Shopping</button>';
@@ -3243,7 +3379,7 @@ function renderFitOnboardingScreen(){
   }
   return ''
     + '<div class="page container" style="max-width:640px;">'
-    +   (sp.step!==4 ? '<div class="progress-steps">'+progress+'</div>' : '')
+    +   (sp.step!=="done" ? '<div class="progress-steps">'+progress+'</div>' : '')
     +   body
     + '</div>';
 }

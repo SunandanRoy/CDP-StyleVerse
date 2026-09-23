@@ -13,6 +13,25 @@ const MODE_BADGE = {
   rules_engine_only: 'rules'
 }
 
+// D8 — consent tags per field. The seed carries one consent_basis per
+// customer (explicit_opt_in), but not every data category actually needs
+// it: order/case records are covered by contractual necessity (fulfilling
+// the order/service the customer already asked for), while anything
+// sensitive or cross-channel (body measurements, bridging a marketplace
+// identity into this profile) requires the customer's own opt-in.
+function ConsentTag({ basis }) {
+  const isConsent = basis === 'explicit_opt_in'
+  return (
+    <span
+      className="rounded-full border px-2 py-0.5 text-[10px] font-medium"
+      style={{ borderColor: 'var(--edge)', color: isConsent ? 'var(--brand-accent)' : 'var(--ink-mute)' }}
+      title={isConsent ? 'Requires the customer\'s own explicit opt-in — sensitive or cross-channel data.' : 'Covered by contractual necessity — no separate consent required to deliver the order/service already requested.'}
+    >
+      {isConsent ? 'Consent: explicit opt-in' : 'Basis: contractual necessity'}
+    </span>
+  )
+}
+
 function TimelineRow({ entry }) {
   if (entry.type === 'order') {
     const o = entry.ref
@@ -100,14 +119,25 @@ export default function CustomerProfile() {
         <div className="flex flex-wrap gap-1.5">
           <Badge variant="pii" />
           {brand && <Badge variant={MODE_BADGE[brand.ai_tooling_mode]} />}
+          <button
+            disabled
+            title="No Storefront project exists in this Console-only build — see SCE_DATA_CONTRACT.md's Console-only note. N/A by design, not a broken link."
+            className="cursor-not-allowed rounded-full border px-2.5 py-0.5 text-[11px] font-medium opacity-60"
+            style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}
+          >
+            Open storefront as this customer — N/A
+          </button>
         </div>
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="lg:col-span-2">
-          <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
-            Merged Timeline · orders + returns + cases
-          </h2>
+          <div className="mb-2 flex items-center justify-between">
+            <h2 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+              Merged Timeline · orders + returns + cases
+            </h2>
+            <ConsentTag basis="contractual_necessity" />
+          </div>
           <div className="card divide-y" style={{ borderColor: 'var(--edge)' }}>
             {customer.timeline.length === 0 && <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>No activity yet.</p>}
             {customer.timeline.map((entry, i) => (
@@ -118,15 +148,55 @@ export default function CustomerProfile() {
 
         <div className="space-y-4">
           <div className="card">
-            <h2 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
-              Fit Passport
-            </h2>
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+                Fit Passport
+              </h2>
+              <ConsentTag basis={customer.consent_basis} />
+            </div>
             <div className="space-y-1.5 text-sm">
               <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Archetype</span><span className="font-medium">{customer.fit_passport.archetype}</span></div>
               <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Height</span><span className="font-medium">{customer.fit_passport.height_cm} cm</span></div>
               <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Measurements</span><span className="font-medium text-right">{customer.fit_passport.measurements}</span></div>
               <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Passport confidence</span><span className="font-medium">{customer.fit_passport.confidence}%</span></div>
               <div className="flex justify-between"><span style={{ color: 'var(--ink-mute)' }}>Shopping for</span><span className="font-medium capitalize">{customer.fit_passport.shopping_for}</span></div>
+            </div>
+          </div>
+
+          <div className="card">
+            <div className="mb-2 flex items-center justify-between">
+              <h2 className="font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+                Identity Graph
+              </h2>
+              <ConsentTag basis={customer.marketplace_claim ? 'explicit_opt_in' : 'contractual_necessity'} />
+            </div>
+            <div className="flex flex-col items-stretch gap-1.5 text-xs">
+              <div className="rounded-md border p-2" style={{ borderColor: 'var(--brand-accent)', background: 'var(--brand-accent-soft)' }}>
+                <div className="font-semibold">D2C Profile</div>
+                <div style={{ color: 'var(--ink-mute)' }}>{customer.name} · {customer.id}</div>
+              </div>
+              <div className="pl-3 text-[10px]" style={{ color: 'var(--ink-mute)' }}>↓ loyalty_id</div>
+              <div className="rounded-md border p-2" style={{ borderColor: 'var(--edge)' }}>
+                <div className="font-semibold">Loyalty Account</div>
+                <div style={{ color: 'var(--ink-mute)' }}>{customer.loyalty_id || 'Not enrolled'}</div>
+              </div>
+              <div className="pl-3 text-[10px]" style={{ color: 'var(--ink-mute)' }}>↓ marketplace bridge</div>
+              {customer.marketplace_claim ? (
+                <div className="rounded-md border p-2" style={{ borderColor: customer.marketplace_claim.claimed_by ? 'var(--good-border)' : 'var(--warn-border)', background: customer.marketplace_claim.claimed_by ? 'var(--good-soft)' : 'var(--warn-soft)' }}>
+                  <div className="font-semibold">Marketplace Alias</div>
+                  <div style={{ color: 'var(--ink-mute)' }}>{customer.marketplace_claim.buyer_alias}</div>
+                  <div className="mt-0.5 font-medium" style={{ color: customer.marketplace_claim.claimed_by ? 'var(--good)' : 'var(--warn)' }}>
+                    {customer.marketplace_claim.claimed_by ? '✓ Bridged' : '⏳ Claim pending'}
+                  </div>
+                </div>
+              ) : (
+                <div className="rounded-md border p-2" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}>
+                  No marketplace alias linked — D2C-native identity.
+                </div>
+              )}
+              {customer.marketplace_bridge_bonus_points && (
+                <p className="mt-1 text-[10px]" style={{ color: 'var(--good)' }}>+{customer.marketplace_bridge_bonus_points} loyalty points awarded on bridge ({formatDateIN(customer.marketplace_bridge_date)}).</p>
+              )}
             </div>
           </div>
 

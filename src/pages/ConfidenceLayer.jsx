@@ -5,6 +5,7 @@ import ProductImage from '../components/ProductImage'
 import ScoreFormulaNote from '../components/ScoreFormulaNote'
 import GeminiAction from '../components/GeminiAction'
 import FitModel from '../components/FitModel/FitModel.jsx'
+import CalibrationChart from '../components/CalibrationChart'
 
 function scoreColor(score) {
   if (score >= 75) return 'var(--good)'
@@ -49,6 +50,7 @@ export default function ConfidenceLayer() {
 
   const isAdvisorMediated = dial?.disclosure_mode === 'Advisor-Mediated'
   const explainerName = isAdvisorMediated ? 'Your Styling Advisor' : 'StyleVerse AI Assistant'
+  const { data: calibration, loading: calibrationLoading } = useFetch(brandId ? `/confidence-calibration?brand_id=${brandId}` : null)
 
   return (
     <div className="max-w-6xl">
@@ -171,6 +173,13 @@ export default function ConfidenceLayer() {
                 </p>
                 {cartItems.length > 0 && <CheckoutPreview items={cartItems} isAdvisorMediated={isAdvisorMediated} />}
               </div>
+            </div>
+
+            <div className="card">
+              <h3 className="mb-2 font-heading text-sm font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>
+                Confidence Calibration — this brand
+              </h3>
+              <CalibrationChart data={calibration} loading={calibrationLoading} />
             </div>
           </div>
         )}

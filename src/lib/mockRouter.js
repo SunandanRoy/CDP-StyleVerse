@@ -254,6 +254,50 @@ const GET_ROUTES = [
     }
   ],
   [
+    /^\/confidence-calibration$/,
+    (_p, q) => {
+      const { brand_id } = q
+      const products = db.products.filter((p) => p.fit_applicable && (!brand_id || p.brand_id === brand_id))
+      const cells = []
+      for (const product of products) {
+        for (const archetype of db.archetypes) {
+          const conf = computeProductConfidence(product, archetype.id, db)
+          if (conf.confidence_score == null) continue
+          const node = db.outcomeIndex?.[product.id]?.[archetype.id] || {}
+          let kept = 0
+          let returned = 0
+          for (const sizeCell of Object.values(node)) {
+            kept += sizeCell.kept || 0
+            returned += sizeCell.returned || 0
+          }
+          const n = kept + returned
+          if (n === 0) continue
+          cells.push({ predicted: conf.confidence_score / 100, kept, returned, n })
+        }
+      }
+      const totalN = cells.reduce((s, c) => s + c.n, 0)
+      const brierScore = totalN
+        ? Math.round((cells.reduce((s, c) => s + (c.kept * (1 - c.predicted) ** 2 + c.returned * c.predicted ** 2), 0) / totalN) * 1000) / 1000
+        : null
+      const bins = Array.from({ length: 10 }, (_, i) => ({ decile: i, label: `${i * 10}-${i * 10 + 10}%`, predSum: 0, kept: 0, n: 0 }))
+      for (const c of cells) {
+        const bin = bins[Math.min(9, Math.floor(c.predicted * 10))]
+        bin.predSum += c.predicted * c.n
+        bin.kept += c.kept
+        bin.n += c.n
+      }
+      const deciles = bins
+        .map((b) => ({
+          decile: b.decile, label: b.label,
+          predicted_mean: b.n ? Math.round((b.predSum / b.n) * 1000) / 10 : null,
+          observed_rate: b.n ? Math.round((b.kept / b.n) * 1000) / 10 : null,
+          n: b.n
+        }))
+        .filter((b) => b.n > 0)
+      return ok({ brier_score: brierScore, n_cells: cells.length, total_n: totalN, deciles })
+    }
+  ],
+  [
     /^\/confidence-demo-archetype$/,
     (_p, q) => {
       const { brand_id } = q

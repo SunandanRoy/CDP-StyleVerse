@@ -2,6 +2,7 @@ import { Fragment, useState } from 'react'
 import { useFetch } from '../lib/useFetch'
 import { useBrand } from '../context/BrandContext'
 import Badge from '../components/Badge'
+import CalibrationChart from '../components/CalibrationChart'
 import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const BADGES_BY_MODEL = {
@@ -20,6 +21,7 @@ export default function ModelRegistry() {
   const { data: registryComponents } = useFetch(brandId ? `/registry-components?brand_id=${brandId}` : null)
   const { data: dialAuditLog } = useFetch(brandId ? `/dial-audit-log?brand_id=${brandId}` : null)
   const [expanded, setExpanded] = useState(null)
+  const { data: calibration, loading: calibrationLoading } = useFetch(expanded === 'model_confidence' ? '/confidence-calibration' : null)
 
   const watchList = registryComponents?.filter((c) => c.automation_bias_watch) || []
 
@@ -78,6 +80,12 @@ export default function ModelRegistry() {
                       <div className="mt-2 flex flex-wrap gap-1.5">
                         {(BADGES_BY_MODEL[m.id] || []).map((b) => <Badge key={b} variant={b} />)}
                       </div>
+                      {m.id === 'model_confidence' && (
+                        <div className="mt-4 border-t pt-3" style={{ borderColor: 'var(--edge)' }}>
+                          <h4 className="mb-2 text-xs font-bold uppercase tracking-wide" style={{ color: 'var(--ink-mute)' }}>Calibration — all brands</h4>
+                          <CalibrationChart data={calibration} loading={calibrationLoading} />
+                        </div>
+                      )}
                     </td>
                   </tr>
                 )}

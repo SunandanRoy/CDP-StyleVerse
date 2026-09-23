@@ -220,6 +220,53 @@ app.get('/api/confidence-batch', (req, res) => {
   res.json(rows)
 })
 
+// D6 — confidence calibration: bucket every (product, archetype) cell's
+// predicted score into a decile and compare against the observed kept rate
+// from the same outcomeIndex data the score itself reads, so the Brier
+// score is exact for this deterministic model (one predicted probability
+// per cell, not sampled).
+app.get('/api/confidence-calibration', (req, res) => {
+  const { brand_id } = req.query
+  const products = db.products.filter((p) => p.fit_applicable && (!brand_id || p.brand_id === brand_id))
+  const cells = []
+  for (const product of products) {
+    for (const archetype of db.archetypes) {
+      const conf = computeProductConfidence(product, archetype.id, db)
+      if (conf.confidence_score == null) continue
+      const node = db.outcomeIndex?.[product.id]?.[archetype.id] || {}
+      let kept = 0
+      let returned = 0
+      for (const sizeCell of Object.values(node)) {
+        kept += sizeCell.kept || 0
+        returned += sizeCell.returned || 0
+      }
+      const n = kept + returned
+      if (n === 0) continue
+      cells.push({ predicted: conf.confidence_score / 100, kept, returned, n })
+    }
+  }
+  const totalN = cells.reduce((s, c) => s + c.n, 0)
+  const brierScore = totalN
+    ? Math.round((cells.reduce((s, c) => s + (c.kept * (1 - c.predicted) ** 2 + c.returned * c.predicted ** 2), 0) / totalN) * 1000) / 1000
+    : null
+  const bins = Array.from({ length: 10 }, (_, i) => ({ decile: i, label: `${i * 10}-${i * 10 + 10}%`, predSum: 0, kept: 0, n: 0 }))
+  for (const c of cells) {
+    const bin = bins[Math.min(9, Math.floor(c.predicted * 10))]
+    bin.predSum += c.predicted * c.n
+    bin.kept += c.kept
+    bin.n += c.n
+  }
+  const deciles = bins
+    .map((b) => ({
+      decile: b.decile, label: b.label,
+      predicted_mean: b.n ? Math.round((b.predSum / b.n) * 1000) / 10 : null,
+      observed_rate: b.n ? Math.round((b.kept / b.n) * 1000) / 10 : null,
+      n: b.n
+    }))
+    .filter((b) => b.n > 0)
+  res.json({ brier_score: brierScore, n_cells: cells.length, total_n: totalN, deciles })
+})
+
 app.get('/api/confidence-demo-archetype', (req, res) => {
   const { brand_id } = req.query
   if (!brand_id) return res.status(400).json({ error: 'brand_id is required' })

@@ -4,7 +4,7 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 import dotenv from 'dotenv'
 
-import { db, getDialSettings, updateDialSettings } from './data/db.js'
+import { db, getDialSettings, updateDialSettings, applyFitMatrixAdjustment } from './data/db.js'
 import { computeProductConfidence } from './lib/scoring.js'
 import { runStartupImageHealthCheck } from './data/imageLibrary.js'
 import { simulateReturnInterception } from '../shared/interception.js'
@@ -50,6 +50,66 @@ app.get('/api/confidence-adjustment-log', (req, res) => {
   if (req.query.category) rows = rows.filter((r) => r.category === req.query.category)
   if (req.query.archetype_id) rows = rows.filter((r) => r.archetype_id === req.query.archetype_id)
   res.json(rows)
+})
+
+// D4 — closed feedback loop: SKU hot-list by return rate x archetype x zone,
+// built from fit-driven size_fit returns joined against total orders for the
+// same (product, archetype) cell so the rate is real, not just a raw count.
+app.get('/api/fit-matrix/hotlist', (req, res) => {
+  const { brand_id, min_orders = 2, limit = 15 } = req.query
+  const minOrders = Number(min_orders) || 2
+  const cellOrders = new Map() // "productId|archetypeId" -> order count
+  for (const o of db.orders) {
+    if (brand_id && o.brand_id !== brand_id) continue
+    const customer = db.customersById.get(o.customer_id)
+    if (!customer) continue
+    const key = `${o.product_id}|${customer.archetype_id}`
+    cellOrders.set(key, (cellOrders.get(key) || 0) + 1)
+  }
+  const cellReturns = new Map() // "productId|archetypeId|zone" -> { count, direction }
+  for (const r of db.returns) {
+    if (!r.fit_driven || r.reason_code !== 'size_fit' || !r.decoded) continue
+    const customer = db.customersById.get(r.customer_id)
+    const product = db.productsById.get(r.product_id)
+    if (!customer || !product) continue
+    if (brand_id && product.brand_id !== brand_id) continue
+    const key = `${r.product_id}|${customer.archetype_id}|${r.decoded.zone}`
+    const cell = cellReturns.get(key) || { count: 0, directions: {} }
+    cell.count += 1
+    cell.directions[r.decoded.direction] = (cell.directions[r.decoded.direction] || 0) + 1
+    cellReturns.set(key, cell)
+  }
+  const rows = [...cellReturns.entries()].map(([key, cell]) => {
+    const [productId, archetypeId, zone] = key.split('|')
+    const product = db.productsById.get(productId)
+    const orderCount = cellOrders.get(`${productId}|${archetypeId}`) || 0
+    const dominantDirection = Object.entries(cell.directions).sort((a, b) => b[1] - a[1])[0]?.[0] || 'too tight'
+    const currentValue = db.fit_matrix_nested?.[product.category]?.[archetypeId]?.[zone] || 'true_to_size'
+    const suggestedValue = /tight/i.test(dominantDirection) ? 'runs_tight' : 'runs_loose'
+    return {
+      product_id: productId, product_name: product.name, brand_id: product.brand_id, category: product.category,
+      archetype_id: archetypeId, zone,
+      return_count: cell.count, order_count: orderCount,
+      return_rate_pct: orderCount ? Math.round((cell.count / orderCount) * 1000) / 10 : null,
+      dominant_direction: dominantDirection, current_value: currentValue, suggested_value: suggestedValue
+    }
+  })
+    .filter((r) => r.order_count >= minOrders && r.current_value !== r.suggested_value)
+    .sort((a, b) => (b.return_rate_pct || 0) - (a.return_rate_pct || 0))
+    .slice(0, Number(limit) || 15)
+  res.json(rows)
+})
+
+app.post('/api/fit-matrix/adjustments', (req, res) => {
+  const { category, archetype_id, zone, new_value, reason, approver } = req.body
+  if (!category || !archetype_id || !zone || !new_value || !reason) {
+    return res.status(400).json({ error: 'category, archetype_id, zone, new_value and reason are required' })
+  }
+  if (!['runs_tight', 'runs_loose', 'true_to_size'].includes(new_value)) {
+    return res.status(400).json({ error: 'new_value must be runs_tight, runs_loose or true_to_size' })
+  }
+  const entry = applyFitMatrixAdjustment({ category, archetype_id, zone, new_value, reason, approver })
+  res.status(201).json(entry)
 })
 
 // ---------------------------------------------------------------- customers

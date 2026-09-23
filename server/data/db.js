@@ -119,3 +119,29 @@ export function updateDialSettings(brandId, patch, reason, changedBy) {
   }
   return next
 }
+
+// D4 — closed feedback loop: a Customer Analytics-approved adjustment
+// mutates the live fit_matrix (both the nested shape scoreProduct reads and
+// the flat row list some UI reads) AND appends to confidence_adjustment_log
+// in the same step, so the Confidence Layer recomputes with the new value
+// on its very next call — no separate "apply" pass needed.
+export function applyFitMatrixAdjustment({ category, archetype_id, zone, new_value, reason, approver }) {
+  db.fit_matrix_nested[category] ??= {}
+  db.fit_matrix_nested[category][archetype_id] ??= {}
+  const old_value = db.fit_matrix_nested[category][archetype_id][zone] || 'true_to_size'
+  db.fit_matrix_nested[category][archetype_id][zone] = new_value
+
+  const flatRow = db.fit_matrix.find((r) => r.category === category && r.archetype_id === archetype_id && r.zone === zone)
+  if (flatRow) flatRow.fit_direction = new_value
+  else db.fit_matrix.push({ category, archetype_id, zone, fit_direction: new_value })
+
+  const entry = {
+    id: `adj_${String(db.confidence_adjustment_log.length + 1).padStart(3, '0')}`,
+    category, archetype_id, zone, old_value, new_value,
+    reason: reason || '(no reason given)',
+    date: new Date().toISOString().slice(0, 10),
+    approver: approver || 'Customer Analytics'
+  }
+  db.confidence_adjustment_log.unshift(entry)
+  return entry
+}

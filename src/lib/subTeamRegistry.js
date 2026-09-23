@@ -24,7 +24,9 @@ const GROUP_OWNERSHIP = {
 // sub-team within it — trim those per sub-team rather than at group level.
 const ITEM_EXCLUSIONS = {
   'Digital Customer Support': ['/business/marketplace-signal'],
-  'Marketplace Operations': ['/returns/decoder', '/track-everywhere', '/grievance-radar']
+  'Marketplace Operations': ['/returns/decoder', '/track-everywhere', '/grievance-radar'],
+  'CRM & Loyalty': ['/feedback-loop'],
+  'Customer Analytics': ['/advisor-workspace']
 }
 
 export function navGroupsForSubTeam(navGroups, subTeam) {

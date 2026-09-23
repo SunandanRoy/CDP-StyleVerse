@@ -120,6 +120,54 @@ const GET_ROUTES = [
     }
   ],
   [
+    /^\/fit-matrix\/hotlist$/,
+    (_p, q) => {
+      const brandId = q.brand_id
+      const minOrders = Number(q.min_orders) || 2
+      const limit = Number(q.limit) || 15
+      const cellOrders = new Map()
+      for (const o of db.orders) {
+        if (brandId && o.brand_id !== brandId) continue
+        const customer = db.customersById.get(o.customer_id)
+        if (!customer) continue
+        const key = `${o.product_id}|${customer.archetype_id}`
+        cellOrders.set(key, (cellOrders.get(key) || 0) + 1)
+      }
+      const cellReturns = new Map()
+      for (const r of db.returns) {
+        if (!r.fit_driven || r.reason_code !== 'size_fit' || !r.decoded) continue
+        const customer = db.customersById.get(r.customer_id)
+        const product = db.productsById.get(r.product_id)
+        if (!customer || !product) continue
+        if (brandId && product.brand_id !== brandId) continue
+        const key = `${r.product_id}|${customer.archetype_id}|${r.decoded.zone}`
+        const cell = cellReturns.get(key) || { count: 0, directions: {} }
+        cell.count += 1
+        cell.directions[r.decoded.direction] = (cell.directions[r.decoded.direction] || 0) + 1
+        cellReturns.set(key, cell)
+      }
+      const rows = [...cellReturns.entries()].map(([key, cell]) => {
+        const [productId, archetypeId, zone] = key.split('|')
+        const product = db.productsById.get(productId)
+        const orderCount = cellOrders.get(`${productId}|${archetypeId}`) || 0
+        const dominantDirection = Object.entries(cell.directions).sort((a, b) => b[1] - a[1])[0]?.[0] || 'too tight'
+        const currentValue = db.fit_matrix_nested?.[product.category]?.[archetypeId]?.[zone] || 'true_to_size'
+        const suggestedValue = /tight/i.test(dominantDirection) ? 'runs_tight' : 'runs_loose'
+        return {
+          product_id: productId, product_name: product.name, brand_id: product.brand_id, category: product.category,
+          archetype_id: archetypeId, zone,
+          return_count: cell.count, order_count: orderCount,
+          return_rate_pct: orderCount ? Math.round((cell.count / orderCount) * 1000) / 10 : null,
+          dominant_direction: dominantDirection, current_value: currentValue, suggested_value: suggestedValue
+        }
+      })
+        .filter((r) => r.order_count >= minOrders && r.current_value !== r.suggested_value)
+        .sort((a, b) => (b.return_rate_pct || 0) - (a.return_rate_pct || 0))
+        .slice(0, limit)
+      return ok(rows)
+    }
+  ],
+  [
     /^\/customers$/,
     (_p, q) => {
       let rows = db.customers
@@ -441,6 +489,38 @@ const POST_ROUTES = [
         date: new Date().toISOString().slice(0, 10)
       }
       db.overrideWins.unshift(entry)
+      return ok(entry)
+    }
+  ],
+  [
+    /^\/fit-matrix\/adjustments$/,
+    (_p, _q, body) => {
+      const { category, archetype_id, zone, new_value, reason, approver } = body
+      if (!category || !archetype_id || !zone || !new_value || !reason) {
+        const err = new Error('category, archetype_id, zone, new_value and reason are required')
+        err.status = 400
+        return Promise.reject(err)
+      }
+      if (!['runs_tight', 'runs_loose', 'true_to_size'].includes(new_value)) {
+        const err = new Error('new_value must be runs_tight, runs_loose or true_to_size')
+        err.status = 400
+        return Promise.reject(err)
+      }
+      db.fit_matrix_nested[category] ??= {}
+      db.fit_matrix_nested[category][archetype_id] ??= {}
+      const old_value = db.fit_matrix_nested[category][archetype_id][zone] || 'true_to_size'
+      db.fit_matrix_nested[category][archetype_id][zone] = new_value
+      const flatRow = db.fit_matrix.find((r) => r.category === category && r.archetype_id === archetype_id && r.zone === zone)
+      if (flatRow) flatRow.fit_direction = new_value
+      else db.fit_matrix.push({ category, archetype_id, zone, fit_direction: new_value })
+      const entry = {
+        id: `adj_${String(db.confidence_adjustment_log.length + 1).padStart(3, '0')}`,
+        category, archetype_id, zone, old_value, new_value,
+        reason: reason || '(no reason given)',
+        date: DEMO_TODAY,
+        approver: approver || 'Customer Analytics'
+      }
+      db.confidence_adjustment_log.unshift(entry)
       return ok(entry)
     }
   ],

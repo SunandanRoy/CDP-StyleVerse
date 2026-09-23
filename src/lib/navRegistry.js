@@ -8,7 +8,8 @@ export const NAV_GROUPS = [
       { to: '/customers', label: 'Unified Profile View', icon: 'customers' },
       { to: '/confidence', label: 'Confidence Layer', icon: 'confidence' },
       { to: '/fit-passport', label: 'Fit Passport Administration', icon: 'passport' },
-      { to: '/advisor-workspace', label: 'Advisor Workspace', icon: 'advisor' }
+      { to: '/advisor-workspace', label: 'Advisor Workspace', icon: 'advisor' },
+      { to: '/feedback-loop', label: 'Closed Feedback Loop', icon: 'feedback' }
     ]
   },
   {

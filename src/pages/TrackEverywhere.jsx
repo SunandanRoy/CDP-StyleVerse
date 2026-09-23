@@ -83,7 +83,7 @@ export default function TrackEverywhere() {
                     <td className="px-3 py-2">
                       <span className="rounded-full px-2 py-0.5 text-[11px] font-semibold" style={{ background: `${STATUS_COLORS[o.status]}22`, color: STATUS_COLORS[o.status] }}>{o.status}</span>
                     </td>
-                    <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{o.date}</td>
+                    <td className="px-3 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{o.order_date}</td>
                   </tr>
                 ))}
               </tbody>
@@ -98,7 +98,7 @@ export default function TrackEverywhere() {
           </div>
           <select value={customerId} onChange={(e) => setCustomerId(e.target.value)} className="mb-3 block w-full rounded-md border px-2 py-1.5 text-sm" style={{ borderColor: 'var(--edge)' }}>
             <option value="">Select a customer…</option>
-            {customers?.map((c) => <option key={c.id} value={c.id}>{c.name}{c.loyalty_id ? ' (bridged)' : ''}</option>)}
+            {customers?.map((c) => <option key={c.id} value={c.id}>{c.name}{c.fit_passport_bridged ? ' (bridged)' : ''}</option>)}
           </select>
 
           {customerDetail && (

@@ -3,6 +3,7 @@ import { useFetch } from '../lib/useFetch'
 import { useBrand } from '../context/BrandContext'
 import GeminiAction from '../components/GeminiAction'
 import Badge from '../components/Badge'
+import { formatDateIN } from '../../shared/sce-lib.mjs'
 
 const MODE_BADGE = {
   full_llm: 'escalation',
@@ -16,20 +17,19 @@ function buildCaseBrief(kase, customerDetail) {
   const { name, fit_passport, channels } = customerDetail
   const orders = customerDetail.orders || []
   const returns = customerDetail.returns || []
-  const mostRecent = [...orders].sort((a, b) => (a.date < b.date ? 1 : -1))[0]
+  const mostRecent = [...orders].sort((a, b) => (a.order_date < b.order_date ? 1 : -1))[0]
   const interceptedCount = returns.filter((r) => r.intercepted).length
-  const firstChannel = kase.channel_log[0]?.channel || channels[0]
-  const openedDate = kase.channel_log[0]?.timestamp?.slice(0, 10)
+  const openedDate = kase.channel_log[0]?.date || kase.opened_date
 
   const parts = [
     `${name} (${fit_passport.archetype}, shopping for ${fit_passport.shopping_for}) is active on ${channels.join(' + ')}.`,
     orders.length
-      ? `${orders.length} order(s) on file; most recent ${mostRecent.product_name} — "${mostRecent.status}" via ${mostRecent.channel} on ${mostRecent.date}.`
+      ? `${orders.length} order(s) on file; most recent ${mostRecent.product_name} — "${mostRecent.status}" via ${mostRecent.channel} on ${formatDateIN(mostRecent.order_date)}.`
       : 'No orders on file yet.',
     returns.length
       ? `${returns.length} return(s) on file, ${interceptedCount} intercepted.`
       : 'No returns on file.',
-    `Case opened via ${firstChannel} on ${openedDate}, currently ${kase.status}.`
+    `Case opened on ${formatDateIN(openedDate)}, currently ${kase.status}.`
   ]
   return parts.join(' ')
 }
@@ -65,7 +65,7 @@ export default function CaseThreadDetail() {
       {kase.predicted_grievance && (
         <div className="mt-4 rounded-md border p-3 text-sm" style={{ borderColor: 'var(--bad-border)', background: 'var(--bad-soft)', color: 'var(--bad)' }}>
           <p className="font-semibold">⚠ Grievance likely — Predictive Grievance model flagged this case.</p>
-          <p className="mt-0.5 text-xs">{kase.proactive_outreach_sent ? 'Proactive outreach has already been sent.' : 'No proactive outreach sent yet.'}</p>
+          <p className="mt-0.5 text-xs">{kase.proactive ? 'Proactive outreach has already been sent.' : 'No proactive outreach sent yet.'}</p>
         </div>
       )}
 
@@ -95,12 +95,15 @@ export default function CaseThreadDetail() {
           <div className="space-y-3">
             {kase.channel_log.map((m, i) => (
               <div key={i} className="flex gap-3 text-sm">
-                <span className="w-24 shrink-0 rounded-full border px-2 py-0.5 text-center text-[10px] font-semibold" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}>
-                  {m.channel}
+                <span
+                  className="w-20 shrink-0 rounded-full border px-2 py-0.5 text-center text-[10px] font-semibold capitalize"
+                  style={{ borderColor: 'var(--edge)', color: m.from === 'agent' ? 'var(--brand-accent)' : 'var(--ink-mute)' }}
+                >
+                  {m.from}
                 </span>
                 <div>
-                  <p>{m.message}</p>
-                  <p className="text-[11px]" style={{ color: 'var(--ink-mute)' }}>{new Date(m.timestamp).toLocaleString('en-IN')}</p>
+                  <p>{m.text}</p>
+                  <p className="text-[11px]" style={{ color: 'var(--ink-mute)' }}>{formatDateIN(m.date)}</p>
                 </div>
               </div>
             ))}

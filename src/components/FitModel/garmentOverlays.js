@@ -12,7 +12,7 @@ function offsetPoint(p, margin) {
  * geometry (never randomized).
  */
 export function buildGarmentOverlay(category, archetypeId) {
-  const params = ARCHETYPE_BODY_PARAMS[archetypeId] || ARCHETYPE_BODY_PARAMS.arch_regular_slim
+  const params = ARCHETYPE_BODY_PARAMS[archetypeId] || ARCHETYPE_BODY_PARAMS['regular-athletic']
   const { left, right } = torsoContourPoints(params)
   const L = bodyLevels(params)
   const zones = ZONES_BY_CATEGORY[category] || []

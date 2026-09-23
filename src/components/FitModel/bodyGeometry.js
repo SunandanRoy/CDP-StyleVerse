@@ -4,17 +4,17 @@
 // component via CSS transform (scaleX crossfade), per the interaction spec —
 // so we only need one clean vector per archetype, not three hand-drawn ones.
 
+// Keyed by SCE_DATA_CONTRACT.md §3's 8 archetype ids (retires the old
+// 10-archetype key set).
 export const ARCHETYPE_BODY_PARAMS = {
-  arch_petite_slim: { shoulder: 0.88, bust: 0.85, waist: 0.82, hip: 0.88, legLen: 0.86, label: 'Petite Slim' },
-  arch_petite_curvy: { shoulder: 0.9, bust: 1.02, waist: 0.98, hip: 1.08, legLen: 0.86, label: 'Petite Curvy' },
-  arch_regular_slim: { shoulder: 0.96, bust: 0.92, waist: 0.86, hip: 0.94, legLen: 1.0, label: 'Regular Slim' },
-  arch_regular_athletic: { shoulder: 1.08, bust: 0.98, waist: 0.88, hip: 0.96, legLen: 1.0, label: 'Regular Athletic' },
-  arch_regular_curvy: { shoulder: 0.98, bust: 1.12, waist: 1.08, hip: 1.2, legLen: 1.0, label: 'Regular Curvy' },
-  arch_tall_slim: { shoulder: 0.98, bust: 0.9, waist: 0.84, hip: 0.92, legLen: 1.16, label: 'Tall Slim' },
-  arch_tall_athletic: { shoulder: 1.12, bust: 1.0, waist: 0.88, hip: 0.98, legLen: 1.16, label: 'Tall Athletic' },
-  arch_plus_curvy: { shoulder: 1.05, bust: 1.28, waist: 1.3, hip: 1.36, legLen: 0.98, label: 'Plus Curvy' },
-  arch_plus_straight: { shoulder: 1.08, bust: 1.22, waist: 1.28, hip: 1.22, legLen: 0.98, label: 'Plus Straight' },
-  arch_broad_athletic: { shoulder: 1.24, bust: 1.1, waist: 0.92, hip: 0.98, legLen: 1.1, label: 'Broad Shoulder Athletic' }
+  'petite-slim': { shoulder: 0.88, bust: 0.85, waist: 0.82, hip: 0.88, legLen: 0.86, label: 'Petite/Slim' },
+  'petite-curvy': { shoulder: 0.9, bust: 1.02, waist: 0.98, hip: 1.08, legLen: 0.86, label: 'Petite/Curvy' },
+  'regular-athletic': { shoulder: 1.08, bust: 0.98, waist: 0.88, hip: 0.96, legLen: 1.0, label: 'Regular/Athletic' },
+  'curvy-regular': { shoulder: 0.98, bust: 1.12, waist: 1.08, hip: 1.2, legLen: 1.0, label: 'Curvy/Regular' },
+  'regular-broad': { shoulder: 1.2, bust: 1.05, waist: 0.9, hip: 0.98, legLen: 1.0, label: 'Regular/Broad' },
+  'tall-slim': { shoulder: 0.98, bust: 0.9, waist: 0.84, hip: 0.92, legLen: 1.16, label: 'Tall/Slim' },
+  'tall-broad': { shoulder: 1.24, bust: 1.1, waist: 0.92, hip: 0.98, legLen: 1.16, label: 'Tall/Broad-shoulder' },
+  'plus-relaxed': { shoulder: 1.08, bust: 1.25, waist: 1.29, hip: 1.29, legLen: 0.98, label: 'Plus/Relaxed-fit' }
 }
 
 // Catmull-Rom -> cubic Bezier, for a smooth silhouette from a sparse point list.
@@ -74,7 +74,7 @@ export function torsoContourPoints(params) {
 }
 
 export function buildSilhouette(archetypeId) {
-  const params = ARCHETYPE_BODY_PARAMS[archetypeId] || ARCHETYPE_BODY_PARAMS.arch_regular_slim
+  const params = ARCHETYPE_BODY_PARAMS[archetypeId] || ARCHETYPE_BODY_PARAMS['regular-athletic']
   const { left, right, closed, levels: L } = torsoContourPoints(params)
   const torsoPath = smoothPath(closed, true)
 

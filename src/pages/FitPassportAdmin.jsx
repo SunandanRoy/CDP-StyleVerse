@@ -53,7 +53,9 @@ export default function FitPassportAdmin() {
             <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
               <div>
                 <h2 className="font-heading text-lg font-bold">{archetype.label}</h2>
-                <p className="text-xs" style={{ color: 'var(--ink-mute)' }}>{archetype.measurement_range}</p>
+                <p className="text-xs" style={{ color: 'var(--ink-mute)' }}>
+                  {archetype.height_cm[0]}–{archetype.height_cm[1]} cm · bust {archetype.bust_in[0]}–{archetype.bust_in[1]} / waist {archetype.waist_in[0]}–{archetype.waist_in[1]} / hip {archetype.hip_in[0]}–{archetype.hip_in[1]} in
+                </p>
               </div>
               <span
                 className="rounded-full border px-2.5 py-1 text-[11px] font-semibold"
@@ -94,7 +96,7 @@ export default function FitPassportAdmin() {
                   <div key={m.id} className="flex items-center justify-between gap-2 border-b py-1" style={{ borderColor: 'var(--edge)' }}>
                     <span className="truncate">{m.name}</span>
                     <span className="shrink-0 text-right" style={{ color: 'var(--ink-mute)' }}>
-                      {m.loyalty_id ? 'bridged' : m.channels[0]} · shopping for {m.fit_passport.shopping_for}
+                      {m.fit_passport_bridged ? 'bridged' : m.channels[0]} · shopping for {m.fit_passport.shopping_for}
                     </span>
                   </div>
                 ))}

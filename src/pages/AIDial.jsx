@@ -92,12 +92,21 @@ export default function AIDial() {
         <Slider label="Proactivity Threshold" field="proactivity_threshold" value={dial.proactivity_threshold} onCommit={(f, v) => updateDial({ [f]: v })} hint="Lower = the system reaches out proactively sooner." />
         <Slider label="Escalation Threshold" field="escalation_threshold" value={dial.escalation_threshold} onCommit={(f, v) => updateDial({ [f]: v })} hint="Higher = more is handled before escalating to a human." />
 
-        <BoolToggle
-          label="Escalation Path Visible to Customer"
-          value={dial.escalation_visible}
-          onChange={(v) => updateDial({ escalation_visible: v })}
-          hint="Shows a one-tap 'talk to a human' option at every AI touchpoint."
-        />
+        {dial.escalation_visible === null ? (
+          <div className="mb-4 rounded-md border p-3" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
+            <div className="text-sm font-medium">Escalation Path Visible to Customer</div>
+            <p className="mt-0.5 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
+              N/A — human-fronted. {brand.name} interactions are Advisor-Mediated with no AI-branded escalation path to disclose; a client can always reach their advisor directly.
+            </p>
+          </div>
+        ) : (
+          <BoolToggle
+            label="Escalation Path Visible to Customer"
+            value={dial.escalation_visible}
+            onChange={(v) => updateDial({ escalation_visible: v })}
+            hint="Shows a one-tap 'talk to a human' option at every AI touchpoint."
+          />
+        )}
 
         <BoolToggle
           label="Generative Content — Client-Facing"

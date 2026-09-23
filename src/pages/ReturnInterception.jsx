@@ -4,7 +4,12 @@ import { useFetch } from '../lib/useFetch'
 import { api } from '../lib/api'
 import DecisionLogicNote from '../components/DecisionLogicNote'
 
-const REASON_CODES = ['fit_runs_small', 'fit_runs_large', 'change_of_mind', 'quality', 'other']
+// Stored return records use the contract's 5-code vocabulary (§8); the
+// simulator (right column) needs a size DIRECTION to demonstrate Module 4's
+// decision logic, so it keeps its own richer reason set independent of the
+// seeded data's reason_code values.
+const REASON_CODES = ['size_fit', 'defective', 'not_as_described', 'no_longer_needed', 'other']
+const SIM_REASON_CODES = ['fit_runs_small', 'fit_runs_large', 'change_of_mind', 'other']
 
 export default function ReturnInterception() {
   const { brandId } = useBrand()
@@ -16,7 +21,7 @@ export default function ReturnInterception() {
   const { data: customers } = useFetch(brandId ? `/customers?brand_id=${brandId}` : null)
   const [simCustomerId, setSimCustomerId] = useState('')
   const [simOrderId, setSimOrderId] = useState('')
-  const [simReason, setSimReason] = useState(REASON_CODES[0])
+  const [simReason, setSimReason] = useState(SIM_REASON_CODES[0])
   const { data: simOrders } = useFetch(simCustomerId ? `/orders?customer_id=${simCustomerId}` : null)
   const [simResult, setSimResult] = useState(null)
   const [simLoading, setSimLoading] = useState(false)
@@ -114,7 +119,7 @@ export default function ReturnInterception() {
           <label className="mb-3 block text-xs font-medium" style={{ color: 'var(--ink-mute)' }}>
             Reason code
             <select value={simReason} onChange={(e) => setSimReason(e.target.value)} className="mt-1 block w-full rounded-md border px-2 py-1.5 text-sm" style={{ borderColor: 'var(--edge)' }}>
-              {REASON_CODES.map((r) => <option key={r} value={r}>{r.replaceAll('_', ' ')}</option>)}
+              {SIM_REASON_CODES.map((r) => <option key={r} value={r}>{r.replaceAll('_', ' ')}</option>)}
             </select>
           </label>
 

@@ -20,7 +20,7 @@ function TimelineRow({ entry }) {
         <span className="mt-0.5 rounded-full px-2 py-0.5 text-[10px] font-semibold" style={{ background: 'var(--info-soft)', color: 'var(--info)' }}>ORDER</span>
         <div className="text-sm">
           <span className="font-medium">{o.product_name}</span> · size {o.size} · <span style={{ color: 'var(--ink-mute)' }}>{o.status} via {o.channel}</span>
-          <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{o.date} · {o.id}</div>
+          <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{o.order_date} · {o.id}</div>
         </div>
       </div>
     )
@@ -47,7 +47,7 @@ function TimelineRow({ entry }) {
       <div className="text-sm">
         <Link to={`/cases/${c.id}`} className="font-medium hover:underline" style={{ color: 'var(--brand-accent)' }}>{c.id}</Link> ·{' '}
         <span style={{ color: 'var(--ink-mute)' }}>{c.status}{c.predicted_grievance ? ' · ⚠ grievance likely' : ''}</span>
-        <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{c.channel_log[0]?.message?.slice(0, 80)}…</div>
+        <div className="text-xs" style={{ color: 'var(--ink-mute)' }}>{c.channel_log[0]?.text?.slice(0, 80)}…</div>
       </div>
     </div>
   )
@@ -61,7 +61,11 @@ export default function CustomerProfile() {
 
   const representativeProductId = useMemo(() => {
     if (!customer?.orders?.length) return null
-    return customer.orders[0].product_id
+    // Prefer the most recent fit-applicable order — Accessories carry no
+    // confidence score (§4), so a Live Confidence Score built off one would
+    // render blank.
+    const fitOrder = [...customer.orders].sort((a, b) => (a.order_date < b.order_date ? 1 : -1)).find((o) => o.fit_applicable)
+    return fitOrder?.product_id || null
   }, [customer])
 
   const { data: confidence } = useFetch(
@@ -81,13 +85,13 @@ export default function CustomerProfile() {
             {customer.channels.map((ch) => (
               <span key={ch} className="rounded-full border px-2 py-0.5 text-[11px]" style={{ borderColor: 'var(--edge)' }}>{ch}</span>
             ))}
-            {customer.loyalty_id ? (
+            {customer.fit_passport_bridged ? (
               <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: 'var(--good-soft)', color: 'var(--good)' }}>
-                Linked via Fit Passport (loyalty_id: {customer.loyalty_id})
+                {customer.fit_passport_status}
               </span>
             ) : (
-              <span className="rounded-full px-2.5 py-0.5 text-[11px] font-semibold" style={{ background: 'var(--warn-soft)', color: 'var(--warn)' }}>
-                Not yet bridged — marketplace identity unresolved
+              <span className="rounded-full border px-2.5 py-0.5 text-[11px] font-semibold" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }} title="This customer is D2C-native — there is no marketplace identity to bridge.">
+                {customer.fit_passport_status}
               </span>
             )}
           </div>
@@ -149,8 +153,8 @@ export default function CustomerProfile() {
             <p className="mb-2 text-[11px]" style={{ color: 'var(--ink-mute)' }}>From the Model Registry — hover a chip for its explainability method.</p>
             <div className="flex flex-wrap gap-1.5">
               {registry?.slice(0, 4).map((m) => (
-                <span key={m.id} className="rounded-full border px-2 py-0.5 text-[10px]" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }} title={m.explainability_method}>
-                  {m.component_name}
+                <span key={m.id} className="rounded-full border px-2 py-0.5 text-[10px]" style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }} title={m.notes}>
+                  {m.name}
                 </span>
               ))}
             </div>

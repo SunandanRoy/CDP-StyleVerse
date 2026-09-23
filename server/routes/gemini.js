@@ -1,10 +1,11 @@
 import express from 'express'
 import { db, getDialSettings } from '../data/db.js'
 import { computeProductConfidence } from '../lib/scoring.js'
+import { certifyVoice } from '../../shared/voice-rubric.mjs'
 
 const router = express.Router()
 
-const GEMINI_MODEL = 'gemini-2.0-flash'
+const GEMINI_MODEL = 'gemini-2.5-flash' // verify this ID is still current in Google AI Studio before a live demo
 const TIMEOUT_MS = 8000
 const RATE_LIMIT_PER_MINUTE = 8
 
@@ -135,8 +136,8 @@ router.post('/draft-outreach', async (req, res) => {
   const brand = db.brandsById.get(customer?.brand_id)
   if (!kase || !customer || !brand) return res.status(404).json({ success: false, reason: 'error' })
 
-  const recentOrder = db.orders.filter((o) => o.customer_id === customer.id).sort((a, b) => (a.date < b.date ? 1 : -1))[0]
-  const orderContext = recentOrder ? `order ${recentOrder.id} (${recentOrder.status}, placed ${recentOrder.date}, channel ${recentOrder.channel})` : 'their recent activity'
+  const recentOrder = db.orders.filter((o) => o.customer_id === customer.id).sort((a, b) => (a.order_date < b.order_date ? 1 : -1))[0]
+  const orderContext = recentOrder ? `order ${recentOrder.id} (${recentOrder.status}, placed ${recentOrder.order_date}, channel ${recentOrder.channel})` : 'their recent activity'
 
   const prompt = `Given case context [${orderContext}], draft a short warm proactive outreach message (2-3 sentences) sent BEFORE the customer complains, acknowledging a likely issue and offering a fix. Brand-appropriate tone for ${brand.name}, not overly apologetic.`
 
@@ -159,22 +160,22 @@ router.post('/certify-voice', async (req, res) => {
 
   const prompt = `Score this draft reply against a '${brandTone}' brand voice, pass/fail. Reply: '${draftText}'. Respond exactly as: 'VERDICT: Pass/Fail\\nREASON: [one sentence]'`
 
+  // C3 — the deterministic rubric is the guard, not just the offline fallback:
+  // even a live Gemini "Pass" gets overridden if the rubric would fail it, so
+  // a model can never certify something the brand's hard rules prohibit.
   const ruleBasedTemplate = () => {
-    const lower = draftText.toLowerCase()
-    const casualHits = ['lol', 'tbh', 'yeah', '😅', 'not sure why'].filter((w) => lower.includes(w)).length
-    const tooShort = draftText.trim().length < 15
-    const verdict = casualHits === 0 && !tooShort ? 'Pass' : 'Fail'
-    const reason = tooShort
-      ? 'Draft is too short to evaluate confidently against the brand voice guide.'
-      : casualHits > 0
-      ? `Contains ${casualHits} casual phrase(s) inconsistent with a "${brandTone}" tone guide.`
-      : `Matches the "${brandTone}" tone guide — clear and on-policy language.`
+    const { verdict, reason } = certifyVoice(draftText, brand)
     return `VERDICT: ${verdict}\nREASON: ${reason}`
   }
 
   const retrievalSource = `Brand tone guide for ${brand.name}: "${brandTone}". Hard limit: "${brand.hard_limit}". Draft under review: "${draftText}"`
 
   const out = await routedCall({ fn: 'certifyVoice', brand, prompt, ruleBasedTemplate, retrievalSource })
+  const rubric = certifyVoice(draftText, brand)
+  if (rubric.verdict === 'Fail' && /VERDICT:\s*Pass/i.test(out.text || '')) {
+    out.text = `VERDICT: Fail\nREASON: ${rubric.reason}`
+    out.rubric_overrode_model = true
+  }
   res.json(out)
 })
 

@@ -5,11 +5,13 @@ import BarChart from '../components/BarChart'
 import KpiCard from '../components/KpiCard'
 import { CATEGORIES } from '../../shared/confidence.js'
 
+// §8 — the contract's 5-code return reason vocabulary (D2C: free-text +
+// decoded {category, zone, direction}; Marketplace: reason code only).
 const REASON_LABELS = {
-  fit_runs_small: 'Fit runs small',
-  fit_runs_large: 'Fit runs large',
-  change_of_mind: 'Change of mind',
-  quality: 'Quality',
+  size_fit: 'Size / fit',
+  defective: 'Defective',
+  not_as_described: 'Not as described',
+  no_longer_needed: 'No longer needed',
   other: 'Other'
 }
 
@@ -26,9 +28,9 @@ export default function ReturnReasonDecoder() {
     for (const code of Object.keys(REASON_LABELS)) byReason[code] = 0
     for (const r of returns) byReason[r.reason_code] = (byReason[r.reason_code] || 0) + 1
 
-    const fitDriven = returns.filter((r) => r.reason_code === 'fit_runs_small' || r.reason_code === 'fit_runs_large')
-    const smallCount = returns.filter((r) => r.reason_code === 'fit_runs_small').length
-    const largeCount = returns.filter((r) => r.reason_code === 'fit_runs_large').length
+    const fitDriven = returns.filter((r) => r.reason_code === 'size_fit')
+    const smallCount = returns.filter((r) => r.decoded?.direction === 'too tight').length
+    const largeCount = returns.filter((r) => r.decoded?.direction === 'too loose').length
     const interceptedFitDriven = fitDriven.filter((r) => r.intercepted).length
     const interceptRate = fitDriven.length ? Math.round((interceptedFitDriven / fitDriven.length) * 100) : 0
 
@@ -66,7 +68,7 @@ export default function ReturnReasonDecoder() {
               data={Object.entries(stats.byReason).map(([code, value]) => ({
                 label: REASON_LABELS[code],
                 value,
-                color: code.startsWith('fit_') ? 'var(--brand-accent)' : 'var(--neutral)'
+                color: code === 'size_fit' ? 'var(--brand-accent)' : 'var(--neutral)'
               }))}
             />
           </div>

@@ -9,26 +9,17 @@ const CSV_COLUMNS = [
   { label: 'Name', key: 'name' },
   { label: 'Customer ID', key: 'id' },
   { label: 'Channels', value: (c) => c.channels.join('; ') },
-  { label: 'Fit Passport', value: (c) => (c.loyalty_id ? `Linked · ${c.loyalty_id}` : 'Not yet bridged') },
+  { label: 'Fit Passport', value: (c) => c.fit_passport_status },
   { label: 'Archetype', value: (c) => c.fit_passport.archetype },
   { label: 'Signup Date', key: 'signup_date' }
-]
-
-const CHANNEL_FILTERS = [
-  { value: '', label: 'All channels' },
-  { value: 'd2c_only', label: 'D2C-only' },
-  { value: 'marketplace_only', label: 'Marketplace-only' },
-  { value: 'bridged', label: 'Bridged' }
 ]
 
 export default function CustomerList() {
   const { brandId } = useBrand()
   const [search, setSearch] = useState('')
-  const [channelType, setChannelType] = useState('')
 
   const params = new URLSearchParams({ brand_id: brandId })
   if (search) params.set('search', search)
-  if (channelType) params.set('channel_type', channelType)
   const { data: customers, loading } = useFetch(brandId ? `/customers?${params.toString()}` : null)
 
   return (
@@ -46,11 +37,6 @@ export default function CustomerList() {
           className="w-64 rounded-md border px-3 py-2 text-sm"
           style={{ borderColor: 'var(--edge)' }}
         />
-        <select value={channelType} onChange={(e) => setChannelType(e.target.value)} className="rounded-md border px-3 py-2 text-sm" style={{ borderColor: 'var(--edge)' }}>
-          {CHANNEL_FILTERS.map((f) => (
-            <option key={f.value} value={f.value}>{f.label}</option>
-          ))}
-        </select>
         {customers && <span className="text-xs" style={{ color: 'var(--ink-mute)' }}>{customers.length} customers</span>}
         <ExportCsvButton filename={`styleverse-customers-${brandId}.csv`} rows={customers} columns={CSV_COLUMNS} />
       </div>
@@ -93,11 +79,7 @@ export default function CustomerList() {
                   </div>
                 </td>
                 <td className="px-4 py-2">
-                  {c.loyalty_id ? (
-                    <span className="text-xs font-medium" style={{ color: 'var(--good)' }}>Linked · {c.loyalty_id}</span>
-                  ) : (
-                    <span className="text-xs font-medium" style={{ color: 'var(--warn)' }}>Not yet bridged</span>
-                  )}
+                  <span className="text-xs font-medium" style={{ color: c.fit_passport_bridged ? 'var(--good)' : 'var(--ink-mute)' }}>{c.fit_passport_status}</span>
                 </td>
                 <td className="px-4 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{c.fit_passport.archetype}</td>
                 <td className="px-4 py-2 text-xs" style={{ color: 'var(--ink-mute)' }}>{c.signup_date}</td>

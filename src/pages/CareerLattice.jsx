@@ -2,9 +2,6 @@ import { Link } from 'react-router-dom'
 import { useFetch } from '../lib/useFetch'
 import Skeleton from '../components/Skeleton'
 
-const GATE_BY_TRANSITION = [
-  'Automate', 'Augment', 'Eliminate', 'Augment', 'Amplify', 'Augment'
-]
 const GATE_COLORS = { Automate: 'var(--info)', Augment: 'var(--accent2)', Amplify: 'var(--good)', Eliminate: 'var(--warn)' }
 
 export default function CareerLattice() {
@@ -14,7 +11,7 @@ export default function CareerLattice() {
     <div className="max-w-4xl">
       <h1 className="font-heading text-2xl font-bold">Career Lattice</h1>
       <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
-        6 role transitions enabled as AI takes over routine work — tied back to the{' '}
+        5 role transitions enabled as AI takes over routine work (solution doc §10.2) — tied back to the{' '}
         <Link to="/business/capacity-ledger" style={{ color: 'var(--brand-accent)' }}>DCX Capacity Ledger</Link>.
       </p>
 
@@ -34,7 +31,7 @@ export default function CareerLattice() {
       ) : (
         <div className="mt-6 space-y-4">
           {lattice?.map((t, i) => {
-            const gate = GATE_BY_TRANSITION[i % GATE_BY_TRANSITION.length]
+            const gate = t.gate
             return (
               <div key={i} className="card flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div className="flex flex-1 items-center gap-3">

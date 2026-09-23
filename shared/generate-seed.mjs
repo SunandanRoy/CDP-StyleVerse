@@ -511,12 +511,7 @@ const CASE_TEMPLATES = {
   ]
 }
 
-const cases = []
-let caseSeq = 0
-const d2cOrdersWithCustomers = orders.filter((o) => o.channel === 'D2C')
-for (let i = 0; i < 30; i++) {
-  caseSeq += 1
-  const order = rng.pick(d2cOrdersWithCustomers)
+function buildCase(order, statusOverride) {
   const customer = customers.find((c) => c.id === order.customer_id)
   const product = products.find((p) => p.id === order.product_id)
   const brand = BRANDS.find((b) => b.id === order.brand_id) // brand of record — C2
@@ -539,18 +534,44 @@ for (let i = 0; i < 30; i++) {
     ...m,
     date: addDays(order.order_date, idx + 1)
   }))
-  cases.push({
-    id: `case_${String(caseSeq).padStart(3, '0')}`,
+  return {
     customer_id: customer.id,
     order_id: order.id,
     brand_id: brand.id, // brand of record, independent of header brand selection (C2)
     template_type: templateType,
-    status: rng.pickWeighted([['Open', 20], ['In Progress', 15], ['Escalated', 10], ['Resolved', 40], ['Closed', 15]]),
+    status: statusOverride || rng.pickWeighted([['Open', 20], ['In Progress', 15], ['Escalated', 10], ['Resolved', 40], ['Closed', 15]]),
     predicted_grievance: order.delivery_exception || rng.bool(0.12),
     proactive: order.delivery_exception && rng.bool(0.5),
     channel_log: messages,
     opened_date: order.order_date
-  })
+  }
+}
+
+const cases = []
+let caseSeq = 0
+const d2cOrdersWithCustomers = orders.filter((o) => o.channel === 'D2C')
+
+// D3 (Grievance Radar) — Priya Nair's delivery_exception scenario order
+// (ord with delivery_exception:true) must surface as a predicted-grievance
+// case so the Grievance Radar demo has a guaranteed, named example, the same
+// way Karan Mehta's marketplace claim is guaranteed rather than left to
+// chance in the random 30-order sample below.
+const priya = customers.find((c) => c.name === 'Priya Nair')
+const priyaExceptionOrder = orders.find((o) => o.customer_id === priya?.id && o.delivery_exception)
+if (priyaExceptionOrder) {
+  caseSeq += 1
+  // proactive:false — not yet contacted, so this is the guaranteed example
+  // in the Grievance Radar's at-risk queue (D3), not something already
+  // resolved by an earlier proactive outreach.
+  cases.push({ id: `case_${String(caseSeq).padStart(3, '0')}`, ...buildCase(priyaExceptionOrder, 'Open'), proactive: false })
+}
+
+const remainingOrders = d2cOrdersWithCustomers.filter((o) => o.id !== priyaExceptionOrder?.id)
+const caseTarget = 30
+while (cases.length < caseTarget) {
+  caseSeq += 1
+  const order = rng.pick(remainingOrders)
+  cases.push({ id: `case_${String(caseSeq).padStart(3, '0')}`, ...buildCase(order) })
 }
 
 // ---------------------------------------------------------------------------

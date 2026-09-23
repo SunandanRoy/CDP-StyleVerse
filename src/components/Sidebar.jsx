@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink } from 'react-router-dom'
 import NavIcon from './NavIcon'
 import { NAV_GROUPS } from '../lib/navRegistry'
+import { navGroupsForSubTeam } from '../lib/subTeamRegistry'
 import { useBrand } from '../context/BrandContext'
 
 // C12 — below 900px the sidebar auto-collapses to the icon rail so content
@@ -37,9 +38,10 @@ function ChevronIcon({ collapsed }) {
 }
 
 export default function Sidebar() {
-  const { sidebarCollapsed: userCollapsed, toggleSidebar } = useBrand()
+  const { sidebarCollapsed: userCollapsed, toggleSidebar, subTeam } = useBrand()
   const narrow = useNarrowViewport()
   const sidebarCollapsed = userCollapsed || narrow
+  const navGroups = navGroupsForSubTeam(NAV_GROUPS, subTeam)
 
   return (
     <aside
@@ -61,17 +63,17 @@ export default function Sidebar() {
         </div>
 
         <NavLink
-          to="/"
+          to={subTeam ? '/today' : '/'}
           end
-          title={sidebarCollapsed ? 'Dashboard' : undefined}
+          title={sidebarCollapsed ? (subTeam ? 'Today' : 'Dashboard') : undefined}
           className={`mx-3 mb-3 flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-semibold ${sidebarCollapsed ? 'justify-center' : ''}`}
           style={({ isActive }) => (isActive ? { background: 'var(--brand-accent)', color: 'var(--brand-accent-text)' } : { color: 'var(--ink)' })}
         >
           <NavIcon name="dashboard" className="h-4 w-4 shrink-0" />
-          {!sidebarCollapsed && <span className="truncate">Dashboard</span>}
+          {!sidebarCollapsed && <span className="truncate">{subTeam ? 'Today' : 'Dashboard'}</span>}
         </NavLink>
 
-        {NAV_GROUPS.map((group) => (
+        {navGroups.map((group) => (
           <div key={group.label} className="mb-4">
             {sidebarCollapsed ? (
               <div className="mx-3 mb-1 mt-2 border-t" style={{ borderColor: 'var(--edge)' }} title={`${group.label} — ${group.owners}`} />

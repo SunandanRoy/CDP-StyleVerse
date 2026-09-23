@@ -13,7 +13,10 @@ const PATHS = {
   registry: 'M6 4h9l3 3v13H6V4Zm9 0v3h3M9 12h6M9 15h6M9 9h3',
   capacity: 'M4 8h16v11H4V8Zm4 0V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M4 13h16',
   signal: 'M4 15V9l12-4v14L4 15Zm12-8v10a3 3 0 0 0 0-10ZM4 15v3a2 2 0 0 0 2 2h1v-5',
-  lattice: 'M5 5h4v4H5V5Zm10 0h4v4h-4V5ZM5 15h4v4H5v-4Zm10 0h4v4h-4v-4ZM9 7h6M7 9v4M17 9v4M9 17h6'
+  lattice: 'M5 5h4v4H5V5Zm10 0h4v4h-4V5ZM5 15h4v4H5v-4Zm10 0h4v4h-4v-4ZM9 7h6M7 9v4M17 9v4M9 17h6',
+  advisor: 'M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm-6 8c0-3 2.5-5.5 6-5.5s6 2.5 6 5.5M17 8l1.5 1.5L21 7',
+  grievance: 'M12 9v4m0 4h.01M10.3 4.3 3 17a1.5 1.5 0 0 0 1.3 2.3h15.4A1.5 1.5 0 0 0 21 17L13.7 4.3a1.5 1.5 0 0 0-2.6 0Z',
+  feedback: 'M4 5h16v11H9l-4 4V5Zm4 4h8M8 12h5'
 }
 
 export default function NavIcon({ name, className = 'h-4 w-4' }) {

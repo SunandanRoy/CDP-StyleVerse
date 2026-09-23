@@ -69,7 +69,8 @@ const FALLBACKS = {
   explainScore: 'This score reflects a strong fit-match with your archetype and positive feedback from shoppers with a similar profile.',
   draftOutreach: 'Hi [name], we noticed a possible delay with your recent order and wanted to reach out before you had to ask. We\'re on it — here\'s what happens next.',
   certifyVoice: 'VERDICT: Pass\nREASON: Tone is warm and on-brand, no policy concerns.',
-  generateSignalInsight: 'Multiple reviews mention fit running small in this category — consider flagging for a sizing review with Merchandising.'
+  generateSignalInsight: 'Multiple reviews mention fit running small in this category — consider flagging for a sizing review with Merchandising.',
+  advisorBrief: 'BRIEF: Client profile and recent order history reviewed — no unusual fit signals.\nMESSAGE: Hi there, we picked out a few pieces we think you\'ll love based on your recent orders — want us to set them aside for you?'
 }
 
 function fallbackResponse(fn, note) {
@@ -207,6 +208,38 @@ router.post('/signal-insight', async (req, res) => {
 
   const out = await routedCall({ fn: 'generateSignalInsight', brand, prompt, ruleBasedTemplate, retrievalSource })
   res.json({ ...out, sample_size: batch.length })
+})
+
+// 5) advisorBrief(customer, suggestedLooks) — D2 Advisor Workspace. Never
+// sent to the client as-is: internal_llm_only/retrieval_only brands treat
+// this as a draft an advisor must edit and certify before it goes out.
+router.post('/advisor-brief', async (req, res) => {
+  const { customerId, brandId, productIds = [] } = req.body
+  const customer = db.customersById.get(customerId)
+  const brand = db.brandsById.get(brandId)
+  if (!customer || !brand) return res.status(404).json({ success: false, reason: 'error' })
+  const archetype = db.archetypesById.get(customer.archetype_id)
+  const looks = productIds.map((id) => db.productsById.get(id)).filter(Boolean)
+  const looksSummary = looks.length ? looks.map((p) => p.name).join(', ') : 'a few pieces from this season'
+  const recentOrders = db.orders.filter((o) => o.customer_id === customerId).sort((a, b) => (a.order_date < b.order_date ? 1 : -1)).slice(0, 3)
+  const firstName = customer.name.split(' ')[0]
+
+  const prompt = `Client profile: ${archetype?.label || 'unknown archetype'}, ${customer.fit_passport_bridged ? 'Fit Passport bridged from D2C sizing history' : 'no Fit Passport on file'}, recent orders: ${recentOrders.map((o) => o.product_id).join(', ') || 'none'}. Suggested looks: ${looksSummary}. Write EXACTLY two lines:\nBRIEF: a 1-2 sentence internal styling note for the advisor's eyes only (may reference data directly).\nMESSAGE: a 1-2 sentence warm client-facing message recommending the suggested looks, in ${brand.name}'s tone. No invented facts.`
+
+  const ruleBasedTemplate = () =>
+    `BRIEF: ${firstName} is a ${archetype?.label || 'profile not on file'}; ${customer.fit_passport_bridged ? 'Fit Passport is bridged from prior D2C orders' : 'no Fit Passport on file yet'}; recent orders: ${recentOrders.length || 'none'}.\nMESSAGE: Hi ${firstName}, based on your recent picks we think you'll love ${looksSummary} — want us to set them aside for you?`
+
+  const retrievalSource = looks.length
+    ? `Verified product data: ${looks.map((p) => `${p.name} (${p.category}, ${p.verified_claims?.[0]?.claim || 'no additional claims'})`).join('; ')}`
+    : null
+
+  const out = await routedCall({ fn: 'advisorBrief', brand, prompt, ruleBasedTemplate, retrievalSource })
+  const [briefLine, messageLine] = (out.text || '').split(/\n+/).filter(Boolean)
+  res.json({
+    ...out,
+    brief: briefLine?.replace(/^BRIEF:\s*/i, '').trim() || out.text,
+    message: messageLine?.replace(/^MESSAGE:\s*/i, '').trim() || ruleBasedTemplate().split('\n')[1].replace(/^MESSAGE:\s*/i, '')
+  })
 })
 
 export default router

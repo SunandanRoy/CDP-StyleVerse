@@ -9,6 +9,7 @@ import { computeProductConfidence } from './lib/scoring.js'
 import { runStartupImageHealthCheck } from './data/imageLibrary.js'
 import { simulateReturnInterception } from '../shared/interception.js'
 import geminiRouter from './routes/gemini.js'
+import { DEMO_TODAY } from '../shared/contract-constants.mjs'
 
 dotenv.config()
 
@@ -234,6 +235,19 @@ app.get('/api/cases/:id', (req, res) => {
   res.json({ ...kase, customer, customer_name: customer?.name })
 })
 
+// D3 — Grievance Radar: draft outreach -> "mark sent" turns the case
+// proactive (contacted before the customer complained) instead of reactive.
+app.post('/api/cases/:id/proactive-contact', (req, res) => {
+  const kase = db.cases.find((c) => c.id === req.params.id)
+  if (!kase) return res.status(404).json({ error: 'case not found' })
+  const { message } = req.body
+  if (!message) return res.status(400).json({ error: 'message is required' })
+  kase.proactive = true
+  kase.contacted_date = DEMO_TODAY
+  kase.channel_log = [...kase.channel_log, { from: 'agent', text: message, date: DEMO_TODAY }]
+  res.json(kase)
+})
+
 // ---------------------------------------------------------------- capacity ledger (C9)
 app.get('/api/capacity-ledger', (req, res) => {
   let rows = db.capacityTasks
@@ -269,6 +283,22 @@ app.get('/api/override-wins', (req, res) => {
   if (req.query.brand_id) rows = rows.filter((r) => r.brand_id === req.query.brand_id)
   if (req.query.sub_team) rows = rows.filter((r) => r.sub_team === req.query.sub_team)
   res.json(rows)
+})
+
+// D2 — Advisor Workspace material edits are logged here as new override wins.
+app.post('/api/override-wins', (req, res) => {
+  const { employee_name, sub_team, brand_id, ai_suggestion, override_reason, outcome } = req.body
+  if (!brand_id || !ai_suggestion || !override_reason) return res.status(400).json({ error: 'brand_id, ai_suggestion and override_reason are required' })
+  const entry = {
+    id: `ovr_${String(db.overrideWins.length + 1).padStart(3, '0')}`,
+    employee_name: employee_name || 'Advisor',
+    sub_team: sub_team || 'CRM & Loyalty',
+    brand_id, ai_suggestion, override_reason,
+    outcome: outcome || 'Sent to client after human styling edit',
+    date: new Date().toISOString().slice(0, 10)
+  }
+  db.overrideWins.unshift(entry)
+  res.status(201).json(entry)
 })
 
 // ---------------------------------------------------------------- certification history (C3)

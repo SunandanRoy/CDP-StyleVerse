@@ -1,10 +1,10 @@
 {
   "meta": {
     "demo_today": "2026-09-25",
-    "generated_at": "2026-09-22T19:02:47.334Z",
+    "generated_at": "2026-09-23T17:52:54.437Z",
     "seed": 20260922,
     "version": "2.0",
-    "checksum": "b5590e7c7e73c18794c38e4de97579182cb897a4dd09b700a44b7d62a9aa0eb8"
+    "checksum": "9967473f435cb6555c4b08145bc3d4fb64b87c21488d25817fc3050f6f3ffc91"
   },
   "brands": [
     {
@@ -16577,266 +16577,159 @@
   "cases": [
     {
       "id": "case_001",
-      "customer_id": "cust_123",
-      "order_id": "ord_0259",
-      "brand_id": "threadbasics",
-      "template_type": "alteration_request",
-      "status": "Escalated",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "I'd like the Basic Zip Hoodie from order ord_0259 altered — is that something you offer?",
-          "date": "2026-09-14"
-        },
-        {
-          "from": "agent",
-          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-09-15"
-        },
-        {
-          "from": "customer",
-          "text": "Perfect, thank you.",
-          "date": "2026-09-16"
-        }
-      ],
-      "opened_date": "2026-09-13"
-    },
-    {
-      "id": "case_002",
-      "customer_id": "cust_115",
-      "order_id": "ord_0168",
-      "brand_id": "maisonluxe",
-      "template_type": "refund_status",
-      "status": "Closed",
+      "customer_id": "cust_004",
+      "order_id": "ord_0174",
+      "brand_id": "ecoweave",
+      "template_type": "delivery_delay",
+      "status": "Open",
       "predicted_grievance": true,
       "proactive": false,
       "channel_log": [
         {
           "from": "customer",
-          "text": "I returned the Tailored Leather Belt two weeks ago — when will my refund for order ord_0168 come through?",
-          "date": "2026-09-10"
-        },
-        {
-          "from": "agent",
-          "text": "I can see the returned item was received at our warehouse. The refund has been processed and should reflect in 5-7 business days.",
-          "date": "2026-09-11"
-        },
-        {
-          "from": "customer",
-          "text": "Got it, thank you for confirming.",
-          "date": "2026-09-12"
-        }
-      ],
-      "opened_date": "2026-09-09"
-    },
-    {
-      "id": "case_003",
-      "customer_id": "cust_122",
-      "order_id": "ord_0249",
-      "brand_id": "threadbasics",
-      "template_type": "delivery_delay",
-      "status": "Open",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "My order ord_0249 has been \"In Transit\" for a while now with no update — is it lost?",
-          "date": "2026-09-25"
+          "text": "My order ord_0174 has been \"In Transit\" for a while now with no update — is it lost?",
+          "date": "2026-09-15"
         },
         {
           "from": "agent",
           "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
-          "date": "2026-09-26"
+          "date": "2026-09-16"
         },
         {
           "from": "customer",
           "text": "Ok, please let me know if it doesn't move in the next couple of days.",
-          "date": "2026-09-27"
+          "date": "2026-09-17"
         },
         {
           "from": "agent",
           "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
-          "date": "2026-09-28"
+          "date": "2026-09-18"
         }
       ],
-      "opened_date": "2026-09-24"
+      "opened_date": "2026-09-14"
+    },
+    {
+      "id": "case_002",
+      "customer_id": "cust_117",
+      "order_id": "ord_0198",
+      "brand_id": "ecoweave",
+      "template_type": "refund_status",
+      "status": "Escalated",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "I returned the Low-Impact Sunglasses two weeks ago — when will my refund for order ord_0198 come through?",
+          "date": "2026-08-20"
+        },
+        {
+          "from": "agent",
+          "text": "I can see the returned item was received at our warehouse. The refund has been processed and should reflect in 5-7 business days.",
+          "date": "2026-08-21"
+        },
+        {
+          "from": "customer",
+          "text": "Got it, thank you for confirming.",
+          "date": "2026-08-22"
+        }
+      ],
+      "opened_date": "2026-08-19"
+    },
+    {
+      "id": "case_003",
+      "customer_id": "cust_001",
+      "order_id": "ord_0007",
+      "brand_id": "speedstyle",
+      "template_type": "alteration_request",
+      "status": "Escalated",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "I'd like the RapidShield Rain Jacket from order ord_0007 altered — is that something you offer?",
+          "date": "2026-08-01"
+        },
+        {
+          "from": "agent",
+          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
+          "date": "2026-08-02"
+        },
+        {
+          "from": "customer",
+          "text": "Perfect, thank you.",
+          "date": "2026-08-03"
+        }
+      ],
+      "opened_date": "2026-07-31"
     },
     {
       "id": "case_004",
-      "customer_id": "cust_124",
-      "order_id": "ord_0267",
-      "brand_id": "threadbasics",
-      "template_type": "sourcing_question",
-      "status": "Closed",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "Can you tell me more about where the Plain School Shoe is made / sourced from?",
-          "date": "2026-09-21"
-        },
-        {
-          "from": "agent",
-          "text": "Here's what's on file for that SKU: Sourced through our standard vetted supplier network — full details are in the product spec sheet.",
-          "date": "2026-09-22"
-        },
-        {
-          "from": "customer",
-          "text": "Great, that's exactly what I needed to know before ordering.",
-          "date": "2026-09-23"
-        }
-      ],
-      "opened_date": "2026-09-20"
-    },
-    {
-      "id": "case_005",
       "customer_id": "cust_102",
-      "order_id": "ord_0025",
+      "order_id": "ord_0031",
       "brand_id": "speedstyle",
-      "template_type": "alteration_request",
-      "status": "Escalated",
-      "predicted_grievance": true,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "I'd like the Active Mesh Tank from order ord_0025 altered — is that something you offer?",
-          "date": "2026-08-14"
-        },
-        {
-          "from": "agent",
-          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-08-15"
-        },
-        {
-          "from": "customer",
-          "text": "Perfect, thank you.",
-          "date": "2026-08-16"
-        }
-      ],
-      "opened_date": "2026-08-13"
-    },
-    {
-      "id": "case_006",
-      "customer_id": "cust_006",
-      "order_id": "ord_0016",
-      "brand_id": "speedstyle",
-      "template_type": "alteration_request",
-      "status": "Escalated",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "I'd like the Speed Track Jacket from order ord_0016 altered — is that something you offer?",
-          "date": "2026-09-23"
-        },
-        {
-          "from": "agent",
-          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-09-24"
-        },
-        {
-          "from": "customer",
-          "text": "Perfect, thank you.",
-          "date": "2026-09-25"
-        }
-      ],
-      "opened_date": "2026-09-22"
-    },
-    {
-      "id": "case_007",
-      "customer_id": "cust_107",
-      "order_id": "ord_0083",
-      "brand_id": "urbanedge",
-      "template_type": "sourcing_question",
-      "status": "Open",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "Can you tell me more about where the Signature Baseball Cap is made / sourced from?",
-          "date": "2026-09-06"
-        },
-        {
-          "from": "agent",
-          "text": "Here's what's on file for that SKU: Sourced through our standard vetted supplier network — full details are in the product spec sheet.",
-          "date": "2026-09-07"
-        },
-        {
-          "from": "customer",
-          "text": "Great, that's exactly what I needed to know before ordering.",
-          "date": "2026-09-08"
-        }
-      ],
-      "opened_date": "2026-09-05"
-    },
-    {
-      "id": "case_008",
-      "customer_id": "cust_104",
-      "order_id": "ord_0046",
-      "brand_id": "speedstyle",
-      "template_type": "alteration_request",
-      "status": "In Progress",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "I'd like the Speed Sundress from order ord_0046 altered — is that something you offer?",
-          "date": "2026-07-30"
-        },
-        {
-          "from": "agent",
-          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-07-31"
-        },
-        {
-          "from": "customer",
-          "text": "Perfect, thank you.",
-          "date": "2026-08-01"
-        }
-      ],
-      "opened_date": "2026-07-29"
-    },
-    {
-      "id": "case_009",
-      "customer_id": "cust_114",
-      "order_id": "ord_0158",
-      "brand_id": "maisonluxe",
-      "template_type": "sourcing_question",
+      "template_type": "refund_status",
       "status": "Resolved",
       "predicted_grievance": false,
       "proactive": false,
       "channel_log": [
         {
           "from": "customer",
-          "text": "Can you tell me more about where the Embroidered Anarkali is made / sourced from?",
-          "date": "2026-09-11"
+          "text": "I returned the Speed Track Jacket two weeks ago — when will my refund for order ord_0031 come through?",
+          "date": "2026-08-12"
         },
         {
           "from": "agent",
-          "text": "Here's what's on file for that SKU: Sourced through our standard vetted supplier network — full details are in the product spec sheet.",
-          "date": "2026-09-12"
+          "text": "I can see the returned item was received at our warehouse. The refund has been processed and should reflect in 5-7 business days.",
+          "date": "2026-08-13"
         },
         {
           "from": "customer",
-          "text": "Great, that's exactly what I needed to know before ordering.",
-          "date": "2026-09-13"
+          "text": "Got it, thank you for confirming.",
+          "date": "2026-08-14"
         }
       ],
-      "opened_date": "2026-09-10"
+      "opened_date": "2026-08-11"
     },
     {
-      "id": "case_010",
-      "customer_id": "cust_008",
-      "order_id": "ord_0069",
-      "brand_id": "urbanedge",
+      "id": "case_005",
+      "customer_id": "cust_124",
+      "order_id": "ord_0270",
+      "brand_id": "threadbasics",
+      "template_type": "delivery_delay",
+      "status": "Closed",
+      "predicted_grievance": true,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "My order ord_0270 has been \"In Transit\" for a while now with no update — is it lost?",
+          "date": "2026-09-12"
+        },
+        {
+          "from": "agent",
+          "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
+          "date": "2026-09-13"
+        },
+        {
+          "from": "customer",
+          "text": "Ok, please let me know if it doesn't move in the next couple of days.",
+          "date": "2026-09-14"
+        },
+        {
+          "from": "agent",
+          "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
+          "date": "2026-09-15"
+        }
+      ],
+      "opened_date": "2026-09-11"
+    },
+    {
+      "id": "case_006",
+      "customer_id": "cust_010",
+      "order_id": "ord_0122",
+      "brand_id": "maisonluxe",
       "template_type": "size_exchange",
       "status": "Open",
       "predicted_grievance": false,
@@ -16844,40 +16737,134 @@
       "channel_log": [
         {
           "from": "customer",
-          "text": "Hi, the Street Hi-Top I ordered doesn't fit — the width runs too tight. Can I exchange for a different size?",
-          "date": "2026-09-19"
-        },
-        {
-          "from": "agent",
-          "text": "Sorry about that! I can see order ord_0069 — I've started an exchange to 6, no need to ship the original back first.",
-          "date": "2026-09-20"
-        },
-        {
-          "from": "customer",
-          "text": "Thank you, that works — how long will the replacement take?",
+          "text": "Hi, the Structured Wool Coat I ordered doesn't fit — the shoulders runs too loose. Can I exchange for a different size?",
           "date": "2026-09-21"
         },
         {
           "from": "agent",
-          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
+          "text": "Sorry about that! I can see order ord_0122 — I've started an exchange to L, no need to ship the original back first.",
           "date": "2026-09-22"
+        },
+        {
+          "from": "customer",
+          "text": "Thank you, that works — how long will the replacement take?",
+          "date": "2026-09-23"
+        },
+        {
+          "from": "agent",
+          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
+          "date": "2026-09-24"
         }
       ],
-      "opened_date": "2026-09-18"
+      "opened_date": "2026-09-20"
     },
     {
-      "id": "case_011",
-      "customer_id": "cust_113",
-      "order_id": "ord_0152",
-      "brand_id": "maisonluxe",
-      "template_type": "delivery_delay",
-      "status": "In Progress",
+      "id": "case_007",
+      "customer_id": "cust_110",
+      "order_id": "ord_0110",
+      "brand_id": "urbanedge",
+      "template_type": "sourcing_question",
+      "status": "Resolved",
+      "predicted_grievance": true,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "Can you tell me more about where the Relaxed Fit Trouser is made / sourced from?",
+          "date": "2026-08-03"
+        },
+        {
+          "from": "agent",
+          "text": "Here's what's on file for that SKU: Sourced through our standard vetted supplier network — full details are in the product spec sheet.",
+          "date": "2026-08-04"
+        },
+        {
+          "from": "customer",
+          "text": "Great, that's exactly what I needed to know before ordering.",
+          "date": "2026-08-05"
+        }
+      ],
+      "opened_date": "2026-08-02"
+    },
+    {
+      "id": "case_008",
+      "customer_id": "cust_117",
+      "order_id": "ord_0198",
+      "brand_id": "ecoweave",
+      "template_type": "size_exchange",
+      "status": "Resolved",
       "predicted_grievance": false,
       "proactive": false,
       "channel_log": [
         {
           "from": "customer",
-          "text": "My order ord_0152 has been \"In Transit\" for a while now with no update — is it lost?",
+          "text": "Hi, the Low-Impact Sunglasses I ordered doesn't fit — the fit runs off. Can I exchange for a different size?",
+          "date": "2026-08-20"
+        },
+        {
+          "from": "agent",
+          "text": "Sorry about that! I can see order ord_0198 — I've started an exchange to One Size, no need to ship the original back first.",
+          "date": "2026-08-21"
+        },
+        {
+          "from": "customer",
+          "text": "Thank you, that works — how long will the replacement take?",
+          "date": "2026-08-22"
+        },
+        {
+          "from": "agent",
+          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
+          "date": "2026-08-23"
+        }
+      ],
+      "opened_date": "2026-08-19"
+    },
+    {
+      "id": "case_009",
+      "customer_id": "cust_010",
+      "order_id": "ord_0128",
+      "brand_id": "maisonluxe",
+      "template_type": "delivery_delay",
+      "status": "Resolved",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "My order ord_0128 has been \"In Transit\" for a while now with no update — is it lost?",
+          "date": "2026-08-27"
+        },
+        {
+          "from": "agent",
+          "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
+          "date": "2026-08-28"
+        },
+        {
+          "from": "customer",
+          "text": "Ok, please let me know if it doesn't move in the next couple of days.",
+          "date": "2026-08-29"
+        },
+        {
+          "from": "agent",
+          "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
+          "date": "2026-08-30"
+        }
+      ],
+      "opened_date": "2026-08-26"
+    },
+    {
+      "id": "case_010",
+      "customer_id": "cust_119",
+      "order_id": "ord_0210",
+      "brand_id": "ecoweave",
+      "template_type": "delivery_delay",
+      "status": "Resolved",
+      "predicted_grievance": true,
+      "proactive": true,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "My order ord_0210 has been \"In Transit\" for a while now with no update — is it lost?",
           "date": "2026-09-14"
         },
         {
@@ -16897,6 +16884,34 @@
         }
       ],
       "opened_date": "2026-09-13"
+    },
+    {
+      "id": "case_011",
+      "customer_id": "cust_108",
+      "order_id": "ord_0092",
+      "brand_id": "urbanedge",
+      "template_type": "refund_status",
+      "status": "In Progress",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "I returned the Weekend Overshirt two weeks ago — when will my refund for order ord_0092 come through?",
+          "date": "2026-09-23"
+        },
+        {
+          "from": "agent",
+          "text": "I can see the returned item was received at our warehouse. The refund has been processed and should reflect in 5-7 business days.",
+          "date": "2026-09-24"
+        },
+        {
+          "from": "customer",
+          "text": "Got it, thank you for confirming.",
+          "date": "2026-09-25"
+        }
+      ],
+      "opened_date": "2026-09-22"
     },
     {
       "id": "case_012",
@@ -16962,8 +16977,69 @@
     {
       "id": "case_014",
       "customer_id": "cust_118",
-      "order_id": "ord_0202",
+      "order_id": "ord_0203",
       "brand_id": "ecoweave",
+      "template_type": "alteration_request",
+      "status": "Open",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "I'd like the Hemp Weave Sandal from order ord_0203 altered — is that something you offer?",
+          "date": "2026-08-06"
+        },
+        {
+          "from": "agent",
+          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
+          "date": "2026-08-07"
+        },
+        {
+          "from": "customer",
+          "text": "Perfect, thank you.",
+          "date": "2026-08-08"
+        }
+      ],
+      "opened_date": "2026-08-05"
+    },
+    {
+      "id": "case_015",
+      "customer_id": "cust_122",
+      "order_id": "ord_0252",
+      "brand_id": "threadbasics",
+      "template_type": "size_exchange",
+      "status": "Resolved",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "Hi, the Essential Formal Trouser I ordered doesn't fit — the inseam runs too tight. Can I exchange for a different size?",
+          "date": "2026-08-13"
+        },
+        {
+          "from": "agent",
+          "text": "Sorry about that! I can see order ord_0252 — I've started an exchange to XL, no need to ship the original back first.",
+          "date": "2026-08-14"
+        },
+        {
+          "from": "customer",
+          "text": "Thank you, that works — how long will the replacement take?",
+          "date": "2026-08-15"
+        },
+        {
+          "from": "agent",
+          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
+          "date": "2026-08-16"
+        }
+      ],
+      "opened_date": "2026-08-12"
+    },
+    {
+      "id": "case_016",
+      "customer_id": "cust_124",
+      "order_id": "ord_0266",
+      "brand_id": "threadbasics",
       "template_type": "alteration_request",
       "status": "Resolved",
       "predicted_grievance": false,
@@ -16971,110 +17047,153 @@
       "channel_log": [
         {
           "from": "customer",
-          "text": "I'd like the Organic Cotton Tee from order ord_0202 altered — is that something you offer?",
-          "date": "2026-09-16"
+          "text": "I'd like the Everyday Wallet from order ord_0266 altered — is that something you offer?",
+          "date": "2026-09-08"
         },
         {
           "from": "agent",
           "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-09-17"
+          "date": "2026-09-09"
         },
         {
           "from": "customer",
           "text": "Perfect, thank you.",
-          "date": "2026-09-18"
+          "date": "2026-09-10"
         }
       ],
-      "opened_date": "2026-09-15"
-    },
-    {
-      "id": "case_015",
-      "customer_id": "cust_102",
-      "order_id": "ord_0029",
-      "brand_id": "speedstyle",
-      "template_type": "alteration_request",
-      "status": "Closed",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "I'd like the Active Mesh Tank from order ord_0029 altered — is that something you offer?",
-          "date": "2026-08-25"
-        },
-        {
-          "from": "agent",
-          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-08-26"
-        },
-        {
-          "from": "customer",
-          "text": "Perfect, thank you.",
-          "date": "2026-08-27"
-        }
-      ],
-      "opened_date": "2026-08-24"
-    },
-    {
-      "id": "case_016",
-      "customer_id": "cust_115",
-      "order_id": "ord_0162",
-      "brand_id": "maisonluxe",
-      "template_type": "alteration_request",
-      "status": "In Progress",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "I'd like the Silk Charmeuse Blouse from order ord_0162 altered — is that something you offer?",
-          "date": "2026-09-16"
-        },
-        {
-          "from": "agent",
-          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
-          "date": "2026-09-17"
-        },
-        {
-          "from": "customer",
-          "text": "Perfect, thank you.",
-          "date": "2026-09-18"
-        }
-      ],
-      "opened_date": "2026-09-15"
+      "opened_date": "2026-09-07"
     },
     {
       "id": "case_017",
-      "customer_id": "cust_125",
-      "order_id": "ord_0274",
-      "brand_id": "threadbasics",
-      "template_type": "refund_status",
-      "status": "In Progress",
+      "customer_id": "cust_104",
+      "order_id": "ord_0044",
+      "brand_id": "speedstyle",
+      "template_type": "delivery_delay",
+      "status": "Resolved",
       "predicted_grievance": false,
       "proactive": false,
       "channel_log": [
         {
           "from": "customer",
-          "text": "I returned the Essential Formal Trouser two weeks ago — when will my refund for order ord_0274 come through?",
-          "date": "2026-09-01"
+          "text": "My order ord_0044 has been \"In Transit\" for a while now with no update — is it lost?",
+          "date": "2026-09-15"
         },
         {
           "from": "agent",
-          "text": "I can see the returned item was received at our warehouse. The refund has been processed and should reflect in 5-7 business days.",
-          "date": "2026-09-02"
+          "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
+          "date": "2026-09-16"
         },
         {
           "from": "customer",
-          "text": "Got it, thank you for confirming.",
-          "date": "2026-09-03"
+          "text": "Ok, please let me know if it doesn't move in the next couple of days.",
+          "date": "2026-09-17"
+        },
+        {
+          "from": "agent",
+          "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
+          "date": "2026-09-18"
         }
       ],
-      "opened_date": "2026-08-31"
+      "opened_date": "2026-09-14"
     },
     {
       "id": "case_018",
-      "customer_id": "cust_110",
-      "order_id": "ord_0111",
+      "customer_id": "cust_113",
+      "order_id": "ord_0152",
+      "brand_id": "maisonluxe",
+      "template_type": "delivery_delay",
+      "status": "Resolved",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "My order ord_0152 has been \"In Transit\" for a while now with no update — is it lost?",
+          "date": "2026-09-14"
+        },
+        {
+          "from": "agent",
+          "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
+          "date": "2026-09-15"
+        },
+        {
+          "from": "customer",
+          "text": "Ok, please let me know if it doesn't move in the next couple of days.",
+          "date": "2026-09-16"
+        },
+        {
+          "from": "agent",
+          "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
+          "date": "2026-09-17"
+        }
+      ],
+      "opened_date": "2026-09-13"
+    },
+    {
+      "id": "case_019",
+      "customer_id": "cust_105",
+      "order_id": "ord_0054",
+      "brand_id": "speedstyle",
+      "template_type": "alteration_request",
+      "status": "Open",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "I'd like the Speed Sport Sandal from order ord_0054 altered — is that something you offer?",
+          "date": "2026-09-22"
+        },
+        {
+          "from": "agent",
+          "text": "Yes — I've noted your alteration request and looped in our styling team. They'll reach out with next steps.",
+          "date": "2026-09-23"
+        },
+        {
+          "from": "customer",
+          "text": "Perfect, thank you.",
+          "date": "2026-09-24"
+        }
+      ],
+      "opened_date": "2026-09-21"
+    },
+    {
+      "id": "case_020",
+      "customer_id": "cust_118",
+      "order_id": "ord_0207",
+      "brand_id": "ecoweave",
+      "template_type": "size_exchange",
+      "status": "Open",
+      "predicted_grievance": false,
+      "proactive": false,
+      "channel_log": [
+        {
+          "from": "customer",
+          "text": "Hi, the Hemp Weave Sandal I ordered doesn't fit — the width runs too tight. Can I exchange for a different size?",
+          "date": "2026-08-02"
+        },
+        {
+          "from": "agent",
+          "text": "Sorry about that! I can see order ord_0207 — I've started an exchange to 8, no need to ship the original back first.",
+          "date": "2026-08-03"
+        },
+        {
+          "from": "customer",
+          "text": "Thank you, that works — how long will the replacement take?",
+          "date": "2026-08-04"
+        },
+        {
+          "from": "agent",
+          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
+          "date": "2026-08-05"
+        }
+      ],
+      "opened_date": "2026-08-01"
+    },
+    {
+      "id": "case_021",
+      "customer_id": "cust_106",
+      "order_id": "ord_0074",
       "brand_id": "urbanedge",
       "template_type": "size_exchange",
       "status": "Resolved",
@@ -17083,128 +17202,57 @@
       "channel_log": [
         {
           "from": "customer",
-          "text": "Hi, the Street Crew Sweatshirt I ordered doesn't fit — the length runs too tight. Can I exchange for a different size?",
-          "date": "2026-09-14"
-        },
-        {
-          "from": "agent",
-          "text": "Sorry about that! I can see order ord_0111 — I've started an exchange to L, no need to ship the original back first.",
-          "date": "2026-09-15"
-        },
-        {
-          "from": "customer",
-          "text": "Thank you, that works — how long will the replacement take?",
-          "date": "2026-09-16"
-        },
-        {
-          "from": "agent",
-          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
-          "date": "2026-09-17"
-        }
-      ],
-      "opened_date": "2026-09-13"
-    },
-    {
-      "id": "case_019",
-      "customer_id": "cust_103",
-      "order_id": "ord_0034",
-      "brand_id": "speedstyle",
-      "template_type": "size_exchange",
-      "status": "Resolved",
-      "predicted_grievance": true,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "Hi, the Active Mesh Tank I ordered doesn't fit — the length runs too tight. Can I exchange for a different size?",
-          "date": "2026-08-12"
-        },
-        {
-          "from": "agent",
-          "text": "Sorry about that! I can see order ord_0034 — I've started an exchange to L, no need to ship the original back first.",
-          "date": "2026-08-13"
-        },
-        {
-          "from": "customer",
-          "text": "Thank you, that works — how long will the replacement take?",
-          "date": "2026-08-14"
-        },
-        {
-          "from": "agent",
-          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
-          "date": "2026-08-15"
-        }
-      ],
-      "opened_date": "2026-08-11"
-    },
-    {
-      "id": "case_020",
-      "customer_id": "cust_120",
-      "order_id": "ord_0219",
-      "brand_id": "ecoweave",
-      "template_type": "delivery_delay",
-      "status": "Resolved",
-      "predicted_grievance": true,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "My order ord_0219 has been \"In Transit\" for a while now with no update — is it lost?",
+          "text": "Hi, the Street Hi-Top I ordered doesn't fit — the length runs too loose. Can I exchange for a different size?",
           "date": "2026-09-05"
         },
         {
           "from": "agent",
-          "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
+          "text": "Sorry about that! I can see order ord_0074 — I've started an exchange to 8, no need to ship the original back first.",
           "date": "2026-09-06"
         },
         {
           "from": "customer",
-          "text": "Ok, please let me know if it doesn't move in the next couple of days.",
+          "text": "Thank you, that works — how long will the replacement take?",
           "date": "2026-09-07"
         },
         {
           "from": "agent",
-          "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
+          "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
           "date": "2026-09-08"
         }
       ],
       "opened_date": "2026-09-04"
     },
     {
-      "id": "case_021",
-      "customer_id": "cust_105",
-      "order_id": "ord_0053",
-      "brand_id": "speedstyle",
-      "template_type": "delivery_delay",
+      "id": "case_022",
+      "customer_id": "cust_107",
+      "order_id": "ord_0084",
+      "brand_id": "urbanedge",
+      "template_type": "refund_status",
       "status": "Open",
       "predicted_grievance": false,
       "proactive": false,
       "channel_log": [
         {
           "from": "customer",
-          "text": "My order ord_0053 has been \"In Transit\" for a while now with no update — is it lost?",
-          "date": "2026-09-11"
+          "text": "I returned the Street Shift Dress two weeks ago — when will my refund for order ord_0084 come through?",
+          "date": "2026-09-07"
         },
         {
           "from": "agent",
-          "text": "I've checked with our logistics partner — there's a delay at the regional hub. I've flagged it for priority dispatch.",
-          "date": "2026-09-12"
+          "text": "I can see the returned item was received at our warehouse. The refund has been processed and should reflect in 5-7 business days.",
+          "date": "2026-09-08"
         },
         {
           "from": "customer",
-          "text": "Ok, please let me know if it doesn't move in the next couple of days.",
-          "date": "2026-09-13"
-        },
-        {
-          "from": "agent",
-          "text": "Will do — I've set a follow-up reminder on this case so you don't have to check back in.",
-          "date": "2026-09-14"
+          "text": "Got it, thank you for confirming.",
+          "date": "2026-09-09"
         }
       ],
-      "opened_date": "2026-09-10"
+      "opened_date": "2026-09-06"
     },
     {
-      "id": "case_022",
+      "id": "case_023",
       "customer_id": "cust_117",
       "order_id": "ord_0198",
       "brand_id": "ecoweave",
@@ -17232,7 +17280,7 @@
       "opened_date": "2026-08-19"
     },
     {
-      "id": "case_023",
+      "id": "case_024",
       "customer_id": "cust_005",
       "order_id": "ord_0116",
       "brand_id": "maisonluxe",
@@ -17260,7 +17308,7 @@
       "opened_date": "2026-09-22"
     },
     {
-      "id": "case_024",
+      "id": "case_025",
       "customer_id": "cust_105",
       "order_id": "ord_0052",
       "brand_id": "speedstyle",
@@ -17288,7 +17336,7 @@
       "opened_date": "2026-08-14"
     },
     {
-      "id": "case_025",
+      "id": "case_026",
       "customer_id": "cust_122",
       "order_id": "ord_0255",
       "brand_id": "threadbasics",
@@ -17321,7 +17369,7 @@
       "opened_date": "2026-08-03"
     },
     {
-      "id": "case_026",
+      "id": "case_027",
       "customer_id": "cust_121",
       "order_id": "ord_0245",
       "brand_id": "threadbasics",
@@ -17349,9 +17397,9 @@
       "opened_date": "2026-08-28"
     },
     {
-      "id": "case_027",
+      "id": "case_028",
       "customer_id": "cust_109",
-      "order_id": "ord_0098",
+      "order_id": "ord_0097",
       "brand_id": "urbanedge",
       "template_type": "size_exchange",
       "status": "Closed",
@@ -17360,29 +17408,29 @@
       "channel_log": [
         {
           "from": "customer",
-          "text": "Hi, the Street Hi-Top I ordered doesn't fit — the length runs too loose. Can I exchange for a different size?",
-          "date": "2026-08-30"
+          "text": "Hi, the Slim Fit Chino I ordered doesn't fit — the hip runs too loose. Can I exchange for a different size?",
+          "date": "2026-08-20"
         },
         {
           "from": "agent",
-          "text": "Sorry about that! I can see order ord_0098 — I've started an exchange to 8, no need to ship the original back first.",
-          "date": "2026-08-31"
+          "text": "Sorry about that! I can see order ord_0097 — I've started an exchange to L, no need to ship the original back first.",
+          "date": "2026-08-21"
         },
         {
           "from": "customer",
           "text": "Thank you, that works — how long will the replacement take?",
-          "date": "2026-09-01"
+          "date": "2026-08-22"
         },
         {
           "from": "agent",
           "text": "The replacement ships within 24 hours and should arrive in 3-5 days. I'll keep this thread open until it's delivered.",
-          "date": "2026-09-02"
+          "date": "2026-08-23"
         }
       ],
-      "opened_date": "2026-08-29"
+      "opened_date": "2026-08-19"
     },
     {
-      "id": "case_028",
+      "id": "case_029",
       "customer_id": "cust_007",
       "order_id": "ord_0182",
       "brand_id": "ecoweave",
@@ -17410,7 +17458,7 @@
       "opened_date": "2026-09-14"
     },
     {
-      "id": "case_029",
+      "id": "case_030",
       "customer_id": "cust_106",
       "order_id": "ord_0076",
       "brand_id": "urbanedge",
@@ -17436,34 +17484,6 @@
         }
       ],
       "opened_date": "2026-08-06"
-    },
-    {
-      "id": "case_030",
-      "customer_id": "cust_107",
-      "order_id": "ord_0086",
-      "brand_id": "urbanedge",
-      "template_type": "sourcing_question",
-      "status": "Resolved",
-      "predicted_grievance": false,
-      "proactive": false,
-      "channel_log": [
-        {
-          "from": "customer",
-          "text": "Can you tell me more about where the Signature Baseball Cap is made / sourced from?",
-          "date": "2026-08-28"
-        },
-        {
-          "from": "agent",
-          "text": "Here's what's on file for that SKU: Sourced through our standard vetted supplier network — full details are in the product spec sheet.",
-          "date": "2026-08-29"
-        },
-        {
-          "from": "customer",
-          "text": "Great, that's exactly what I needed to know before ordering.",
-          "date": "2026-08-30"
-        }
-      ],
-      "opened_date": "2026-08-27"
     }
   ],
   "kpiTable": [

@@ -1,7 +1,8 @@
 import { useMemo, useState } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useBrand } from '../context/BrandContext'
 import { ALL_NAV_ITEMS } from '../lib/navRegistry'
+import { SUB_TEAMS } from '../lib/subTeamRegistry'
 import SettingsDrawer from './SettingsDrawer'
 
 function GearIcon() {
@@ -51,9 +52,15 @@ function useCurrentNavItem() {
 }
 
 export default function TopBar() {
-  const { brands, brandId, setBrandId, brand, effectiveTheme, toggleTheme } = useBrand()
+  const { brands, brandId, setBrandId, brand, effectiveTheme, toggleTheme, subTeam, setSubTeam } = useBrand()
   const currentItem = useCurrentNavItem()
   const [settingsOpen, setSettingsOpen] = useState(false)
+  const navigate = useNavigate()
+
+  const handleViewAsChange = (value) => {
+    setSubTeam(value || null)
+    navigate(value ? '/today' : '/')
+  }
 
   return (
     <>
@@ -103,6 +110,19 @@ export default function TopBar() {
         <span className="hidden text-xs font-medium lg:inline" style={{ color: 'var(--ink-mute)' }}>
           Last 6 months
         </span>
+
+        <select
+          value={subTeam || ''}
+          onChange={(e) => handleViewAsChange(e.target.value)}
+          className="rounded-md border px-2.5 py-1.5 text-xs font-medium"
+          style={{ borderColor: 'var(--edge)', background: 'var(--surface)', color: 'var(--ink)' }}
+          title="View as — filters the sidebar and shows a role-scoped Today home"
+        >
+          <option value="">View as: Leadership (all)</option>
+          {SUB_TEAMS.map((t) => (
+            <option key={t} value={t}>View as: {t}</option>
+          ))}
+        </select>
 
         <select
           value={brandId}

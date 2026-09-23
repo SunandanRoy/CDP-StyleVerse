@@ -5,15 +5,18 @@ import CommandPalette from './components/CommandPalette'
 import ToastHost from './components/ToastHost'
 
 import Dashboard from './pages/Dashboard'
+import TeamToday from './pages/TeamToday'
 import CustomerList from './pages/CustomerList'
 import CustomerProfile from './pages/CustomerProfile'
 import ConfidenceLayer from './pages/ConfidenceLayer'
 import FitPassportAdmin from './pages/FitPassportAdmin'
+import AdvisorWorkspace from './pages/AdvisorWorkspace'
 import ReturnInterception from './pages/ReturnInterception'
 import ReturnReasonDecoder from './pages/ReturnReasonDecoder'
 import CaseThreadList from './pages/CaseThreadList'
 import CaseThreadDetail from './pages/CaseThreadDetail'
 import TrackEverywhere from './pages/TrackEverywhere'
+import GrievanceRadar from './pages/GrievanceRadar'
 import AIDial from './pages/AIDial'
 import BrandVoiceCertification from './pages/BrandVoiceCertification'
 import OverrideWins from './pages/OverrideWins'
@@ -33,16 +36,19 @@ export default function App() {
         <main className="min-w-0 flex-1 p-6">
           <Routes>
             <Route path="/" element={<Dashboard />} />
+            <Route path="/today" element={<TeamToday />} />
             <Route path="/customers" element={<CustomerList />} />
             <Route path="/customers/:id" element={<CustomerProfile />} />
             <Route path="/confidence" element={<ConfidenceLayer />} />
             <Route path="/fit-passport" element={<FitPassportAdmin />} />
             <Route path="/fit-passport/:archetypeId" element={<FitPassportAdmin />} />
+            <Route path="/advisor-workspace" element={<AdvisorWorkspace />} />
             <Route path="/returns" element={<ReturnInterception />} />
             <Route path="/returns/decoder" element={<ReturnReasonDecoder />} />
             <Route path="/cases" element={<CaseThreadList />} />
             <Route path="/cases/:id" element={<CaseThreadDetail />} />
             <Route path="/track-everywhere" element={<TrackEverywhere />} />
+            <Route path="/grievance-radar" element={<GrievanceRadar />} />
             <Route path="/governance/dial" element={<AIDial />} />
             <Route path="/governance/voice-certification" element={<BrandVoiceCertification />} />
             <Route path="/governance/override-wins" element={<OverrideWins />} />

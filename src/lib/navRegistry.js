@@ -7,7 +7,8 @@ export const NAV_GROUPS = [
     items: [
       { to: '/customers', label: 'Unified Profile View', icon: 'customers' },
       { to: '/confidence', label: 'Confidence Layer', icon: 'confidence' },
-      { to: '/fit-passport', label: 'Fit Passport Administration', icon: 'passport' }
+      { to: '/fit-passport', label: 'Fit Passport Administration', icon: 'passport' },
+      { to: '/advisor-workspace', label: 'Advisor Workspace', icon: 'advisor' }
     ]
   },
   {
@@ -17,7 +18,8 @@ export const NAV_GROUPS = [
       { to: '/returns', label: 'Return Interception', icon: 'interception' },
       { to: '/returns/decoder', label: 'Return Reason Decoder', icon: 'decoder' },
       { to: '/cases', label: 'Unified Case Thread', icon: 'cases' },
-      { to: '/track-everywhere', label: 'Track Everywhere', icon: 'track' }
+      { to: '/track-everywhere', label: 'Track Everywhere', icon: 'track' },
+      { to: '/grievance-radar', label: 'Grievance Radar', icon: 'grievance' }
     ]
   },
   {

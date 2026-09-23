@@ -12,6 +12,7 @@ import { computeProductConfidence } from '../../server/lib/scoring.js'
 import { buildDialSettings, applyDialPatch } from '../../shared/dial.js'
 import { simulateReturnInterception } from '../../shared/interception.js'
 import { certifyVoice } from '../../shared/voice-rubric.mjs'
+import { DEMO_TODAY } from '../../shared/contract-constants.mjs'
 
 function flattenFitMatrix(nested) {
   const rows = []
@@ -421,6 +422,44 @@ const POST_ROUTES = [
       db.signal_insights.unshift(entry)
       return ok(entry)
     }
+  ],
+  [
+    /^\/override-wins$/,
+    (_p, _q, body) => {
+      const { employee_name, sub_team, brand_id, ai_suggestion, override_reason, outcome } = body
+      if (!brand_id || !ai_suggestion || !override_reason) {
+        const err = new Error('brand_id, ai_suggestion and override_reason are required')
+        err.status = 400
+        return Promise.reject(err)
+      }
+      const entry = {
+        id: `ovr_${String(db.overrideWins.length + 1).padStart(3, '0')}`,
+        employee_name: employee_name || 'Advisor',
+        sub_team: sub_team || 'CRM & Loyalty',
+        brand_id, ai_suggestion, override_reason,
+        outcome: outcome || 'Sent to client after human styling edit',
+        date: new Date().toISOString().slice(0, 10)
+      }
+      db.overrideWins.unshift(entry)
+      return ok(entry)
+    }
+  ],
+  [
+    /^\/cases\/([^/]+)\/proactive-contact$/,
+    ([id], _q, body) => {
+      const kase = db.cases.find((c) => c.id === id)
+      if (!kase) return notFound('case not found')
+      const { message } = body
+      if (!message) {
+        const err = new Error('message is required')
+        err.status = 400
+        return Promise.reject(err)
+      }
+      kase.proactive = true
+      kase.contacted_date = DEMO_TODAY
+      kase.channel_log = [...kase.channel_log, { from: 'agent', text: message, date: DEMO_TODAY }]
+      return ok(kase)
+    }
   ]
 ]
 
@@ -526,7 +565,8 @@ const FALLBACKS = {
   'explain-score': 'This score reflects a strong fit-match with your archetype and positive feedback from shoppers with a similar profile.',
   'draft-outreach': "Hi [name], we noticed a possible delay with your recent order and wanted to reach out before you had to ask. We're on it — here's what happens next.",
   'certify-voice': 'VERDICT: Pass\nREASON: Tone is warm and on-brand, no policy concerns.',
-  'signal-insight': 'Multiple reviews mention fit running small in this category — consider flagging for a sizing review with Merchandising.'
+  'signal-insight': 'Multiple reviews mention fit running small in this category — consider flagging for a sizing review with Merchandising.',
+  'advisor-brief': 'BRIEF: Client profile and recent order history reviewed — no unusual fit signals.\nMESSAGE: Hi there, we picked out a few pieces we think you\'ll love based on your recent orders — want us to set them aside for you?'
 }
 
 // Mirrors server/routes/gemini.js's routedCall: rules_engine_only never
@@ -629,6 +669,31 @@ async function mockGemini(fn, body) {
       retrievalSource: sample.length ? `Verified customer reviews (mentions_fit=true): ${JSON.stringify(sample)}` : null,
       extra: { sample_size: batch.length }
     })
+  }
+  if (fn === 'advisor-brief') {
+    const { customerId, brandId, productIds = [] } = body
+    const customer = db.customersById.get(customerId)
+    const brand = db.brandsById.get(brandId)
+    if (!customer || !brand) return notFound('error')
+    const archetype = db.archetypesById.get(customer.archetype_id)
+    const looks = productIds.map((id) => db.productsById.get(id)).filter(Boolean)
+    const looksSummary = looks.length ? looks.map((p) => p.name).join(', ') : 'a few pieces from this season'
+    const recentOrders = db.orders.filter((o) => o.customer_id === customerId).sort((a, b) => (a.order_date < b.order_date ? 1 : -1)).slice(0, 3)
+    const firstName = customer.name.split(' ')[0]
+    const prompt = `Client profile: ${archetype?.label || 'unknown archetype'}, ${customer.fit_passport_bridged ? 'Fit Passport bridged from D2C sizing history' : 'no Fit Passport on file'}, recent orders: ${recentOrders.map((o) => o.product_id).join(', ') || 'none'}. Suggested looks: ${looksSummary}. Write EXACTLY two lines:\nBRIEF: a 1-2 sentence internal styling note for the advisor's eyes only (may reference data directly).\nMESSAGE: a 1-2 sentence warm client-facing message recommending the suggested looks, in ${brand.name}'s tone. No invented facts.`
+    const ruleBasedTemplate = () =>
+      `BRIEF: ${firstName} is a ${archetype?.label || 'profile not on file'}; ${customer.fit_passport_bridged ? 'Fit Passport is bridged from prior D2C orders' : 'no Fit Passport on file yet'}; recent orders: ${recentOrders.length || 'none'}.\nMESSAGE: Hi ${firstName}, based on your recent picks we think you'll love ${looksSummary} — want us to set them aside for you?`
+    const retrievalSource = looks.length
+      ? `Verified product data: ${looks.map((p) => `${p.name} (${p.category}, ${p.verified_claims?.[0]?.claim || 'no additional claims'})`).join('; ')}`
+      : null
+    const out = await routedCall({ fn: 'advisor-brief', brand, prompt, ruleBasedTemplate, retrievalSource })
+    const [briefLine, messageLine] = (out.text || '').split(/\n+/).filter(Boolean)
+    const fallbackMessage = ruleBasedTemplate().split('\n')[1].replace(/^MESSAGE:\s*/i, '')
+    return {
+      ...out,
+      brief: briefLine?.replace(/^BRIEF:\s*/i, '').trim() || out.text,
+      message: messageLine?.replace(/^MESSAGE:\s*/i, '').trim() || fallbackMessage
+    }
   }
   return Promise.reject(new Error('unknown gemini function'))
 }

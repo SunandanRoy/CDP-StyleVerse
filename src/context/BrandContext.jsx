@@ -7,6 +7,7 @@ const BrandContext = createContext(null)
 const STORAGE_KEY = 'styleverse.selectedBrandId'
 const THEME_KEY = 'styleverse.theme'
 const SIDEBAR_KEY = 'styleverse.sidebarCollapsed'
+const SUB_TEAM_KEY = 'styleverse.viewAsSubTeam'
 
 export function BrandProvider({ children }) {
   const [brands, setBrands] = useState([])
@@ -21,6 +22,14 @@ export function BrandProvider({ children }) {
   )
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => localStorage.getItem(SIDEBAR_KEY) === '1')
+
+  // D1 — "View as" sub-team switcher. null = Leadership (unfiltered) view.
+  const [subTeam, setSubTeamState] = useState(() => localStorage.getItem(SUB_TEAM_KEY) || null)
+  const setSubTeam = useCallback((team) => {
+    if (team) localStorage.setItem(SUB_TEAM_KEY, team)
+    else localStorage.removeItem(SUB_TEAM_KEY)
+    setSubTeamState(team || null)
+  }, [])
 
   useEffect(() => {
     api.get('/brands').then(setBrands).catch(console.error)
@@ -104,9 +113,10 @@ export function BrandProvider({ children }) {
     () => ({
       brands, brandId, setBrandId, brand, dial, updateDial, loading,
       theme, effectiveTheme, setTheme, toggleTheme,
-      sidebarCollapsed, toggleSidebar
+      sidebarCollapsed, toggleSidebar,
+      subTeam, setSubTeam
     }),
-    [brands, brandId, setBrandId, brand, dial, updateDial, loading, theme, effectiveTheme, setTheme, toggleTheme, sidebarCollapsed, toggleSidebar]
+    [brands, brandId, setBrandId, brand, dial, updateDial, loading, theme, effectiveTheme, setTheme, toggleTheme, sidebarCollapsed, toggleSidebar, subTeam, setSubTeam]
   )
 
   return <BrandContext.Provider value={value}>{children}</BrandContext.Provider>

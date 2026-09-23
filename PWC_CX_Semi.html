@@ -2869,50 +2869,113 @@ function renderReturnsListScreen(){
 /* ---------------------------- SCREEN 11 — SUPPORT / CASE THREAD ---------------------------- */
 const ADVISOR_NAMES = SCE_SEED.advisorNames;
 const CHANNEL_ICON = { chat:"&#128172;", email:"&#9993;", call:"&#128222;" };
-function getOrCreateThread(p){
+function getOrCreateThread(p, caseId){
   if(!p.cases.length){
     p.cases.push({ id:"CASE-"+Math.floor(100+Math.random()*899), subject:"General Support", predictedGrievance:false, channelLog:[] });
   }
+  if(caseId){ return p.cases.find(function(c){ return c.id===caseId; }) || p.cases[0]; }
   return p.cases[0];
+}
+// A6 — every reply is grounded in the persona's own orders/returns so they never repeat
+// information the app already has.
+function findGroundingReference(p){
+  const activeReturn = (p.returns||[]).find(function(r){ return r.status === "in_progress" || r.status === "requested"; });
+  if(activeReturn){
+    const pr = getProduct(activeReturn.productId);
+    return "I can see " + activeReturn.orderId + " — your " + (activeReturn.resolvedType==="exchange"?"exchange":"return") + " for the " + pr.name + " is currently " + activeReturn.status.replace(/_/g," ") + ". ";
+  }
+  const recentOrder = (p.orders||[])[0];
+  if(recentOrder){
+    const pr = getProduct(recentOrder.items[0].productId);
+    return "I can see " + recentOrder.id + " (" + pr.name + ") is currently " + recentOrder.status + ". ";
+  }
+  return "";
+}
+function buildGroundedReply(p, brand){
+  const grounding = findGroundingReference(p);
+  if(brand.ai_tooling_mode === "rules_engine_only") return grounding + "If you need anything else, our team typically responds within 24 hours.";
+  if(brand.ai_tooling_mode === "retrieval_only") return grounding + "Let me know if you'd like more detail — happy to pull the verified data sheet.";
+  return grounding + "Thanks for the message — let us know if there's anything specific we can check.";
+}
+async function askSupportGemini(question, p, brand){
+  const grounding = findGroundingReference(p);
+  const prompt = "Brand tone: " + brand.tagline + ". Customer context: " + grounding + "A customer support message: '" + question
+    + "'. Reply in ONE short, helpful, grounded sentence (under 30 words) referencing the order/return context above where relevant. Do not invent order IDs or statuses not given.";
+  const result = await callGemini(prompt);
+  if(result.ok) return { text: result.text, isFallback:false };
+  return { text: buildGroundedReply(p, brand), isFallback:true };
 }
 function sendSupportMessage(){
   const input = document.getElementById("support-input");
   const text = input ? input.value.trim() : "";
   if(!text) return;
   const p = state.currentPersona;
-  const thread = getOrCreateThread(p);
+  const brand = getBrand(p.brandId);
+  const thread = getOrCreateThread(p, state.screenParams.activeCaseId);
   thread.channelLog.push({ from:"customer", channel:"chat", text:text, ts:new Date().toISOString() });
   state.screenParams.typing = true;
   render();
-  setTimeout(function(){
-    thread.channelLog.push({ from:"system", channel:"chat", text:"Thanks — we'll get back to you shortly.", ts:new Date().toISOString() });
-    state.screenParams.typing = false;
-    render();
-  }, 1000);
+  if(brand.client_facing_generative && !state.screenParams.escalated){
+    askSupportGemini(text, p, brand).then(function(result){
+      thread.channelLog.push({ from:"system", channel:"chat", text:result.text, isFallback:result.isFallback, ts:new Date().toISOString() });
+      state.screenParams.typing = false;
+      render();
+    });
+  } else {
+    setTimeout(function(){
+      const from = state.screenParams.escalated ? "agent" : "system";
+      thread.channelLog.push({ from:from, channel:"chat", text: buildGroundedReply(p, brand), ts:new Date().toISOString() });
+      state.screenParams.typing = false;
+      render();
+    }, 1000);
+  }
 }
+// A6 — UrbanEdge's "Talk to a human" is a real hand-off: a named Digital Customer Support
+// agent joins, the header switches to them, and a system line states they can already see
+// the full thread (no repeating yourself to a human after talking to the AI).
+function escalateToHuman(){
+  const p = state.currentPersona;
+  const thread = getOrCreateThread(p, state.screenParams.activeCaseId);
+  const agent = employees.find(function(e){ return e.subTeam === "Digital Customer Support"; });
+  state.screenParams.escalated = true;
+  state.screenParams.escalatedAgent = agent ? agent.name : "a Digital Customer Support agent";
+  thread.channelLog.push({ from:"agent", channel:"chat", text: (agent?agent.name:"Our agent") + " here — I can already see this full thread, no need to repeat anything.", ts:new Date().toISOString() });
+  render();
+}
+function setActiveCaseId(id){ state.screenParams.activeCaseId = id; render(); }
 function renderSupportScreen(){
   const p = state.currentPersona;
   const brand = activeBrand();
-  const thread = getOrCreateThread(p);
+  const sp = state.screenParams;
+  const thread = getOrCreateThread(p, sp.activeCaseId);
   const advisorName = ADVISOR_NAMES[brand.id] || "Advisor";
   const initials = advisorName.slice(0,1);
+  const caseListHtml = p.cases.length > 1 ? '<div class="choice-row" style="margin-bottom:12px;">' + p.cases.map(function(c){
+    return '<div class="choice-card '+(thread.id===c.id?"selected":"")+'" style="min-width:0;" data-action="select-case" data-val="'+c.id+'">'+escapeHtml(c.subject)+'</div>';
+  }).join("") + '</div>' : '';
   const msgs = thread.channelLog.map(function(m){
     const isCustomer = m.from === "customer";
+    const isAgent = m.from === "agent";
     const time = new Date(m.ts).toLocaleTimeString("en-IN", { hour:"2-digit", minute:"2-digit" });
     let whoHtml = "";
     if(!isCustomer){
-      if(brand.client_facing_generative){
+      if(isAgent){
+        whoHtml = '<div class="who"><span class="avatar-circle">'+(sp.escalatedAgent||"A").slice(0,1)+'</span> '+escapeHtml(sp.escalatedAgent||"Support Agent")+' (human)</div>';
+      } else if(isAdvisorFronted(brand)){
+        whoHtml = '<div class="who"><span class="avatar-circle">'+initials+'</span> Your Style Advisor, '+advisorName+'</div>';
+      } else if(brand.client_facing_generative){
         whoHtml = '<div class="who"><span class="ai-badge">AI</span> StyleVerse AI Assistant</div>';
       } else {
-        whoHtml = '<div class="who"><span class="avatar-circle">'+initials+'</span> Your Style Advisor, '+advisorName+'</div>';
+        whoHtml = '<div class="who"><span class="avatar-circle">S</span> StyleVerse Support</div>';
       }
     }
     return ''
       + '<div class="msg '+(isCustomer?"customer":"system")+'">'
       +   whoHtml
       +   escapeHtml(m.text)
+      +   (m.isFallback ? ' <span style="color:var(--muted); font-size:11px;">(example response)</span>' : '')
       +   '<div class="msg-meta">'+CHANNEL_ICON[m.channel||"chat"]+' '+time+'</div>'
-      +   (!isCustomer && brand.escalation_visible ? '<div style="margin-top:8px;"><span class="escalation-pill" data-action="go-support">Talk to a human</span></div>' : "")
+      +   (!isCustomer && !isAgent && brand.escalation_visible && !sp.escalated ? '<div style="margin-top:8px;"><span class="escalation-pill" data-action="escalate-human">Talk to a human</span></div>' : "")
       + '</div>';
   }).join("");
   const typingHtml = state.screenParams.typing
@@ -2920,7 +2983,8 @@ function renderSupportScreen(){
   return ''
     + '<div class="page container" style="max-width:640px;">'
     +   '<h1>Support</h1>'
-    +   '<p style="color:var(--muted); font-size:12.5px; margin-bottom:6px;">'+(brand.client_facing_generative ? "AI-assisted, human-escalation always available." : "Human advisor-routed — no bots in this thread.")+'</p>'
+    +   '<p style="color:var(--muted); font-size:12.5px; margin-bottom:6px;">'+(sp.escalated ? "You're talking with " + escapeHtml(sp.escalatedAgent) + "." : brand.client_facing_generative ? "AI-assisted, human-escalation always available." : "Human advisor-routed — no bots in this thread.")+'</p>'
+    +   caseListHtml
     +   '<div class="card" style="padding:14px 18px;">'
     +     '<div class="chat-thread">' + (msgs || '<p style="color:var(--muted); font-size:13px;">No messages yet — say hello!</p>') + typingHtml + '</div>'
     +     '<div class="chat-input-row"><input type="text" id="support-input" placeholder="Type a message..."><button class="btn small" data-action="send-support">Send</button></div>'
@@ -3014,6 +3078,8 @@ function handleAppClick(e){
     case "refund-pref": setRefundPref(val); break;
     case "submit-return-form": submitReturnForm(); break;
     case "send-support": sendSupportMessage(); break;
+    case "select-case": setActiveCaseId(val); break;
+    case "escalate-human": escalateToHuman(); break;
     case "clear-catalog-search": setFilter("search",""); break;
     case "toggle-wishlist": toggleWishlist(id); break;
     default: break;

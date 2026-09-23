@@ -754,66 +754,7 @@ const ARCHETYPES_BY_ID = {}; ARCHETYPES.forEach(a=>{ ARCHETYPES_BY_ID[a.id]=a; }
 const fitMatrix = SCE_SEED.fitMatrix;
 const confidenceAdjustmentLog = SCE_SEED.confidenceAdjustmentLog;
 
-/* ---------------------------- IMAGE LIBRARY ---------------------------- */
-const IMAGE_LIBRARY = {
-  Tops: [
-    "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=600&q=80",
-    "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=600&q=80",
-    "https://images.unsplash.com/photo-1562157873-818bc0726f68?w=600&q=80",
-    "https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?w=600&q=80",
-    "https://images.unsplash.com/photo-1620799140408-edc6dcb6d633?w=600&q=80",
-    "https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=600&q=80"
-  ],
-  Bottoms: [
-    "https://images.unsplash.com/photo-1542272604-787c3835535d?w=600&q=80",
-    "https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=600&q=80",
-    "https://images.unsplash.com/photo-1594633312681-425c7b97ccd1?w=600&q=80",
-    "https://images.unsplash.com/photo-1602293589930-45821b8b8f92?w=600&q=80",
-    "https://images.unsplash.com/photo-1473966968600-fa801b869a1a?w=600&q=80",
-    "https://images.unsplash.com/photo-1517438476312-10d79c077509?w=600&q=80"
-  ],
-  Outerwear: [
-    "https://images.unsplash.com/photo-1551028719-00167b16eac5?w=600&q=80",
-    "https://images.unsplash.com/photo-1544022613-e87ca75a784a?w=600&q=80",
-    "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&q=80",
-    "https://images.unsplash.com/photo-1520975954732-35dd22299614?w=600&q=80",
-    "https://images.unsplash.com/photo-1520367445093-50dc08a59d9d?w=600&q=80",
-    "https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80"
-  ],
-  Footwear: [
-    "https://images.unsplash.com/photo-1549298916-b41d501d3772?w=600&q=80",
-    "https://images.unsplash.com/photo-1560769629-975ec94e6a86?w=600&q=80",
-    "https://images.unsplash.com/photo-1595950653106-6c9ebd614d3a?w=600&q=80",
-    "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=600&q=80",
-    "https://images.unsplash.com/photo-1460353581641-37baddab0fa2?w=600&q=80",
-    "https://images.unsplash.com/photo-1525966222134-fcfa99b8ae77?w=600&q=80"
-  ],
-  Dresses: [
-    "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80",
-    "https://images.unsplash.com/photo-1566174053879-31528523f8ae?w=600&q=80",
-    "https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?w=600&q=80",
-    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=600&q=80",
-    "https://images.unsplash.com/photo-1595341888016-a392ef81b7de?w=600&q=80",
-    "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=600&q=80"
-  ],
-  Accessories: [
-    "https://images.unsplash.com/photo-1523170335258-f5ed11844a49?w=600&q=80",
-    "https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&q=80",
-    "https://images.unsplash.com/photo-1611085583191-a3b181a88401?w=600&q=80",
-    "https://images.unsplash.com/photo-1519638399535-1b036603ac77?w=600&q=80",
-    "https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&q=80",
-    "https://images.unsplash.com/photo-1601121141461-9d6647bca1ed?w=600&q=80"
-  ]
-};
-const imageCursor = {};
-function nextImage(category, detail){
-  const list = IMAGE_LIBRARY[category];
-  imageCursor[category] = imageCursor[category] || 0;
-  const idx = imageCursor[category] % list.length;
-  if(!detail) imageCursor[category]++;
-  const detailIdx = (idx+1) % list.length;
-  return detail ? list[detailIdx] : list[idx];
-}
+/* ---------------------------- PRODUCT IMAGERY ---------------------------- */
 // B18 fix: offline/broken-image fallback is now a category-specific garment illustration
 // (drawn in code, no third-party art) tinted by the brand accent, instead of a flat
 // "StyleVerse / Category" text card.
@@ -832,14 +773,18 @@ const GARMENT_ILLUSTRATIONS = {
   Accessories: '<path d="M170 230 L330 230 L345 460 L155 460 Z" fill="white" opacity="0.92"/>'
       + '<path d="M205 230 Q205 160 250 160 Q295 160 295 230" fill="none" stroke="white" stroke-width="10" opacity="0.75"/>'
 };
-function placeholderDataUri(category, accentHex){
+// The "detail" slot reuses the exact same drawing, just cropped to a zoomed-in viewBox —
+// a genuine second frame (not a duplicate image) with zero extra artwork to maintain.
+function placeholderDataUri(category, accentHex, variant){
   const bgHex = accentHex || "#64748b";
   const illustration = GARMENT_ILLUSTRATIONS[category] || GARMENT_ILLUSTRATIONS.Tops;
-  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="640">'
-    + '<rect width="500" height="640" fill="' + bgHex + '"/>'
-    + '<rect x="0" y="0" width="500" height="640" fill="black" opacity="0.1"/>'
+  const isDetail = variant === "detail";
+  const viewBox = isDetail ? "140 160 220 220" : "0 0 500 640";
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="640" viewBox="' + viewBox + '">'
+    + '<rect x="-60" y="-60" width="620" height="760" fill="' + bgHex + '"/>'
+    + '<rect x="-60" y="-60" width="620" height="760" fill="black" opacity="0.1"/>'
     + illustration
-    + '<text x="250" y="590" font-family="sans-serif" font-size="14" fill="white" text-anchor="middle" opacity="0.7">' + escapeHtml(category) + ' &middot; illustrative</text>'
+    + (isDetail ? '' : '<text x="250" y="590" font-family="sans-serif" font-size="14" fill="white" text-anchor="middle" opacity="0.7">' + escapeHtml(category) + ' · illustrative</text>')
     + '</svg>';
   return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 }
@@ -847,14 +792,14 @@ function handleImgError(imgEl, category, accentHex){
   imgEl.onerror = null;
   imgEl.src = placeholderDataUri(category, accentHex || "#64748b");
 }
+// Product imagery is these procedural illustrations directly — not a fetch-then-fallback.
+// This is a self-contained, offline-capable prototype (per spec): it must never depend on
+// reaching a third-party image host to render correctly, in this sandbox or anywhere else.
+function productImageDataUri(category, accentHex, variant){
+  return placeholderDataUri(category, accentHex, variant);
+}
 function preflightImageCheck(){
-  Object.keys(IMAGE_LIBRARY).forEach(cat=>{
-    IMAGE_LIBRARY[cat].forEach(url=>{
-      const img = new Image();
-      img.onerror = function(){ console.warn("[StyleVerse] image failed to load:", url); };
-      img.src = url;
-    });
-  });
+  // no-op: product imagery never leaves the page, so there is nothing to preflight.
 }
 
 /* ---------------------------- HASH / DETERMINISTIC HELPERS ---------------------------- */
@@ -876,8 +821,9 @@ function mulberry32(seed){
 // "One Size", fit_applicable:false — no score, no ring, no fit preview, excluded from the
 // confidence filter). B2 fix: recSizeFor below replaces the old hashed recommendedSize.
 const products = SCE_SEED.products.map(function(p){
-  const imageUrl = nextImage(p.category, false);
-  const imageUrlDetail = nextImage(p.category, true);
+  const brandAccent = (SCE_SEED.brands.find(function(b){ return b.id === p.brandId; }) || {}).accent;
+  const imageUrl = productImageDataUri(p.category, brandAccent);
+  const imageUrlDetail = productImageDataUri(p.category, brandAccent, "detail");
   return Object.assign({}, p, {
     sizes: p.fit_applicable ? (p.category === "Footwear" ? SCE_SEED.footwearSizeRun : SCE_SEED.apparelSizeRun) : ["One Size"],
     imageUrl, imageUrlDetail

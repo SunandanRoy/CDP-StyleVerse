@@ -980,10 +980,26 @@ const state = {
 };
 
 function cloneJSON(o){ return JSON.parse(JSON.stringify(o)); }
+// A10/A11 — optional flags, default OFF. Listed in About -> Changelog as proposed
+// extensions beyond the solution doc, not in the case itself.
+const FEATURE_FLAGS = { LIVE_SYNC:false, BRACKETING_CHECK:false, STORE_HANDOFF:false };
 // A1: RudderStack-style event log, surfaced live in the Prototype Console's Event Stream panel.
 function emitEvent(name, data){
   state.eventStream.push({ name: name, data: data || {}, ts: new Date().toISOString() });
   if(state.eventStream.length > 200) state.eventStream.shift();
+}
+// A10: optional live event bus — appends to localStorage so a second tool on the same
+// origin could pick these up. Requires both files served from the same origin; file://
+// behaviour differs by browser. Default OFF (FEATURE_FLAGS.LIVE_SYNC).
+function liveSyncAppend(eventName, data){
+  if(!FEATURE_FLAGS.LIVE_SYNC) return;
+  try{
+    const key = "sce_event_bus_v1";
+    const arr = JSON.parse(window.localStorage.getItem(key) || "[]");
+    arr.push({ name:eventName, data:data||{}, ts:new Date().toISOString() });
+    while(arr.length > 200) arr.shift();
+    window.localStorage.setItem(key, JSON.stringify(arr));
+  }catch(e){ /* localStorage unavailable (e.g. some file:// contexts) — no-op */ }
 }
 
 function money(n){
@@ -1629,6 +1645,31 @@ function openInEnterpriseConsole(){
 }
 function closeConsole(){ state.consoleOpen = false; render(); }
 // A1: live Event Stream panel — RudderStack-style event names + current session hesitation.
+// A4c — mock third-party marketplace listing, generated from aggregate SKU data only (no
+// individual customer data — the marketplace never gives StyleVerse an identity).
+function renderMarketplaceListingPreview(){
+  const brand = activeBrand();
+  const prod = products.find(function(pr){ return pr.brandId === brand.id && pr.fit_applicable; }) || products[0];
+  const dom = DOMINANT_ZONE_BY_CATEGORY[prod.category];
+  const counts = { true_to_size:0, runs_tight:0, runs_loose:0 };
+  ARCHETYPES.forEach(function(a){
+    const cell = fitMatrix[prod.category] && fitMatrix[prod.category][a.id];
+    if(cell && dom) counts[cell[dom]]++;
+  });
+  let majority = "true_to_size", max = -1;
+  Object.keys(counts).forEach(function(k){ if(counts[k] > max){ max = counts[k]; majority = k; } });
+  const badgeText = majority === "runs_tight" ? "StyleVerse Fit: runs small in the " + dom + " — most shoppers size up"
+    : majority === "runs_loose" ? "StyleVerse Fit: runs large in the " + dom + " — most shoppers size down"
+    : "StyleVerse Fit: true to size in the " + dom;
+  return '<div class="cp-section">'
+    + '<div class="cp-label">Marketplace listing preview (mock)</div>'
+    + '<div style="background:#fff; color:#111; border-radius:10px; padding:10px;">'
+    +   '<div style="font-size:12px; font-weight:700;">' + escapeHtml(prod.name) + '</div>'
+    +   '<div style="font-size:11px; color:#555;">' + money(prod.priceInr) + ' &middot; sold on a third-party marketplace</div>'
+    +   '<div style="margin-top:6px; padding:4px 8px; background:#fef3c7; border-radius:4px; font-size:10.5px; display:inline-block;">' + badgeText + '</div>'
+    +   '<div style="margin-top:4px; font-size:9.5px; color:#888;">No individual data — marketplace provides no customer identity.</div>'
+    + '</div></div>';
+}
 function renderEventStreamPanel(){
   const sp = state.screenParams;
   const hesitation = (state.screen === "product" && sp.pdpSession) ? computeSessionHesitation(sp) : null;
@@ -1676,6 +1717,7 @@ function renderDemoConsole(){
       +     '</div>'
       +   '</div>'
       +   renderEventStreamPanel()
+      +   renderMarketplaceListingPreview()
       +   '<div class="cp-section">'
       +     '<div class="cp-label">Shared data spine</div>'
       +     '<p class="cp-status">Dataset: <code>'+SCE_CHECKSUM.slice(0,8)+'</code> — same checksum as the Enterprise Console.</p>'
@@ -2384,9 +2426,26 @@ function renderCartScreen(){
       +   '</div>'
       + '</div>';
   }).join("");
+  // A11 — BRACKETING_CHECK (proposed extension, feature-flagged, default OFF): same SKU in
+  // >=2 sizes in cart.
+  let bracketingHtml = "";
+  if(FEATURE_FLAGS.BRACKETING_CHECK){
+    const bySku = {};
+    state.cart.forEach(function(l){ (bySku[l.productId] = bySku[l.productId] || []).push(l); });
+    Object.keys(bySku).forEach(function(pid){
+      if(bySku[pid].length < 2) return;
+      const p = getProduct(pid);
+      const rec = archId ? recSizeFor(p, archId) : null;
+      bracketingHtml += '<div class="card" style="padding:12px; margin-bottom:12px; border:1px solid var(--amber);">'
+        + '<p style="font-size:13px;">You have '+escapeHtml(p.name)+' in '+bySku[pid].length+' sizes. Keep one? We\'d pick '+(rec||bySku[pid][0].size)+' — free exchange if it doesn\'t fit.</p>'
+        + (FEATURE_FLAGS.STORE_HANDOFF ? '<button class="btn ghost small" style="margin-top:6px;" data-action="reserve-in-store" data-val="'+pid+'">Reserve both sizes to try at a store</button>' : '')
+        + '</div>';
+    });
+  }
   return ''
     + '<div class="page container">'
     +   '<h1>Cart</h1>'
+    +   bracketingHtml
     +   '<div class="card" style="padding:6px 18px;">'+lines+'</div>'
     +   '<div class="cart-summary"><span>Total</span><span>'+money(total)+'</span></div>'
     +   '<button class="btn" data-action="go-checkout">Proceed to Checkout</button>'
@@ -2449,6 +2508,8 @@ function placeOrder(){
   };
   p.orders.unshift(order);
   state.cart = [];
+  emitEvent("order_placed", { orderId: orderId });
+  liveSyncAppend("order_placed", { orderId: orderId, personaId: p.id, items: items });
   navigate("order-confirm", { order: order, deliveryDate: deliveryDate });
 }
 function renderCheckoutInterstitialScreen(){
@@ -2727,6 +2788,7 @@ function selectFitDirection(direction){
   // Closed loop: every decoded fit return counts toward size guidance, intercepted or not.
   state.fitSignalLog.push({ productId: p.id, archetypeId: archId, zone: rec._pendingZone, direction: direction, source:"d2c", ts: new Date().toISOString() });
   emitEvent("fit_signal", { productId: p.id, zone: rec._pendingZone, direction: direction });
+  liveSyncAppend("fit_signal", { productId: p.id, archetypeId: archId, zone: rec._pendingZone, direction: direction, source:"d2c" });
   // Value threshold: Maison Luxe, or any line over Rs 10,000, routes to human confirmation.
   if(isAdvisorFronted(brand) || p.priceInr > 10000){
     rec.step = "human-confirm";
@@ -2773,6 +2835,7 @@ function confirmExchange(){
   rec.newDeliveryDate = new Date(Date.now() + 4*86400000).toISOString().slice(0,10);
   const order = state.currentPersona.orders.find(function(o){ return o.id===rec.orderId; });
   if(order) order.status = "Exchange in progress";
+  liveSyncAppend("return_submitted", { returnId: rec.id, resolvedType:"exchange" });
   render();
 }
 function declineExchange(){
@@ -2790,6 +2853,7 @@ function submitReturnForm(){
   rec.step = "return-confirm";
   const order = state.currentPersona.orders.find(function(o){ return o.id===rec.orderId; });
   if(order) order.status = "Return in Progress";
+  liveSyncAppend("return_submitted", { returnId: rec.id, resolvedType:"return" });
   render();
 }
 const RETURN_REASONS = [
@@ -3071,6 +3135,7 @@ function handleAppClick(e){
     case "explain-fit": triggerExplainFit(); break;
     case "open-size-guide": toggleSizeGuide(); break;
     case "nudge-accept": nudgeAccept(el.getAttribute("data-val")); break;
+    case "reserve-in-store": showToast("Reserved — both sizes held for you to try at a store (online-to-store handoff, proposed extension)."); break;
     case "open-fitting-picker": openFittingPicker(); break;
     case "book-fitting": bookVirtualFitting(el.getAttribute("data-val")); break;
     case "advisor-submit": submitAdvisorQuestion(); break;
@@ -3909,6 +3974,8 @@ function completeClaim(){
     p.loyaltyPoints = (p.loyaltyPoints||0) + 250; // Tier D, illustrative bridge incentive
     p.claimStatus = "claimed";
     p.bridgingStatus = "linked";
+    emitEvent("orders_claimed", { personaId: p.id, count: entry.orders.length });
+    liveSyncAppend("orders_claimed", { personaId: p.id, orderIds: entry.orders.map(function(o){ return o.id; }) });
   }
   cm.step = "success";
   cm.claimedCount = entry ? entry.orders.length : 0;

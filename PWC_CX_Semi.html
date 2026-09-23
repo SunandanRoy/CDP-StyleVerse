@@ -945,7 +945,7 @@ const state = {
   geminiKey: "",
   apiCallLog: [],           // rolling 60s call timestamps
   bridgeBannerDismissed: false,
-  bridgeModal: null,        // {step, prefilled}
+  claimModal: null,         // {step, orderIdInput, otpInput, matchedAlias, error} — A4a claim flow (replaces the old loyalty-number bridge, B9)
   proactiveShown: false,
   supportDraft: "",
   catalogFilters: { category:"all", confidence:"all", price:"all", search:"" },
@@ -1557,8 +1557,8 @@ function render(){
     }
   }
   const modalHost = document.getElementById("modal-host");
-  if(state.bridgeModal && modalHost){
-    modalHost.innerHTML = renderBridgeModal();
+  if(state.claimModal && modalHost){
+    modalHost.innerHTML = renderClaimModal();
   }
 }
 const FOOTER_LINK_COLS = [
@@ -1637,6 +1637,7 @@ function renderScreenBody(){
     case "checkout-interstitial": return renderCheckoutInterstitialScreen();
     case "order-confirm": return renderOrderConfirmScreen();
     case "track": return renderTrackScreen();
+    case "marketplace-return-handoff": return renderMarketplaceReturnHandoffScreen();
     case "returns": return renderReturnsListScreen();
     case "return-flow": return renderReturnFlowScreen(state.screenParams.returnKey);
     case "support": return renderSupportScreen();
@@ -2342,11 +2343,8 @@ function renderOrderConfirmScreen(){
 /* ---------------------------- SCREEN 9 — TRACK EVERYWHERE ---------------------------- */
 const STATUS_STEPS = ["Ordered","Shipped","Out for Delivery","Delivered"];
 function getTimelineOrders(p){
-  const isBridged = p.bridgingStatus === "linked";
   let list = p.orders.map(function(o){ return Object.assign({}, o, { channel:"d2c" }); });
-  if(isBridged){
-    list = list.concat((p.marketplaceOrders||[]).map(function(o){ return Object.assign({}, o, { channel:"marketplace" }); }));
-  }
+  list = list.concat((p.marketplaceOrders||[]).map(function(o){ return Object.assign({}, o, { channel:"marketplace" }); }));
   list.sort(function(a,b){ return new Date(b.date) - new Date(a.date); });
   return list;
 }
@@ -2354,37 +2352,51 @@ function toggleOrderExpand(orderId){
   state.screenParams.expandedOrderId = state.screenParams.expandedOrderId === orderId ? null : orderId;
   render();
 }
+// A7: a predicted-delay flag (delivery_exception) links to the proactive outreach thread.
 function renderTrackScreen(){
   const p = state.currentPersona;
-  const isBridged = p.bridgingStatus === "linked";
+  const isBridged = p.claimStatus === "claimed";
   const timeline = getTimelineOrders(p);
   const expandedId = state.screenParams.expandedOrderId;
+  // B13 fix: an unlinked shopper gets an honest teaser instead of a blank "No orders yet",
+  // since we genuinely cannot see their marketplace history until they claim it.
+  const teaser = (p.claimStatus === "unclaimed" || p.claimStatus === "started") ? ''
+    + '<div class="card" style="padding:14px; margin-bottom:16px; border:1px dashed var(--border);">'
+    +   '<p style="font-size:13.5px; margin-bottom:8px;">Bought on a marketplace? We can\'t see those orders until you claim them.</p>'
+    +   '<button class="btn small" data-action="open-claim-modal">'+(p.claimStatus==="started"?"Finish claiming":"Claim marketplace orders")+'</button>'
+    + '</div>' : '';
   const rows = timeline.length ? timeline.map(function(o){
     const stepIdx = STATUS_STEPS.indexOf(o.status);
     const stepsHtml = STATUS_STEPS.map(function(s,i){ return '<div class="'+(stepIdx>=0 && i<=stepIdx ? "done":"")+'"></div>'; }).join("");
     const expanded = expandedId === o.id;
+    // B1 fix: every item in the order gets its own return entry point, not just items[0];
+    // marketplace items route to the Marketplace Return Handoff (A4b), never startReturnFlow.
+    const canReturn = o.status === "Delivered";
     const itemsHtml = o.items.map(function(it){
       const pr = getProduct(it.productId);
-      return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:13.5px;">'+escapeHtml(pr.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+it.size+' &middot; Qty '+it.qty+'</div></div></div>';
+      const returnBtn = !canReturn ? "" : o.channel === "d2c"
+        ? '<button class="btn ghost small" data-action="start-return" data-order="'+o.id+'" data-product="'+it.productId+'">Start a Return</button>'
+        : '<button class="btn ghost small" data-action="start-marketplace-return" data-order="'+o.id+'" data-product="'+it.productId+'">Start a Return</button>';
+      return '<div class="cart-line"><div class="cl-info"><div style="font-weight:600; font-size:13.5px;">'+escapeHtml(pr.name)+'</div><div style="font-size:12px; color:var(--muted);">Size '+it.size+' &middot; Qty '+it.qty+'</div></div>'+returnBtn+'</div>';
     }).join("");
-    const canReturn = o.status === "Delivered";
+    const delayNote = o.delivery_exception ? '<div style="margin-top:6px; font-size:12px; color:var(--amber);">&#9888; Running behind schedule — <button class="btn ghost small" style="padding:2px 8px;" data-action="go-support">see what we\'re doing</button></div>' : '';
     return ''
       + '<div class="card order-row" data-action="toggle-order" data-id="'+o.id+'">'
       +   '<div class="or-top">'
       +     '<div><strong>'+o.id+'</strong> <span class="channel-tag '+o.channel+'">'+(o.channel==="d2c"?"via StyleVerse.com":"via Marketplace")+'</span></div>'
       +     '<span class="status-badge">'+o.status+'</span>'
       +   '</div>'
-      +   '<div style="font-size:12px; color:var(--muted); margin-top:4px;">'+fmtDate(o.date)+'</div>'
+      +   '<div style="font-size:12px; color:var(--muted); margin-top:4px;">'+fmtDate(o.date)+(o.channel==="marketplace" ? ' &middot; <span style="opacity:.75;">status from marketplace feed</span>' : '')+'</div>'
+      +   delayNote
       +   (STATUS_STEPS.indexOf(o.status)>=0 ? '<div class="step-progress">'+stepsHtml+'</div>' : '')
-      +   (expanded ? '<div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">'+itemsHtml
-              + (canReturn ? '<button class="btn small" style="margin-top:10px;" data-action="start-return" data-order="'+o.id+'" data-product="'+o.items[0].productId+'">Start a Return</button>' : '')
-              + '</div>' : '')
+      +   (expanded ? '<div style="margin-top:14px; border-top:1px solid var(--border); padding-top:12px;">'+itemsHtml+'</div>' : '')
       + '</div>';
   }).join("") : '<p style="color:var(--muted);">No orders yet.</p>';
   return ''
     + '<div class="page container">'
     +   '<h1>Track Everywhere</h1>'
     +   (isBridged ? '<p class="linked-badge" style="margin-bottom:16px;">Merged view — D2C + Marketplace</p>' : '')
+    +   teaser
     +   rows
     + '</div>';
 }
@@ -2407,6 +2419,49 @@ function startReturnFlow(orderId, productId){
   navigate("return-flow", { returnKey: key });
 }
 function resumeReturnFlow(key){ navigate("return-flow", { returnKey: key }); }
+
+/* ---------------------------- A4b — MARKETPLACE RETURN HANDOFF ---------------------------- */
+// B1 fix: marketplace orders never reach startReturnFlow (which only ever understood D2C
+// orders and threw on marketplaceOrders). Marketplace returns are processed in the
+// marketplace app itself; StyleVerse only ever receives a reason code from that channel, so
+// the optional two-tap zone+direction feedback here is the one individual-level fit signal
+// the marketplace can't provide on its own (contract §8).
+function startMarketplaceReturn(orderId, productId){
+  navigate("marketplace-return-handoff", { orderId: orderId, productId: productId, zone:null, direction:null, feedbackGiven:false });
+}
+function setMarketplaceFeedbackZone(zone){ state.screenParams.zone = zone; render(); }
+function setMarketplaceFeedbackDirection(direction){
+  const sp = state.screenParams;
+  sp.direction = direction;
+  const p = getProduct(sp.productId);
+  const archId = activeArchetypeId();
+  state.fitSignalLog = state.fitSignalLog || [];
+  state.fitSignalLog.push({ productId: sp.productId, archetypeId: archId, zone: sp.zone, direction: direction, source:"marketplace", ts: new Date().toISOString() });
+  sp.feedbackGiven = true;
+  render();
+}
+function renderMarketplaceReturnHandoffScreen(){
+  const sp = state.screenParams;
+  const p = getProduct(sp.productId);
+  const brand = getBrand(p.brandId);
+  const zones = ZONES_BY_CATEGORY[p.category] || [];
+  return ''
+    + '<div class="page container" style="max-width:560px;">'
+    +   '<h1>Return this marketplace order</h1>'
+    +   '<div class="card" style="padding:18px;">'
+    +     '<img class="img-loading" src="'+p.imageUrl+'" style="width:110px; height:135px; object-fit:cover; border-radius:8px; margin-bottom:12px;" onload="this.classList.remove(\'img-loading\')" onerror="handleImgError(this,\''+p.category+'\',\''+brand.accent+'\')">'
+    +     '<p style="font-size:13.5px;"><strong>'+escapeHtml(p.name)+'</strong> was bought on a marketplace, so its return is handled there — StyleVerse doesn\'t process the refund or pickup for this one.</p>'
+    +     '<button class="btn" style="margin-top:6px;" data-action="open-marketplace-app">Open in Marketplace App</button>'
+    +     '<div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border);">'
+    +       (sp.feedbackGiven ? '<p style="font-size:13px; color:var(--green);">Thanks — your feedback was counted.</p>' : ''
+          + '<p style="font-size:12.5px; color:var(--muted);">The marketplace only sends us a reason code, no fit detail. Mind a quick, optional two-tap note so our size guidance stays accurate?</p>'
+          + (!sp.zone ? '<div class="reason-grid" style="margin-top:10px;">' + zones.map(function(z){ return '<div class="reason-card" data-action="mkt-feedback-zone" data-val="'+z+'">'+z+'</div>'; }).join("") + '</div>'
+            : '<div class="fitq-row" style="margin-top:10px;"><div class="fitq-opt" data-action="mkt-feedback-direction" data-val="runs_tight">Ran tight</div><div class="fitq-opt" data-action="mkt-feedback-direction" data-val="runs_loose">Ran loose</div></div>'))
+    +     '</div>'
+    +   '</div>'
+    +   '<button class="btn ghost" style="margin-top:16px;" data-action="go-track">Back to Track Everywhere</button>'
+    + '</div>';
+}
 function selectReturnReason(reason){
   const rec = findReturnByKey(state.screenParams.returnKey);
   rec.reason = reason;
@@ -2630,11 +2685,13 @@ function handleAppClick(e){
     case "go-wishlist": navigate("wishlist", {}); break;
     case "go-catalog-category": state.catalogFilters.category = val; navigate("catalog", {}); break;
     case "toggle-mobile-nav": toggleMobileNav(); break;
-    case "open-bridge-modal": openBridgeModal(); break;
+    case "open-claim-modal": openClaimModal(); break;
+    case "close-claim-modal": closeClaimModal(); break;
+    case "claim-submit-order": submitClaimOrderId(); break;
+    case "claim-scan-qr": scanClaimQr(); break;
+    case "claim-submit-otp": submitClaimOtp(); break;
     case "dismiss-bridge-banner": dismissBridgeBanner(); break;
     case "view-outreach-details": viewOutreachDetails(); break;
-    case "bridge-verify": bridgeModalVerify(); break;
-    case "bridge-complete": completeBridge(); break;
     case "start-onboarding": startFitOnboarding(); break;
     case "onboard-height": onboardingSelectHeight(val); break;
     case "onboard-fit": onboardingSelectFit(val); break;
@@ -2663,6 +2720,10 @@ function handleAppClick(e){
     case "confirm-checkout-details": confirmCheckoutDetails(); break;
     case "toggle-order": toggleOrderExpand(id); break;
     case "start-return": startReturnFlow(el.getAttribute("data-order"), el.getAttribute("data-product")); break;
+    case "start-marketplace-return": startMarketplaceReturn(el.getAttribute("data-order"), el.getAttribute("data-product")); break;
+    case "open-marketplace-app": showToast("This would open the marketplace app's own return flow (placeholder deep link)."); break;
+    case "mkt-feedback-zone": setMarketplaceFeedbackZone(val); break;
+    case "mkt-feedback-direction": setMarketplaceFeedbackDirection(val); break;
     case "resume-return": resumeReturnFlow(el.getAttribute("data-key")); break;
     case "return-reason": selectReturnReason(val); break;
     case "fit-issue": selectFitIssue(val); break;
@@ -2701,7 +2762,12 @@ function handleAppKeypress(e){
   if(e.key !== "Enter") return;
   if(e.target.id === "support-input"){ sendSupportMessage(); }
   if(e.target.id === "advisor-input"){ submitAdvisorQuestion(); }
-  if(e.target.id === "bridge-loyalty-input"){ bridgeModalVerify(); }
+  if(e.target.id === "claim-order-input"){ submitClaimOrderId(); }
+  if(e.target.id === "claim-otp-input"){ submitClaimOtp(); }
+}
+// B9/B15 fix: the modal is closable by Esc as well as its close button and overlay click.
+function handleAppKeydown(e){
+  if(e.key === "Escape" && state.claimModal){ closeClaimModal(); }
 }
 
 function initApp(){
@@ -2710,6 +2776,7 @@ function initApp(){
   app.addEventListener("change", handleAppChange);
   app.addEventListener("keypress", handleAppKeypress);
   app.addEventListener("input", handleAppInput);
+  document.addEventListener("keydown", handleAppKeydown);
   preflightImageCheck();
   render();
 }
@@ -2894,11 +2961,15 @@ function renderAccountScreen(){
       + '</div>';
   }
 
-  const bridgedBadge = p.bridgingStatus === "linked" ? '<span class="linked-badge">2 accounts linked</span>' : "";
-  let bridgeStatusText = "Not linked to a marketplace account.";
-  if(p.bridgingStatus === "linked") bridgeStatusText = "Marketplace + StyleVerse.com accounts linked.";
-  else if(p.bridgingStatus === "started") bridgeStatusText = "Linking in progress — finish anytime.";
-  else if(p.bridgingStatus === "linked-native") bridgeStatusText = "D2C-native account (StyleVerse.com only).";
+  // B9/A4a fix: linkage is framed as claiming marketplace orders, not a loyalty-number
+  // "bridge"; D2C-only accounts show "Not applicable", never "not yet bridged" (contract §9).
+  const bridgedBadge = p.claimStatus === "claimed" ? '<span class="linked-badge">Marketplace orders claimed</span>' : "";
+  let bridgeStatusText = "Not applicable (D2C-native).";
+  if(p.claimStatus === "claimed") bridgeStatusText = "Marketplace orders claimed and merged into Track Everywhere.";
+  else if(p.claimStatus === "started") bridgeStatusText = "Marketplace claim in progress — finish anytime.";
+  else if(p.claimStatus === "unclaimed") bridgeStatusText = "You have marketplace orders waiting to be claimed.";
+  const claimCta = (p.claimStatus === "unclaimed" || p.claimStatus === "started")
+    ? '<button class="btn small" style="margin-top:8px;" data-action="open-claim-modal">'+(p.claimStatus==="started"?"Finish claiming":"Claim marketplace orders")+'</button>' : "";
 
   const ZONE_PHRASE = {
     true_to_size:{ default:"fits true to size", length:"runs true to length" },
@@ -2930,6 +3001,7 @@ function renderAccountScreen(){
     +       '<h3>Order History &amp; Linked Accounts</h3>'
     +       '<p style="font-size:13.5px;">'+bridgeStatusText+'</p>'
     +       bridgedBadge
+    +       claimCta
     +       '<p style="margin-top:14px;"><button class="btn ghost small" data-action="go-track">View full order history &rarr;</button></p>'
     +       '<details class="log-panel" style="margin-top:16px;"><summary>Why your size guidance changes</summary>' + logHtml + '</details>'
     +     '</div>'
@@ -2982,7 +3054,7 @@ function selectPersona(personaId){
   state.cart = [];
   state.wishlist = [];
   state.bridgeBannerDismissed = false;
-  state.bridgeModal = null;
+  state.claimModal = null;
   state.proactiveShown = false;
   applyTheme(getBrand(state.currentPersona.brandId));
   navigate("home", {});
@@ -2996,7 +3068,7 @@ function switchPersona(){
 /* ---------------------------- HOME SCREEN ---------------------------- */
 function needsBridgeBanner(){
   const p = state.currentPersona;
-  return (p.scenario === 2 || p.scenario === 3) && p.bridgingStatus !== "linked" && !state.bridgeBannerDismissed;
+  return (p.claimStatus === "unclaimed" || p.claimStatus === "started") && !state.bridgeBannerDismissed;
 }
 function needsProactiveOutreach(){
   const p = state.currentPersona;
@@ -3007,12 +3079,12 @@ function renderHomeScreen(){
   const brand = activeBrand();
   let banners = "";
   if(needsBridgeBanner()){
-    const label = p.bridgingStatus === "started" ? "Finish linking your account" : "Link Account";
+    const label = p.claimStatus === "started" ? "Finish claiming your orders" : "Claim marketplace orders";
     banners += ''
       + '<div class="banner">'
-      +   '<p><strong>Shop smarter</strong> — link your marketplace account to unlock Fit Preview and faster checkout.</p>'
+      +   '<p><strong>Shop smarter</strong> — bought here on a marketplace app? Claim those orders to unlock Fit Preview and faster checkout.</p>'
       +   '<div style="display:flex; gap:10px; align-items:center;">'
-      +     '<button class="btn small" data-action="open-bridge-modal">'+label+'</button>'
+      +     '<button class="btn small" data-action="open-claim-modal">'+label+'</button>'
       +     '<button class="close-x" data-action="dismiss-bridge-banner">&times;</button>'
       +   '</div>'
       + '</div>';
@@ -3050,7 +3122,7 @@ function renderHomeScreen(){
   const statsHtml = ''
     + '<div class="card stat-tile"><div class="stat-value" data-countup="'+timeline.length+'">0</div><div class="stat-label">Total orders</div></div>'
     + '<div class="card stat-tile"><div class="stat-value">'+(arch ? arch.label : "Not set")+'</div><div class="stat-label">Your fit profile</div></div>'
-    + '<div class="card stat-tile"><div class="stat-value">'+(p.bridgingStatus==="linked" ? "Linked" : p.bridgingStatus==="started" ? "In progress" : p.bridgingStatus==="linked-native" ? "Single account" : "Not linked")+'</div><div class="stat-label">Linked accounts</div></div>'
+    + '<div class="card stat-tile"><div class="stat-value">'+(p.claimStatus==="claimed" ? "Claimed" : p.claimStatus==="started" ? "In progress" : p.claimStatus==="unclaimed" ? "Unclaimed" : "N/A")+'</div><div class="stat-label">Marketplace orders</div></div>'
     + '<div class="card stat-tile"><div class="stat-value" data-countup="'+activeReturns+'">0</div><div class="stat-label">Returns in progress</div></div>';
   const props = VALUE_PROPS[brand.id].map(function(v){ return '<span>'+escapeHtml(v)+'</span>'; }).join("");
   return ''
@@ -3177,55 +3249,138 @@ function renderFitOnboardingScreen(){
 }
 
 /* ---------------------------- SCREEN 2 — IDENTITY BRIDGE MODAL ---------------------------- */
-function openBridgeModal(){
-  const p = state.currentPersona;
-  state.bridgeModal = { step: p.bridgingStatus === "started" ? 1 : 1, loyaltyInput: p.bridgingStatus === "started" ? (p.loyaltyId || "") : "" };
+/* ---------------------------- A4a — CLAIM MARKETPLACE ORDERS (replaces the loyalty-number bridge, B9) ---------------------------- */
+// A marketplace buyer has no name, archetype or Fit Passport on the marketplace side
+// (contract §9) — claiming is how an anonymous buyer_alias becomes linked to a named
+// StyleVerse account, via an order ID (or a simulated package-insert QR scan) + a
+// simulated phone OTP. Nothing about the alias is shown to the user before a match.
+function findPoolEntryByOrderId(orderId){
+  return marketplaceOrderPool.find(function(entry){
+    return !entry.claimed && entry.orders.some(function(o){ return o.id.toLowerCase() === String(orderId||"").trim().toLowerCase(); });
+  });
+}
+function findClaimablePoolEntryFor(personaId){
+  return marketplaceOrderPool.find(function(entry){ return !entry.claimed && entry._claimableBy === personaId; });
+}
+function guessArchetypeFromSizes(items){
+  const counts = {};
+  items.forEach(function(it){ counts[it.size] = (counts[it.size]||0) + 1; });
+  let bestSize = null, bestCount = -1;
+  Object.keys(counts).forEach(function(sz){ if(counts[sz] > bestCount){ bestCount = counts[sz]; bestSize = sz; } });
+  if(!bestSize || bestSize === "One Size") return ARCHETYPES[0].id;
+  const apparelMatch = ARCHETYPES.find(function(a){ return a.base_apparel_size === bestSize; });
+  if(apparelMatch) return apparelMatch.id;
+  const footMatch = ARCHETYPES.find(function(a){ return String(a.base_footwear_uk) === bestSize; });
+  return footMatch ? footMatch.id : ARCHETYPES[0].id;
+}
+function openClaimModal(){
+  state.claimModal = { step:"entry", orderIdInput:"", otpInput:"", matchedAlias:null, error:null };
   render();
 }
-function closeBridgeModal(){ state.bridgeModal = null; render(); }
-function bridgeModalVerify(){
-  const input = document.getElementById("bridge-loyalty-input");
-  if(input) state.bridgeModal.loyaltyInput = input.value;
-  state.bridgeModal.step = 2;
+// B9 fix: closable via close button, Esc (handleAppKeydown) and overlay click.
+function closeClaimModal(){ state.claimModal = null; render(); }
+function scanClaimQr(){
+  const p = state.currentPersona;
+  const entry = findClaimablePoolEntryFor(p.id);
+  if(!entry){ state.claimModal.error = "No package-insert QR found for this order."; render(); return; }
+  state.claimModal.orderIdInput = entry.orders[0].id;
+  state.claimModal.error = null;
+  render();
+}
+function submitClaimOrderId(){
+  const cm = state.claimModal;
+  const input = document.getElementById("claim-order-input");
+  const orderId = (input ? input.value : cm.orderIdInput || "").trim();
+  cm.orderIdInput = orderId;
+  const entry = findPoolEntryByOrderId(orderId);
+  if(!entry){
+    cm.error = "We couldn't find a marketplace order with that ID. Double-check it and try again.";
+    render();
+    return;
+  }
+  cm.error = null;
+  cm.matchedAlias = entry.buyer_alias;
+  cm.step = "otp";
+  render();
+}
+function submitClaimOtp(){
+  const cm = state.claimModal;
+  const input = document.getElementById("claim-otp-input");
+  cm.otpInput = input ? input.value : cm.otpInput;
+  if(!cm.otpInput || cm.otpInput.trim().length < 4){
+    cm.error = "Enter the 4-digit code we sent to your phone (any 4 digits work in this demo).";
+    render();
+    return;
+  }
+  cm.error = null;
+  cm.step = "verifying";
   render();
   setTimeout(function(){
-    if(!state.bridgeModal) return;
-    state.bridgeModal.step = 3;
-    render();
+    if(!state.claimModal) return;
+    completeClaim();
   }, 1200);
 }
-function completeBridge(){
+function completeClaim(){
+  const cm = state.claimModal;
   const p = state.currentPersona;
-  p.bridgingStatus = "linked";
-  if(!p.loyaltyId) p.loyaltyId = state.bridgeModal.loyaltyInput || ("SV-" + Math.floor(10000+Math.random()*89999));
-  state.bridgeModal = null;
+  const entry = marketplaceOrderPool.find(function(e){ return e.buyer_alias === cm.matchedAlias; });
+  if(entry){
+    entry.claimed = true;
+    p.marketplaceOrders = (p.marketplaceOrders||[]).concat(entry.orders);
+    if(!p.fitPassport){
+      const allItems = entry.orders.reduce(function(list,o){ return list.concat(o.items); }, []);
+      p.fitPassport = {
+        archetypeId: guessArchetypeFromSizes(allItems), tier:"basic", passportConfidence: 45,
+        completedAt: SCE_SEED.demoToday, consent:{ use_for_sizing:true, share_with_advisors:false, include_claimed_marketplace:true },
+        sourcedFromClaim: true
+      };
+    }
+    p.loyaltyPoints = (p.loyaltyPoints||0) + 250; // Tier D, illustrative bridge incentive
+    p.claimStatus = "claimed";
+    p.bridgingStatus = "linked";
+  }
+  cm.step = "success";
+  cm.claimedCount = entry ? entry.orders.length : 0;
   render();
 }
-function renderBridgeModal(){
-  const bm = state.bridgeModal;
+function renderClaimModal(){
+  const cm = state.claimModal;
   const p = state.currentPersona;
-  const finishing = p.bridgingStatus === "started" || p.bridgingStatus === "linked";
   let inner = "";
-  if(bm.step === 1){
+  if(cm.step === "entry"){
     inner = ''
-      + '<h3>'+(finishing ? "Finish linking your account" : "Link your marketplace account")+'</h3>'
-      + '<p style="color:var(--muted); font-size:13px;">Enter your StyleVerse loyalty number to connect your marketplace history.</p>'
-      + '<div class="field"><label>Loyalty number</label><input type="text" id="bridge-loyalty-input" placeholder="e.g. SV-10344" value="'+escapeHtml(bm.loyaltyInput||"")+'"></div>'
-      + '<button class="btn" style="width:100%" data-action="bridge-verify">Verify</button>';
-  } else if(bm.step === 2){
-    inner = '<h3>Verifying...</h3><div class="spinner"></div><p style="text-align:center; color:var(--muted); font-size:13px;">Connecting your marketplace history</p>';
-  } else if(bm.step === 3){
-    const mktCount = (p.marketplaceOrders||[]).length;
+      + '<h3>Claim your marketplace orders</h3>'
+      + '<p style="color:var(--muted); font-size:13px;">Bought '+escapeHtml(activeBrand().name)+' on a marketplace app? Enter an order ID to bring that history — and your sizes — into this account.</p>'
+      + (cm.error ? '<p style="color:var(--red); font-size:12.5px;">'+escapeHtml(cm.error)+'</p>' : '')
+      + '<div class="field"><label>Marketplace order ID</label><input type="text" id="claim-order-input" placeholder="e.g. MKT-7701" value="'+escapeHtml(cm.orderIdInput||"")+'"></div>'
+      + '<button class="btn" style="width:100%" data-action="claim-submit-order">Continue</button>'
+      + '<button class="btn ghost" style="width:100%; margin-top:8px;" data-action="claim-scan-qr">Scan package-insert QR instead</button>';
+  } else if(cm.step === "otp"){
+    inner = ''
+      + '<h3>Verify it\'s you</h3>'
+      + '<p style="color:var(--muted); font-size:13px;">We texted a 4-digit code to the phone on file for this order (this demo accepts any 4 digits).</p>'
+      + (cm.error ? '<p style="color:var(--red); font-size:12.5px;">'+escapeHtml(cm.error)+'</p>' : '')
+      + '<div class="field"><label>OTP code</label><input type="text" id="claim-otp-input" placeholder="e.g. 4821" maxlength="4"></div>'
+      + '<button class="btn" style="width:100%" data-action="claim-submit-otp">Verify</button>';
+  } else if(cm.step === "verifying"){
+    inner = '<h3>Verifying...</h3><div class="spinner"></div><p style="text-align:center; color:var(--muted); font-size:13px;">Matching your marketplace history</p>';
+  } else if(cm.step === "success"){
     inner = ''
       + '<div class="checkmark-anim">&#10003;</div>'
       + '<h3 style="text-align:center;">You\'re linked!</h3>'
-      + '<div class="card" style="padding:14px; margin-top:12px; font-size:13px;">Your marketplace history and this account are now connected — '+mktCount+' marketplace order'+(mktCount===1?"":"s")+' now visible here.</div>'
-      + '<button class="btn" style="width:100%; margin-top:16px;" data-action="bridge-complete">Done</button>';
+      + '<div class="card" style="padding:14px; margin-top:12px; font-size:13px;">'
+      +   (cm.claimedCount||0)+' marketplace order'+(cm.claimedCount===1?"":"s")+' now visible in Track Everywhere'
+      +   (p.fitPassport && p.fitPassport.sourcedFromClaim ? ', and we started a Fit Passport from your purchased sizes' : '')+'. '
+      +   '+250 loyalty points credited (illustrative).'
+      + '</div>'
+      + '<button class="btn" style="width:100%; margin-top:16px;" data-action="close-claim-modal">Done</button>';
   }
+  const stepIdx = { entry:1, otp:2, verifying:2, success:3 }[cm.step] || 1;
   return ''
-    + '<div class="modal-overlay" data-action="noop">'
-    +   '<div class="modal">'
-    +     '<div class="step-dots"><span class="'+(bm.step>=1?"active":"")+'"></span><span class="'+(bm.step>=2?"active":"")+'"></span><span class="'+(bm.step>=3?"active":"")+'"></span></div>'
+    + '<div class="modal-overlay" data-action="close-claim-modal">'
+    +   '<div class="modal" data-action="noop" role="dialog" aria-modal="true" aria-label="Claim marketplace orders">'
+    +     '<button class="close-x" data-action="close-claim-modal" aria-label="Close" style="position:absolute; top:12px; right:14px;">&times;</button>'
+    +     '<div class="step-dots"><span class="'+(stepIdx>=1?"active":"")+'"></span><span class="'+(stepIdx>=2?"active":"")+'"></span><span class="'+(stepIdx>=3?"active":"")+'"></span></div>'
     +     inner
     +   '</div>'
     + '</div>';

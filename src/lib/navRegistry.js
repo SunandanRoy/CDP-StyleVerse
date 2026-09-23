@@ -30,7 +30,8 @@ export const NAV_GROUPS = [
       { to: '/governance/dial', label: 'AI Involvement Dial', icon: 'dial' },
       { to: '/governance/voice-certification', label: 'Brand Voice Certification', icon: 'voice' },
       { to: '/governance/override-wins', label: 'Override Wins', icon: 'override' },
-      { to: '/governance/model-registry', label: 'Model Registry', icon: 'registry' }
+      { to: '/governance/model-registry', label: 'Model Registry', icon: 'registry' },
+      { to: '/changelog', label: 'Changelog', icon: 'changelog' }
     ]
   },
   {

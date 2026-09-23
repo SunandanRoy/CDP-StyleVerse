@@ -25,6 +25,7 @@ import CapacityLedger from './pages/CapacityLedger'
 import MarketplaceSignal from './pages/MarketplaceSignal'
 import CareerLattice from './pages/CareerLattice'
 import FeedbackLoop from './pages/FeedbackLoop'
+import Changelog from './pages/Changelog'
 
 export default function App() {
   return (
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/business/marketplace-signal" element={<MarketplaceSignal />} />
             <Route path="/business/career-lattice" element={<CareerLattice />} />
             <Route path="/feedback-loop" element={<FeedbackLoop />} />
+            <Route path="/changelog" element={<Changelog />} />
           </Routes>
         </main>
       </div>

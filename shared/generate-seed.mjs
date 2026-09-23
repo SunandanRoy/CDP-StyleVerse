@@ -793,7 +793,7 @@ const LIMITATIONS_DATA = [
   "Fit Preview renders are stylised and illustrative, not photorealistic — deliberately, per the pilot-feasible rendering tier.",
   "Social-proof rates are computed over seeded fit-feedback events, so they demonstrate the mechanism and its data-volume fallback ladder, not production statistical power.",
   "The marketplace claim flow's QR scan and OTP are simulated; real claiming depends on a negotiated marketplace data-sharing arrangement.",
-  "Only two Gemini call sites exist here versus more in the Enterprise Console — a deliberate scoping choice, not an architectural limit.",
+  "Only three Gemini call sites exist here (fit explanation, style advisor, support) versus more in the Enterprise Console — a deliberate scoping choice, not an architectural limit.",
   "No payment or delivery mechanics: Stage 4 drop-off is largely Order Fulfilment's remit and is flagged as unaddressed rather than force-fitted with a feature.",
   "The live event bus (LIVE_SYNC) and bracketing/store-handoff flags are proposed extensions beyond the solution doc, shipped default-OFF."
 ];

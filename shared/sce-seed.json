@@ -89,7 +89,8 @@
       "price_band": [
         499,
         2999
-      ]
+      ],
+      "hesitation_nudge_threshold": 25
     },
     {
       "id": "urbanedge",
@@ -116,7 +117,8 @@
       "price_band": [
         1299,
         4999
-      ]
+      ],
+      "hesitation_nudge_threshold": 30
     },
     {
       "id": "maisonluxe",
@@ -143,7 +145,8 @@
       "price_band": [
         12000,
         48000
-      ]
+      ],
+      "hesitation_nudge_threshold": 40
     },
     {
       "id": "ecoweave",
@@ -170,7 +173,8 @@
       "price_band": [
         1999,
         6999
-      ]
+      ],
+      "hesitation_nudge_threshold": 35
     },
     {
       "id": "threadbasics",
@@ -197,7 +201,8 @@
       "price_band": [
         299,
         1799
-      ]
+      ],
+      "hesitation_nudge_threshold": 30
     }
   ],
   "archetypes": [
@@ -9113,5 +9118,5 @@
       }
     ]
   },
-  "checksum": "53ad7642ac694f23d6f51fbcf086aa1ccb9ae873220a039a420a8a65340a35bd"
+  "checksum": "e3b1f818862798ad1a9cfac9770aa114bdb70f29d7f2d472ae614c5a13a889eb"
 }

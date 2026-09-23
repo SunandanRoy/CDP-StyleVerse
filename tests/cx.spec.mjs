@@ -243,6 +243,31 @@ async function test10_noHorizontalOverflow(browser) {
   await page.close();
   record("10. No horizontal overflow at 390px (8 screens)", allOk, detail.join(" "));
 }
+// Regression guard for a real bug this suite's manual QA caught: a broken product image's
+// intrinsic size blowing out a `1fr 1fr` CSS Grid track (min-width:auto default) on the
+// product detail page specifically, silently masked by html,body{overflow-x:hidden} — no
+// visible scrollbar, but price/ring/add-to-cart were laid out off-screen. Checked at 1280px
+// (desktop) on the PDP after the exact interaction sequence that surfaced it (two size
+// toggles + opening the size guide, which also renders the A1 nudge card).
+async function test10b_noPdpLayoutBlowoutAt1280(browser) {
+  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  await page.goto(FILE_URL);
+  await page.waitForTimeout(200);
+  await page.evaluate(() => { window.selectPersona("p1"); });
+  await page.waitForTimeout(150);
+  await page.evaluate(() => { const p = products.find(pr => pr.brandId === "speedstyle" && pr.fit_applicable); window.openProduct(p.id); });
+  await page.waitForTimeout(150);
+  await page.evaluate(() => { window.selectSize("S"); window.selectSize("M"); window.toggleSizeGuide(); });
+  await page.waitForTimeout(150);
+  const o = await page.evaluate(() => ({ sw: document.documentElement.scrollWidth, cw: document.documentElement.clientWidth, hasAddToCart: !!document.querySelector('[data-action="add-to-cart"]') }));
+  const rect = await page.evaluate(() => {
+    const el = document.querySelector('[data-action="add-to-cart"]');
+    return el ? el.getBoundingClientRect().right : null;
+  });
+  await page.close();
+  const pass = o.sw === o.cw && o.hasAddToCart && rect !== null && rect <= 1280;
+  record("10b. PDP (with nudge + size guide open) has no grid blowout at 1280px", pass, JSON.stringify({ ...o, addToCartRight: rect }));
+}
 
 async function test11_standaloneGate() {
   const tmp = mkdtempSync(path.join(tmpdir(), "sce-standalone-"));
@@ -325,6 +350,7 @@ async function main() {
     test8_arithmetic();
     test9_checksumMatches();
     await test10_noHorizontalOverflow(browser);
+    await test10b_noPdpLayoutBlowoutAt1280(browser);
     await test12_deepLink(browser);
   } finally {
     await browser.close();

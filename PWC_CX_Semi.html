@@ -979,10 +979,12 @@ function renderShareLinkBox(profileName){
     +   '<div class="link-row"><input type="text" readonly value="'+shareLinkFor(profileName)+'"><button class="btn ghost small" data-action="copy-share-link" data-link="'+shareLinkFor(profileName)+'">Copy</button></div>'
     + '</div>';
 }
+// B17 fix: dates render via the shared formatDateIN helper everywhere (e.g. "9 Jun 2026"),
+// not a locale/ISO mix — the exact same formatting the Enterprise Console uses.
 function fmtDate(iso){
-  const dt = new Date(iso);
-  if(isNaN(dt)) return iso;
-  return dt.toLocaleDateString("en-IN", { day:"numeric", month:"short", year:"numeric" });
+  if(!iso) return "";
+  const out = formatDateIN(iso.length > 10 ? iso.slice(0,10) : iso);
+  return out || iso;
 }
 /* ---------------------------- TOAST NOTIFICATIONS ---------------------------- */
 function showToast(message, actionLabel, actionFn){
@@ -2104,8 +2106,31 @@ function renderWishlistScreen(){
     +   '<div class="product-grid">'+cards+'</div>'
     + '</div>';
 }
+// B3 fix: a line is flagged if the selected size != the recommended size OR its tier is
+// low (fit-applicable items only) — not score<60 alone — and this is recomputed fresh on
+// every render (cart screen included), so changing size in cart re-checks immediately.
+function cartLineFlag(p, line, archId){
+  if(!p.fit_applicable) return null;
+  const score = confidenceScore(p, archId);
+  const tier = confidenceTier(score);
+  const rec = archId ? recSizeFor(p, archId) : null;
+  const wrongSize = !!(rec && rec !== line.size);
+  const lowTier = tier === "low";
+  if(!wrongSize && !lowTier) return null;
+  return { wrongSize: wrongSize, lowTier: lowTier, rec: rec, score: score, tier: tier };
+}
+function zoneRiskNote(product, archetypeId){
+  const dom = DOMINANT_ZONE_BY_CATEGORY[product.category];
+  const cell = (archetypeId && fitMatrix[product.category]) ? fitMatrix[product.category][archetypeId] : null;
+  if(!dom || !cell) return "This runs a lower fit-confidence match for your build.";
+  const dir = cell[dom];
+  if(dir === "runs_tight") return "This runs snug in the " + dom + " for your build.";
+  if(dir === "runs_loose") return "This runs with extra room in the " + dom + " for your build.";
+  return "Even true to size, this runs a lower fit-confidence match for your build.";
+}
 function renderCartScreen(){
   const brand = activeBrand();
+  const archId = activeArchetypeId();
   if(!state.cart.length){
     return ''
       + '<div class="page container">'
@@ -2121,8 +2146,10 @@ function renderCartScreen(){
   const lines = state.cart.map(function(line, idx){
     const p = getProduct(line.productId);
     const brandOf = getBrand(p.brandId);
-    const score = confidenceScore(p, activeArchetypeId());
-    const tier = confidenceTier(score);
+    const showScore = p.fit_applicable && !isAdvisorFronted(brandOf);
+    const score = showScore ? confidenceScore(p, archId) : null;
+    const tier = showScore ? confidenceTier(score) : null;
+    const flag = cartLineFlag(p, line, archId);
     total += p.priceInr * line.qty;
     const sizeOpts = p.sizes.map(function(sz){ return '<option value="'+sz+'" '+(sz===line.size?"selected":"")+'>'+sz+'</option>'; }).join("");
     return ''
@@ -2131,10 +2158,11 @@ function renderCartScreen(){
       +   '<div class="cl-info">'
       +     '<div style="font-weight:600; font-size:14px;">'+escapeHtml(p.name)+'</div>'
       +     '<div style="font-size:12px; color:var(--muted);">'+money(p.priceInr)+' &middot; Qty '+line.qty+'</div>'
-      +     '<span class="badge '+tier+'">'+score+'% fit confidence</span>'
+      +     (showScore ? '<span class="badge '+tier+'">'+score+'% fit confidence</span>' : '')
+      +     (flag ? '<div style="font-size:11.5px; color:var(--amber); margin-top:4px;">&#9888; '+(flag.wrongSize ? 'Recommended size is '+flag.rec+' for your build.' : zoneRiskNote(p, archId))+'</div>' : '')
       +   '</div>'
       +   '<div class="cl-actions">'
-      +     '<select data-action="cart-size" data-idx="'+idx+'">'+sizeOpts+'</select>'
+      +     (p.fit_applicable ? '<select data-action="cart-size" data-idx="'+idx+'">'+sizeOpts+'</select>' : '<span class="badge">One Size</span>')
       +     '<button class="btn ghost small" data-action="cart-remove" data-idx="'+idx+'">Remove</button>'
       +   '</div>'
       + '</div>';
@@ -2149,11 +2177,11 @@ function renderCartScreen(){
 }
 
 function goCheckout(){
+  const archId = activeArchetypeId();
   const flagged = [];
   state.cart.forEach(function(line, idx){
     const p = getProduct(line.productId);
-    const score = confidenceScore(p, activeArchetypeId());
-    if(score < 60) flagged.push(idx);
+    if(cartLineFlag(p, line, archId)) flagged.push(idx);
   });
   navigate("checkout-interstitial", {
     flaggedIdx: flagged, reviewPos: 0, resolved:{},
@@ -2209,21 +2237,30 @@ function placeOrder(){
 function renderCheckoutInterstitialScreen(){
   const sp = state.screenParams;
   const brand = activeBrand();
+  const archId = activeArchetypeId();
   const totalFlagged = sp.flaggedIdx.length;
   if(sp.reviewPos < totalFlagged){
     const idx = sp.flaggedIdx[sp.reviewPos];
     const line = state.cart[idx];
     const p = getProduct(line.productId);
     const brandOf = getBrand(p.brandId);
-    const suggested = recSizeFor(p, activeArchetypeId());
+    // B2 fix: the interstitial never offers the size already selected; when the recommended
+    // size equals the current one, it's flagged purely on zone risk, so explain that instead.
+    const flag = cartLineFlag(p, line, archId);
+    const title = flag && flag.wrongSize
+      ? escapeHtml(p.name) + ' may not fit as expected in size ' + line.size
+      : escapeHtml(p.name) + ' — a fit note for your build';
+    const body = flag && flag.wrongSize
+      ? 'Based on fit data for your archetype, we suggest size <strong>' + flag.rec + '</strong> instead.'
+      : zoneRiskNote(p, archId);
     return ''
       + '<div class="interstitial"><div class="interstitial-inner">'
       +   '<p style="font-size:12px; color:var(--muted);">'+(sp.reviewPos+1)+' of '+totalFlagged+' items to review</p>'
       +   '<img class="img-loading" src="'+p.imageUrl+'" alt="'+escapeHtml(p.name)+'" onload="this.classList.remove(\'img-loading\')" onerror="handleImgError(this,\''+p.category+'\',\''+brandOf.accent+'\')">'
-      +   '<h2>'+escapeHtml(p.name)+' may not fit as expected in size '+line.size+'</h2>'
-      +   '<p style="color:var(--muted); font-size:13.5px;">Based on fit data for your archetype, we suggest size <strong>'+suggested+'</strong> instead.</p>'
+      +   '<h2>'+title+'</h2>'
+      +   '<p style="color:var(--muted); font-size:13.5px;">'+body+'</p>'
       +   '<div style="display:flex; flex-direction:column; gap:10px; margin-top:20px;">'
-      +     '<button class="btn" data-action="resolve-update-size">Update to size '+suggested+'</button>'
+      +     (flag && flag.wrongSize ? '<button class="btn" data-action="resolve-update-size">Update to size '+flag.rec+'</button>' : '')
       +     '<button class="btn ghost" data-action="resolve-keep-anyway">Continue with size '+line.size+' anyway</button>'
       +   '</div>'
       + '</div></div>';
@@ -2980,15 +3017,32 @@ function renderHomeScreen(){
       +   '</div>'
       + '</div>';
   }
+  // B7 fix: render functions must be pure — no state mutation here. proactiveOutreachSent
+  // is set only by the actual user action (viewOutreachDetails), so a re-render triggered
+  // by something else (e.g. a wishlist toggle) never silently dismisses the banner.
   if(needsProactiveOutreach()){
     banners += ''
       + '<div class="banner outreach">'
       +   '<p><strong>We noticed a possible delay</strong> with your recent order — here\'s what we\'re doing about it.</p>'
       +   '<button class="btn small secondary" data-action="view-outreach-details">View Details</button>'
       + '</div>';
-    p.proactiveOutreachSent = true; // mark shown so it doesn't repeat within the session
   }
-  const featured = products.filter(function(pr){ return pr.brandId === brand.id; }).slice(0,4);
+  // B11 fix: "Picked for you" ranks by confidence for the active profile, excluding items
+  // already owned; advisor-fronted brands (Maison Luxe) get a curated, score-free rail.
+  const advisorFronted = isAdvisorFronted(brand);
+  const ownedIds = (p.orders||[]).reduce(function(set, o){ o.items.forEach(function(it){ set[it.productId]=true; }); return set; }, {});
+  const brandProducts = products.filter(function(pr){ return pr.brandId === brand.id && !ownedIds[pr.id]; });
+  let featured;
+  if(advisorFronted){
+    featured = brandProducts.slice(0,4);
+  } else {
+    const archId = activeArchetypeId();
+    featured = brandProducts.filter(function(pr){ return pr.fit_applicable; })
+      .map(function(pr){ return { pr: pr, score: confidenceScore(pr, archId) || 0 }; })
+      .sort(function(a,b){ return b.score - a.score; })
+      .slice(0,4).map(function(x){ return x.pr; });
+    if(featured.length < 4){ featured = brandProducts.slice(0,4); }
+  }
   const featuredHtml = featured.map(renderProductCard).join("");
   const timeline = getTimelineOrders(p);
   const arch = p.fitPassport ? getArchetype(p.fitPassport.archetypeId) : null;
@@ -3009,7 +3063,7 @@ function renderHomeScreen(){
     +   '</div>'
     +   banners
     +   '<div class="stats-strip">'+statsHtml+'</div>'
-    +   '<h2 class="section-title">Picked for you</h2>'
+    +   '<h2 class="section-title">'+(advisorFronted ? 'Curated by '+(ADVISOR_NAMES[brand.id]||'your Advisor') : 'Picked for you')+'</h2>'
     +   '<div class="product-grid">'+featuredHtml+'</div>'
     + '</div>';
 }

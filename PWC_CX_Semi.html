@@ -31,7 +31,9 @@
     --glass-blur: 18px;
   }
   *{box-sizing:border-box;}
-  html,body{margin:0;padding:0;}
+  /* B16 fix: no page-level horizontal scroll at any width — tables scroll inside their own
+     .table-wrap container instead (see .table-wrap below). */
+  html,body{margin:0;padding:0; overflow-x:hidden; max-width:100%;}
   body{
     font-family:var(--body-font);
     background:var(--bg);
@@ -609,7 +611,7 @@
 </head>
 <body>
 <div id="app"></div>
-<div id="toast-host"></div>
+<div id="toast-host" aria-live="polite" aria-atomic="true"></div>
 <script>
 /* =========================================================================
    STYLEVERSE — SINGLE-FILE PROTOTYPE
@@ -812,15 +814,32 @@ function nextImage(category, detail){
   const detailIdx = (idx+1) % list.length;
   return detail ? list[detailIdx] : list[idx];
 }
+// B18 fix: offline/broken-image fallback is now a category-specific garment illustration
+// (drawn in code, no third-party art) tinted by the brand accent, instead of a flat
+// "StyleVerse / Category" text card.
+const GARMENT_ILLUSTRATIONS = {
+  Tops: '<path d="M170 150 L210 110 L250 130 L290 110 L330 150 L370 210 L330 240 L310 210 L310 480 L190 480 L190 210 L170 240 L130 210 Z" fill="white" opacity="0.92"/>'
+      + '<path d="M210 110 Q250 150 290 110" fill="none" stroke="white" stroke-width="6" opacity="0.5"/>',
+  Bottoms: '<path d="M190 130 L310 130 L320 480 L270 480 L250 260 L230 480 L180 480 Z" fill="white" opacity="0.92"/>'
+      + '<line x1="190" y1="170" x2="310" y2="170" stroke="white" stroke-width="4" opacity="0.4"/>',
+  Outerwear: '<path d="M160 160 L215 105 L250 135 L285 105 L340 160 L378 225 L335 255 L312 220 L312 490 L188 490 L188 220 L165 255 L122 225 Z" fill="white" opacity="0.92"/>'
+      + '<line x1="250" y1="135" x2="250" y2="480" stroke="black" stroke-width="3" opacity="0.18"/>'
+      + '<path d="M215 105 L235 160 L250 135 L265 160 L285 105" fill="none" stroke="white" stroke-width="5" opacity="0.55"/>',
+  Footwear: '<path d="M110 420 Q110 370 170 360 L260 345 Q300 300 360 320 L400 345 Q430 355 430 400 L430 440 L110 440 Z" fill="white" opacity="0.92"/>'
+      + '<path d="M170 360 L260 345" fill="none" stroke="black" stroke-width="4" opacity="0.15"/>',
+  Dresses: '<path d="M200 130 L230 105 L250 125 L270 105 L300 130 L285 200 L330 470 L170 470 L215 200 Z" fill="white" opacity="0.92"/>'
+      + '<path d="M230 105 Q250 145 270 105" fill="none" stroke="white" stroke-width="6" opacity="0.5"/>',
+  Accessories: '<path d="M170 230 L330 230 L345 460 L155 460 Z" fill="white" opacity="0.92"/>'
+      + '<path d="M205 230 Q205 160 250 160 Q295 160 295 230" fill="none" stroke="white" stroke-width="10" opacity="0.75"/>'
+};
 function placeholderDataUri(category, accentHex){
-  const label = category;
   const bgHex = accentHex || "#64748b";
+  const illustration = GARMENT_ILLUSTRATIONS[category] || GARMENT_ILLUSTRATIONS.Tops;
   const svg = '<svg xmlns="http://www.w3.org/2000/svg" width="500" height="640">'
     + '<rect width="500" height="640" fill="' + bgHex + '"/>'
-    + '<rect x="0" y="0" width="500" height="640" fill="black" opacity="0.12"/>'
-    + '<circle cx="250" cy="270" r="70" fill="white" opacity="0.18"/>'
-    + '<text x="250" y="285" font-family="sans-serif" font-size="26" fill="white" text-anchor="middle" opacity="0.9">StyleVerse</text>'
-    + '<text x="250" y="330" font-family="sans-serif" font-size="16" fill="white" text-anchor="middle" opacity="0.75">' + label + '</text>'
+    + '<rect x="0" y="0" width="500" height="640" fill="black" opacity="0.1"/>'
+    + illustration
+    + '<text x="250" y="590" font-family="sans-serif" font-size="14" fill="white" text-anchor="middle" opacity="0.7">' + escapeHtml(category) + ' &middot; illustrative</text>'
     + '</svg>';
   return "data:image/svg+xml;utf8," + encodeURIComponent(svg);
 }
@@ -1351,17 +1370,24 @@ function initFitModel(containerId, archetypeId, category){
 
   root.querySelector('[data-role="rotleft"]').addEventListener("click", function(){ animatedStep(-1); });
   root.querySelector('[data-role="rotright"]').addEventListener("click", function(){ animatedStep(1); });
+  // B15 fix: auto-rotate respects prefers-reduced-motion instead of ignoring it.
+  const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const autoBtn = root.querySelector('[data-role="autorotate"]');
-  autoBtn.addEventListener("click", function(){
-    if(ctrl.autoRotateTimer){
-      clearInterval(ctrl.autoRotateTimer);
-      ctrl.autoRotateTimer = null;
-      autoBtn.classList.remove("active-toggle");
-    } else {
-      autoBtn.classList.add("active-toggle");
-      ctrl.autoRotateTimer = setInterval(function(){ animatedStep(1); }, 2500);
-    }
-  });
+  if(prefersReducedMotion){
+    autoBtn.disabled = true;
+    autoBtn.title = "Auto-rotate is off (reduced motion preferred)";
+  } else {
+    autoBtn.addEventListener("click", function(){
+      if(ctrl.autoRotateTimer){
+        clearInterval(ctrl.autoRotateTimer);
+        ctrl.autoRotateTimer = null;
+        autoBtn.classList.remove("active-toggle");
+      } else {
+        autoBtn.classList.add("active-toggle");
+        ctrl.autoRotateTimer = setInterval(function(){ animatedStep(1); }, 2500);
+      }
+    });
+  }
   root.querySelector('[data-role="zoomin"]').addEventListener("click", function(){
     ctrl.zoom = Math.min(2, ctrl.zoom + 0.15);
     zoomwrap.style.transform = "scale(" + ctrl.zoom + ")";
@@ -1660,10 +1686,26 @@ function afterRender(){
     if(arch && p) initFitModel("pd-fm", arch, p.category);
   }
   if(state.screen === "home"){ animateCountUps(); }
+  enhanceInteractiveDivs();
+}
+// B15 fix: every clickable, non-<button> element with a data-action becomes keyboard
+// operable (role="button", tabindex="0") without touching every render function's markup;
+// Enter/Space activation is handled once in handleAppKeydown.
+function enhanceInteractiveDivs(){
+  document.querySelectorAll("#app [data-action]").forEach(function(el){
+    const tag = el.tagName;
+    if(tag === "BUTTON" || tag === "A" || tag === "INPUT" || tag === "SELECT" || tag === "TEXTAREA" || tag === "LABEL") return;
+    if(el.getAttribute("data-action") === "noop") return;
+    if(!el.hasAttribute("tabindex")) el.setAttribute("tabindex", "0");
+    if(!el.hasAttribute("role")) el.setAttribute("role", "button");
+  });
 }
 function animateCountUps(){
+  // B15 fix: skip the count-up animation for reduced-motion users — show the final value immediately.
+  const prefersReducedMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   document.querySelectorAll("[data-countup]").forEach(function(el){
     const target = parseInt(el.getAttribute("data-countup"), 10) || 0;
+    if(prefersReducedMotion){ el.textContent = target; return; }
     const start = performance.now();
     const dur = 650;
     function tick(now){
@@ -2776,9 +2818,14 @@ function handleAppKeypress(e){
   if(e.target.id === "claim-order-input"){ submitClaimOrderId(); }
   if(e.target.id === "claim-otp-input"){ submitClaimOtp(); }
 }
-// B9/B15 fix: the modal is closable by Esc as well as its close button and overlay click.
+// B9/B15 fix: the modal is closable by Esc as well as its close button and overlay click,
+// and every role="button" data-action element activates on Enter/Space like a real button.
 function handleAppKeydown(e){
-  if(e.key === "Escape" && state.claimModal){ closeClaimModal(); }
+  if(e.key === "Escape" && state.claimModal){ closeClaimModal(); return; }
+  if(e.key === "Enter" || e.key === " " || e.key === "Spacebar"){
+    const el = e.target && e.target.closest && e.target.closest('[data-action][role="button"]');
+    if(el){ e.preventDefault(); el.click(); }
+  }
 }
 
 function initApp(){

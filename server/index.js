@@ -164,6 +164,23 @@ app.get('/api/marketplace-buyers', (req, res) => {
   )
 })
 
+// D5 — bridge funnel: approve a pending marketplace claim, joining the
+// alias to its D2C profile and awarding the +250 loyalty-point bridge
+// incentive (SCE_DATA_CONTRACT.md §12.1 open-decision default).
+app.post('/api/marketplace-buyers/:alias/approve-claim', (req, res) => {
+  const buyer = db.marketplaceBuyers.find((b) => b.buyer_alias === req.params.alias)
+  if (!buyer || !buyer.pending_claim_for) return res.status(404).json({ error: 'no pending claim for this alias' })
+  const customer = db.customersById.get(buyer.pending_claim_for)
+  if (!customer) return res.status(404).json({ error: 'claimed customer not found' })
+  buyer.claimed_by = buyer.pending_claim_for
+  buyer.pending_claim_for = null
+  customer.channels = [...new Set([...(customer.channels || []), 'Marketplace'])]
+  customer.d2c_only = false
+  customer.marketplace_bridge_bonus_points = 250
+  customer.marketplace_bridge_date = DEMO_TODAY
+  res.json({ buyer, customer })
+})
+
 // ---------------------------------------------------------------- products
 app.get('/api/products', (req, res) => {
   let rows = db.products

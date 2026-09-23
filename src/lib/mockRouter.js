@@ -493,6 +493,22 @@ const POST_ROUTES = [
     }
   ],
   [
+    /^\/marketplace-buyers\/([^/]+)\/approve-claim$/,
+    ([alias]) => {
+      const buyer = db.marketplaceBuyers.find((b) => b.buyer_alias === alias)
+      if (!buyer || !buyer.pending_claim_for) return notFound('no pending claim for this alias')
+      const customer = db.customersById.get(buyer.pending_claim_for)
+      if (!customer) return notFound('claimed customer not found')
+      buyer.claimed_by = buyer.pending_claim_for
+      buyer.pending_claim_for = null
+      customer.channels = [...new Set([...(customer.channels || []), 'Marketplace'])]
+      customer.d2c_only = false
+      customer.marketplace_bridge_bonus_points = 250
+      customer.marketplace_bridge_date = DEMO_TODAY
+      return ok({ buyer, customer })
+    }
+  ],
+  [
     /^\/fit-matrix\/adjustments$/,
     (_p, _q, body) => {
       const { category, archetype_id, zone, new_value, reason, approver } = body

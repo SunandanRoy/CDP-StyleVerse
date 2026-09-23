@@ -3116,6 +3116,10 @@ function handleAppInput(e){
   if(action === "catalog-search"){ setFilter("search", el.value); }
   if(action === "secondary-name"){ state.screenParams.secondaryName = el.value; render(); }
   if(action === "measure-field"){ onboardSetMeasurement(el.getAttribute("data-field"), el.value); }
+  if(action === "calc-view-to-cart"){ state.screenParams.calcViewToCart = Number(el.value); render(); }
+  if(action === "calc-d2c-rate"){ state.screenParams.calcD2cRate = Number(el.value); render(); }
+  if(action === "calc-mkt-rate"){ state.screenParams.calcMktRate = Number(el.value); render(); }
+  if(action === "calc-split"){ state.screenParams.calcSplit = Number(el.value); render(); }
 }
 function handleAppChange(e){
   const el = e.target.closest("[data-action]");
@@ -3179,7 +3183,46 @@ if(document.readyState === "loading"){
 }
 
 /* ---------------------------- IMPACT DASHBOARD ---------------------------- */
+// A8 — Impact dashboard calculators (reviewer area, not shown to shoppers).
+function renderFunnelCalculator(sp){
+  const viewToCart = sp.calcViewToCart || 22;
+  const sessions = FUNNEL_DATA[0].volumeNum, views = FUNNEL_DATA[1].volumeNum;
+  const carts = Math.round(views * (viewToCart/100));
+  const checkouts = Math.round(carts * 0.57);
+  const orders = Math.round(checkouts * 0.42);
+  const endToEnd = (orders / sessions) * 100;
+  const required = 2.875;
+  return '<div class="card" style="padding:18px; margin-bottom:20px;">'
+    + '<strong style="font-size:13px;">Funnel calculator — product-view &rarr; cart rate</strong>'
+    + '<div style="margin-top:10px;"><input type="range" min="19" max="25" step="0.5" value="'+viewToCart+'" id="calc-view-to-cart" data-action="calc-view-to-cart" style="width:100%;"><div style="display:flex; justify-content:space-between; font-size:11px; color:var(--muted);"><span>19%</span><span style="font-weight:700; color:var(--text);">'+viewToCart+'%</span><span>25%</span></div></div>'
+    + '<div class="stats-strip" style="margin-top:14px;">'
+    +   '<div class="card stat-tile"><div class="stat-value">'+carts.toLocaleString("en-IN")+'</div><div class="stat-label">Carts</div></div>'
+    +   '<div class="card stat-tile"><div class="stat-value">'+checkouts.toLocaleString("en-IN")+'</div><div class="stat-label">Checkouts</div></div>'
+    +   '<div class="card stat-tile"><div class="stat-value">'+orders.toLocaleString("en-IN")+'</div><div class="stat-label">Orders</div></div>'
+    +   '<div class="card stat-tile"><div class="stat-value" style="color:'+(endToEnd>=required?"var(--green)":"var(--red)")+';">'+endToEnd.toFixed(2)+'%</div><div class="stat-label">End-to-end conversion</div></div>'
+    + '</div>'
+    + '<p style="font-size:11.5px; color:var(--muted); margin-top:8px;">Requirement marker: &ge;'+required+'% (the 3.2% ambition\'s minimum viable floor). '+(endToEnd>=required?"Above":"Below")+' the line at this rate.</p>'
+    + '</div>';
+}
+function renderReturnBlendCalculator(sp){
+  const d2c = sp.calcD2cRate != null ? sp.calcD2cRate : 21;
+  const mkt = sp.calcMktRate != null ? sp.calcMktRate : 23.5;
+  const split = sp.calcSplit != null ? sp.calcSplit : 45;
+  const blended = (split/100)*d2c + (1-split/100)*mkt;
+  const target = 22.4;
+  return '<div class="card" style="padding:18px; margin-bottom:26px;">'
+    + '<strong style="font-size:13px;">Return-rate blend calculator (SpeedStyle)</strong>'
+    + '<div style="margin-top:12px;"><label style="font-size:11.5px; color:var(--muted);">D2C return rate: '+d2c+'%</label><input type="range" min="10" max="35" step="0.5" value="'+d2c+'" id="calc-d2c-rate" data-action="calc-d2c-rate" style="width:100%;"></div>'
+    + '<div style="margin-top:10px;"><label style="font-size:11.5px; color:var(--muted);">Marketplace return rate: '+mkt+'%</label><input type="range" min="10" max="35" step="0.5" value="'+mkt+'" id="calc-mkt-rate" data-action="calc-mkt-rate" style="width:100%;"></div>'
+    + '<div style="margin-top:10px;"><label style="font-size:11.5px; color:var(--muted);">D2C share of orders: '+split+'%</label><input type="range" min="0" max="100" step="5" value="'+split+'" id="calc-split" data-action="calc-split" style="width:100%;"></div>'
+    + '<div class="stats-strip" style="margin-top:14px;">'
+    +   '<div class="card stat-tile"><div class="stat-value" style="color:'+(blended<=target?"var(--green)":"var(--red)")+';">'+blended.toFixed(2)+'%</div><div class="stat-label">Blended return rate</div></div>'
+    +   '<div class="card stat-tile"><div class="stat-value">'+target+'%</div><div class="stat-label">Target line (&minus;20%)</div></div>'
+    + '</div>'
+    + '</div>';
+}
 function renderImpactScreen(){
+  const sp = state.screenParams;
   const maxVol = FUNNEL_DATA[0].volumeNum;
   const bars = FUNNEL_DATA.map(function(f){
     const pct = Math.max(6, Math.round((f.volumeNum / maxVol) * 100));
@@ -3211,7 +3254,11 @@ function renderImpactScreen(){
     +   '<p style="color:var(--muted); max-width:640px; margin-bottom:26px;">The behavioural failure this prototype targets: purchase-decision uncertainty, pre- and post-purchase. Every feature below is mapped to the funnel stage it addresses and the KPI it is committed to move.</p>'
     +   '<h2 class="section-title">Funnel — where the leak happens</h2>'
     +   '<div class="card" style="padding:20px 22px; margin-bottom:26px;">' + bars + '</div>'
+    +   '<p style="font-size:11.5px; color:var(--muted); margin:-16px 0 20px 0;">Tracked but uncommitted: true cart abandonment (1 &minus; orders/carts) is 76.2% — the KPI table\'s 81%&rarr;78% row is exploration-stage abandonment (100 &minus; view&rarr;cart), a different denominator.</p>'
     +   '<div class="table-wrap"><table class="data-table"><thead><tr><th>Stage</th><th>Volume</th><th>Advance</th><th>Named cause</th><th>Feature response</th></tr></thead><tbody>'+funnelRows+'</tbody></table></div>'
+    +   '<h2 class="section-title">Calculators</h2>'
+    +   renderFunnelCalculator(sp)
+    +   renderReturnBlendCalculator(sp)
     +   '<h2 class="section-title">Feature &rarr; KPI attribution</h2>'
     +   '<div class="kpi-grid">'+kpiCards+'</div>'
     + '</div>';

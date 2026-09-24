@@ -1,10 +1,10 @@
 {
   "meta": {
     "demo_today": "2026-09-25",
-    "generated_at": "2026-09-23T18:20:06.408Z",
+    "generated_at": "2026-09-24T07:27:22.178Z",
     "seed": 20260922,
     "version": "2.0",
-    "checksum": "85a954d11c4df2f82abde5c39e1f7004ccb71ccc17784a9b59e178008f8253a4"
+    "checksum": "999cb359066ad622b509eddba9a33bb686b461d8eb4dbd96ad6fbbd35e90aada"
   },
   "brands": [
     {
@@ -17492,7 +17492,7 @@
       "baseline": "19%",
       "commit": "22%",
       "ambition": "25%",
-      "note": "A / D",
+      "note": "",
       "modules": [
         2,
         3
@@ -17514,7 +17514,7 @@
       "baseline": "81%",
       "commit": "78%",
       "ambition": "75%",
-      "note": "Renamed from \"cart abandonment\" — see §12.2",
+      "note": "Renamed from \"cart abandonment\" to reflect the full pre-purchase journey",
       "modules": []
     },
     {
@@ -17522,7 +17522,7 @@
       "baseline": "58%",
       "commit": "68%",
       "ambition": "75%",
-      "note": "A / D",
+      "note": "",
       "modules": [
         3,
         5,
@@ -17534,7 +17534,7 @@
       "baseline": "28%",
       "commit": "22.4% blended (21% D2C / 23.5% marketplace)",
       "ambition": "20%",
-      "note": "0.45×21 + 0.55×23.5 = 22.375 ≈ 22.4 = 28 × 0.8; weights assume SpeedStyle mirrors the 45/55 portfolio split (Tier C)",
+      "note": "0.45×21 + 0.55×23.5 = 22.375 ≈ 22.4 = 28 × 0.8; weights assume SpeedStyle mirrors the 45/55 portfolio split",
       "modules": [
         4,
         5,
@@ -17546,7 +17546,7 @@
       "baseline": "48 hrs",
       "commit": "18 hrs",
       "ambition": "8 hrs",
-      "note": "A / D",
+      "note": "",
       "modules": [
         6,
         7
@@ -17579,7 +17579,7 @@
       "baseline": "~₹3,195",
       "commit": "+8%",
       "ambition": "+15%",
-      "note": "Tier C",
+      "note": "Directional estimate",
       "modules": []
     },
     {

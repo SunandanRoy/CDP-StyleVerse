@@ -124,7 +124,7 @@ export default function AdvisorWorkspace() {
         <h1 className="font-heading text-2xl font-bold">Advisor Workspace</h1>
         <div className="mt-4 card">
           <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>
-            {brand.name} runs disclosure_mode <code>{brand.disclosure_mode}</code> — the Advisor Workspace is only active for Advisor-Mediated brands (Maison Luxe, EcoWeave). Switch brands in the top bar to try it.
+            {brand.name} operates in <strong>{brand.disclosure_mode}</strong> mode — the Advisor Workspace is only active for Advisor-Mediated brands (Maison Luxe, EcoWeave). Switch brands in the top bar to try it.
           </p>
         </div>
       </div>
@@ -136,7 +136,7 @@ export default function AdvisorWorkspace() {
       <div className="mb-1 flex flex-wrap items-center gap-2">
         <h1 className="font-heading text-2xl font-bold">Advisor Workspace — {brand.name}</h1>
         <span className="rounded-full px-2.5 py-1 text-[11px] font-semibold" style={{ background: 'var(--brand-accent-soft)', color: 'var(--brand-accent)' }}>
-          client_facing_generative: {String(brand.client_facing_generative)}
+          {brand.client_facing_generative ? 'Generative content allowed client-facing' : 'Human-authored content only'}
         </span>
       </div>
       <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
@@ -158,7 +158,7 @@ export default function AdvisorWorkspace() {
               >
                 <div className="font-medium">{c.name}</div>
                 <div className="text-[11px]" style={{ color: c.id === customerId ? 'var(--brand-accent-text)' : 'var(--ink-mute)', opacity: 0.85 }}>
-                  {c.archetype_id} · {c.loyalty_id}
+                  {archetypes?.find((a) => a.id === c.archetype_id)?.label || c.archetype_id} · {c.loyalty_id}
                 </div>
               </button>
             ))}

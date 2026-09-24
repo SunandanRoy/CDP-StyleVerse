@@ -120,7 +120,7 @@ export default function CustomerList() {
       ) : (
         <>
           <div className="mt-4 rounded-md border p-3 text-sm" style={{ borderColor: 'var(--edge)', background: 'var(--surface-alt)' }}>
-            No name, archetype, or Fit Passport is ever shown here — marketplace platforms give StyleVerse order-level data only (SKU, size, reason code, delivery status), never customer identity. Buyers are keyed by an anonymous alias until they claim their orders via the D2C→Marketplace bridge (D5).
+            No name, archetype, or Fit Passport is ever shown here — marketplace platforms give StyleVerse order-level data only (SKU, size, reason code, delivery status), never customer identity. Buyers are keyed by an anonymous alias until they claim their orders and link their marketplace purchases to a StyleVerse account.
           </div>
           <div className="mt-3 flex flex-wrap items-center gap-3">
             {mktBuyers && <span className="text-xs" style={{ color: 'var(--ink-mute)' }}>{mktBuyers.length} marketplace buyers</span>}

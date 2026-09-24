@@ -23,7 +23,7 @@ export default function SettingsDrawer({ open, onClose }) {
     setLiveSyncEnabled(next)
     setLiveSync(next)
     setEventCount(0)
-    toast.info(next ? 'Live Sync on — listening for a Storefront event bus (none is running in this workspace).' : 'Live Sync off.')
+    toast.info(next ? 'Live Sync on — listening for storefront activity.' : 'Live Sync off.')
   }
 
   if (!open) return null
@@ -58,7 +58,7 @@ export default function SettingsDrawer({ open, onClose }) {
           {GEMINI_KEY_APPLIES ? (
             <>
               <p className="mb-2 text-xs" style={{ color: 'var(--ink-mute)' }}>
-                This standalone build has no server, so it can't hold a key for you. Paste a Gemini API key here to enable live calls for this browser tab only — kept in memory, never written to disk or localStorage, and gone on refresh.
+                This offline build has no server to hold a key for you. Paste an API key to enable live AI responses for this browser tab only — kept in memory, never saved to disk, and cleared on refresh.
               </p>
               <input
                 type="password"
@@ -103,14 +103,14 @@ export default function SettingsDrawer({ open, onClose }) {
             </label>
           </div>
           <p className="text-xs" style={{ color: 'var(--ink-mute)' }}>
-            Default off. When on, this Console listens across browser tabs for <code>localStorage["sce_event_bus_v1"]</code> writes — the shared event bus a sibling Storefront tool would use to publish live shopper activity.
+            Off by default. When on, this console listens for live activity from a connected storefront — useful when demonstrating the storefront and console side by side.
           </p>
           <p className="mt-2 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
-            No Storefront project exists in this Console-only build (see SCE_DATA_CONTRACT.md's Console-only note), so there is no producer writing that key here — this is a real, working listener with nothing to listen to, not a simulated indicator.
+            No storefront is connected in this environment, so nothing will appear here yet.
           </p>
           {liveSync && (
             <p className="mt-2 text-[11px] font-medium" style={{ color: eventCount > 0 ? 'var(--good)' : 'var(--brand-accent)' }}>
-              {eventCount > 0 ? `✓ ${eventCount} event(s) received from another tab.` : '● Listening — no events yet (would show live Storefront updates here).'}
+              {eventCount > 0 ? `✓ ${eventCount} update(s) received.` : '● Listening for storefront activity…'}
             </p>
           )}
         </div>

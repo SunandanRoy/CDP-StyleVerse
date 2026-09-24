@@ -195,7 +195,7 @@ export default function AIDial() {
           Dial Audit Log — {brand.name}
         </h2>
         <p className="mb-3 text-[11px]" style={{ color: 'var(--ink-mute)' }}>
-          Every historical change, reviewed at Risk &amp; Ethics Board cadence (C13). Most recent first.
+          Every historical change, reviewed at Risk &amp; Ethics Board cadence. Most recent first.
         </p>
         <div className="space-y-2">
           {auditLoading && <p className="text-sm" style={{ color: 'var(--ink-mute)' }}>Loading…</p>}

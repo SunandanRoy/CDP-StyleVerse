@@ -162,15 +162,15 @@ export const ARCHETYPE_IDS = ARCHETYPES.map((a) => a.id)
 
 // §10 — KPI table (both tools would render from this; Console renders it alone).
 export const KPI_TABLE = [
-  { kpi: 'Product-view → cart', baseline: '19%', commit: '22%', ambition: '25%', note: 'A / D', modules: [2, 3] },
+  { kpi: 'Product-view → cart', baseline: '19%', commit: '22%', ambition: '25%', note: '', modules: [2, 3] },
   { kpi: 'End-to-end conversion', baseline: '2.5%', commit: '2.9%', ambition: '3.2%', note: '5.1M × 22% × 57% × 42% = 268,607 orders ÷ 9.2M = 2.92% ≥ 2.875% required', modules: [2, 3] },
-  { kpi: 'Exploration-stage abandonment', baseline: '81%', commit: '78%', ambition: '75%', note: 'Renamed from "cart abandonment" — see §12.2', modules: [] },
-  { kpi: 'First-time fit accuracy (SpeedStyle)', baseline: '58%', commit: '68%', ambition: '75%', note: 'A / D', modules: [3, 5, 13] },
-  { kpi: 'SpeedStyle return rate', baseline: '28%', commit: '22.4% blended (21% D2C / 23.5% marketplace)', ambition: '20%', note: '0.45×21 + 0.55×23.5 = 22.375 ≈ 22.4 = 28 × 0.8; weights assume SpeedStyle mirrors the 45/55 portfolio split (Tier C)', modules: [4, 5, 13] },
-  { kpi: 'Blended resolution time', baseline: '48 hrs', commit: '18 hrs', ambition: '8 hrs', note: 'A / D', modules: [6, 7] },
+  { kpi: 'Exploration-stage abandonment', baseline: '81%', commit: '78%', ambition: '75%', note: 'Renamed from "cart abandonment" to reflect the full pre-purchase journey', modules: [] },
+  { kpi: 'First-time fit accuracy (SpeedStyle)', baseline: '58%', commit: '68%', ambition: '75%', note: '', modules: [3, 5, 13] },
+  { kpi: 'SpeedStyle return rate', baseline: '28%', commit: '22.4% blended (21% D2C / 23.5% marketplace)', ambition: '20%', note: '0.45×21 + 0.55×23.5 = 22.375 ≈ 22.4 = 28 × 0.8; weights assume SpeedStyle mirrors the 45/55 portfolio split', modules: [4, 5, 13] },
+  { kpi: 'Blended resolution time', baseline: '48 hrs', commit: '18 hrs', ambition: '8 hrs', note: '', modules: [6, 7] },
   { kpi: 'SpeedStyle resolution time', baseline: '72 hrs', commit: '24 hrs', ambition: '10 hrs', note: 'Round 1 Exhibit 2', modules: [6, 7] },
   { kpi: 'Repeat purchase (SpeedStyle)', baseline: '32%', commit: '36%', ambition: '40%', note: '', modules: [4, 6] },
-  { kpi: 'Average order value', baseline: '~₹3,195', commit: '+8%', ambition: '+15%', note: 'Tier C', modules: [] },
+  { kpi: 'Average order value', baseline: '~₹3,195', commit: '+8%', ambition: '+15%', note: 'Directional estimate', modules: [] },
   { kpi: 'NPS (SpeedStyle)', baseline: '35', commit: '45', ambition: '52', note: '', modules: [6, 7] },
   { kpi: 'Fit Passport opt-in (D2C)', baseline: '—', commit: '>25% in 6 months', ambition: '—', note: '', modules: [3] },
   { kpi: 'Case Thread / Track Everywhere weekly active use', baseline: '—', commit: '>80% eligible staff', ambition: '—', note: '', modules: [6, 7] },

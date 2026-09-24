@@ -1,9 +1,9 @@
 {
   "meta": {
     "seed": 20260923,
-    "generated_at": "2026-09-23T18:20:06.598Z",
+    "generated_at": "2026-09-24T07:27:22.359Z",
     "version": "2.0-extension",
-    "based_on_checksum": "85a954d11c4df2f82abde5c39e1f7004ccb71ccc17784a9b59e178008f8253a4"
+    "based_on_checksum": "999cb359066ad622b509eddba9a33bb686b461d8eb4dbd96ad6fbbd35e90aada"
   },
   "employees": [
     {
@@ -2864,7 +2864,7 @@
       "owner": "Customer Analytics",
       "last_validated": "2026-09-07",
       "override_rate": null,
-      "notes": "Deterministic formula (§6), not a trained model — validation = formula unit tests + calibration chart (D6)."
+      "notes": "A deterministic, fully explainable formula rather than a trained model — validated through automated tests and an ongoing calibration chart comparing predicted scores against actual outcomes."
     },
     {
       "id": "model_archetype",
@@ -2874,7 +2874,7 @@
       "owner": "Customer Analytics",
       "last_validated": "2026-09-07",
       "override_rate": null,
-      "notes": "Nearest-centroid over (height, bust, waist, hip, usual size) in the prototype; production = K-means/GMM (solution doc §7.3)."
+      "notes": "Assigns each customer to the nearest body-profile archetype using height, bust, waist, hip and usual size; a production rollout would move to a clustering model trained on a larger dataset."
     },
     {
       "id": "model_interception",
@@ -2884,7 +2884,7 @@
       "owner": "Customer Analytics",
       "last_validated": "2026-08-26",
       "override_rate": 23.6,
-      "notes": "Rules engine on top of the confidence score + stock check (§ Module 4 decision logic)."
+      "notes": "A rules engine layered on top of the confidence score and live stock levels to decide when to offer an exchange instead of a return."
     },
     {
       "id": "model_case_triage",
@@ -2894,7 +2894,7 @@
       "owner": "Digital Customer Support",
       "last_validated": "2026-08-31",
       "override_rate": 20.3,
-      "notes": "Flags automation-bias watch on SpeedStyle — see Override Wins."
+      "notes": "Flags an automation-bias watch on SpeedStyle — see Override Wins."
     },
     {
       "id": "model_voice_rubric",
@@ -2904,7 +2904,7 @@
       "owner": "Customer Journey & Experience Design",
       "last_validated": "2026-09-20",
       "override_rate": null,
-      "notes": "Deterministic rubric (banned markers, emoji policy, apology count, length bounds, brand-specific rules) — guards every live Gemini call too."
+      "notes": "A deterministic rubric checking tone, banned phrasing, emoji policy, apology count and brand-specific rules — it also guards every live AI-generated response before it can go out."
     },
     {
       "id": "model_grievance",
@@ -2914,7 +2914,7 @@
       "owner": "Digital Customer Support",
       "last_validated": "2026-09-13",
       "override_rate": null,
-      "notes": "Rule + z-score on delivery delay; sensitivity bound to the AI Involvement Dial proactivity threshold."
+      "notes": "A rule-based risk score on delivery delays, with sensitivity tied to the AI Involvement Dial's proactivity setting."
     },
     {
       "id": "model_signal",
@@ -2924,7 +2924,7 @@
       "owner": "Marketplace Operations",
       "last_validated": "2026-08-16",
       "override_rate": null,
-      "notes": "SKU-level aggregate only — no individual marketplace buyer identity (data boundary, D5)."
+      "notes": "Surfaces SKU-level aggregate return patterns only — individual marketplace buyer identity is never exposed."
     }
   ],
   "dialAuditLog": [

@@ -121,11 +121,11 @@ export default function CustomerProfile() {
           {brand && <Badge variant={MODE_BADGE[brand.ai_tooling_mode]} />}
           <button
             disabled
-            title="No Storefront project exists in this Console-only build — see SCE_DATA_CONTRACT.md's Console-only note. N/A by design, not a broken link."
+            title="Not available in this environment — no storefront is connected."
             className="cursor-not-allowed rounded-full border px-2.5 py-0.5 text-[11px] font-medium opacity-60"
             style={{ borderColor: 'var(--edge)', color: 'var(--ink-mute)' }}
           >
-            Open storefront as this customer — N/A
+            Open storefront as this customer
           </button>
         </div>
       </div>
@@ -172,10 +172,10 @@ export default function CustomerProfile() {
             </div>
             <div className="flex flex-col items-stretch gap-1.5 text-xs">
               <div className="rounded-md border p-2" style={{ borderColor: 'var(--brand-accent)', background: 'var(--brand-accent-soft)' }}>
-                <div className="font-semibold">D2C Profile</div>
-                <div style={{ color: 'var(--ink-mute)' }}>{customer.name} · {customer.id}</div>
+                <div className="font-semibold">Direct Customer Profile</div>
+                <div style={{ color: 'var(--ink-mute)' }}>{customer.name}</div>
               </div>
-              <div className="pl-3 text-[10px]" style={{ color: 'var(--ink-mute)' }}>↓ loyalty_id</div>
+              <div className="pl-3 text-[10px]" style={{ color: 'var(--ink-mute)' }}>↓ linked via loyalty account</div>
               <div className="rounded-md border p-2" style={{ borderColor: 'var(--edge)' }}>
                 <div className="font-semibold">Loyalty Account</div>
                 <div style={{ color: 'var(--ink-mute)' }}>{customer.loyalty_id || 'Not enrolled'}</div>

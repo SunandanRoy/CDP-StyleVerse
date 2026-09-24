@@ -3,6 +3,7 @@ import { useBrand } from '../context/BrandContext'
 import { useFetch } from '../lib/useFetch'
 import KpiCard from '../components/KpiCard'
 import { KpiCardSkeleton } from '../components/Skeleton'
+import { AI_TOOLING_MODE_LABELS } from '../../shared/confidence.js'
 
 // D7 — the End-to-end conversion KPI's note in the shared KPI table spells
 // out the exact arithmetic (5.1M x 22% x 57% x 42% = 268,607 orders / 9.2M
@@ -60,7 +61,10 @@ export default function Dashboard() {
       <div className="mb-6">
         <h1 className="font-heading text-2xl font-bold">{brand.name} — Console Overview</h1>
         <p className="mt-1 text-sm" style={{ color: 'var(--ink-mute)' }}>
-          {brand.posture} · ai_tooling_mode: <code className="rounded px-1 py-0.5 text-xs" style={{ background: 'var(--surface-alt)', color: 'var(--ink)' }}>{brand.ai_tooling_mode}</code>
+          {brand.posture} · AI governance tier:{' '}
+          <span className="rounded-full px-2 py-0.5 text-xs font-semibold" style={{ background: 'var(--brand-accent-soft)', color: 'var(--brand-accent)' }}>
+            {AI_TOOLING_MODE_LABELS[brand.ai_tooling_mode] || brand.ai_tooling_mode}
+          </span>
         </p>
       </div>
 

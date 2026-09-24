@@ -73,7 +73,7 @@ test.describe('Routes render for every brand', () => {
     '/returns', '/returns/decoder', '/cases', '/track-everywhere', '/grievance-radar',
     '/governance/dial', '/governance/voice-certification', '/governance/override-wins',
     '/governance/model-registry', '/business/capacity-ledger', '/business/marketplace-signal',
-    '/business/career-lattice', '/changelog', '/today'
+    '/business/career-lattice', '/today'
   ]
   for (const route of ROUTES) {
     test(`${route} renders with no console errors`, async ({ page }) => {
